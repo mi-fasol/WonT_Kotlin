@@ -17,11 +17,12 @@ import com.example.haemo_kotlin.screen.intro.LoadingScreen
 import com.example.haemo_kotlin.screen.intro.LoginScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.viewModel.LoginViewModel
+import com.example.haemo_kotlin.viewModel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class StartActivity : ComponentActivity() {
-
+    private val viewModel by viewModels<PostViewModel>()
     private val loginViewModel by viewModels<LoginViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +34,9 @@ class StartActivity : ComponentActivity() {
             Haemo_kotlinTheme {
                 val navController = rememberNavController()
                 Surface(
-                    modifier = Modifier.fillMaxSize().background(Color.White),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     NavHost(navController = navController, startDestination = "loadingScreen") {
@@ -51,6 +54,9 @@ class StartActivity : ComponentActivity() {
                                 loginViewModel = loginViewModel,
                                 navController = navController
                             )
+                        }
+                        composable("mainScreen") {
+                            MainScreen(viewModel, loginViewModel)
                         }
                     }
                 }

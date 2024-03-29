@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,10 +34,13 @@ fun LoadingScreen(loginViewModel: LoginViewModel, navController: NavController) 
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
 
+    val loginId by loginViewModel.loginId.collectAsState()
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize().background(Color.White)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -45,23 +50,27 @@ fun LoadingScreen(loginViewModel: LoginViewModel, navController: NavController) 
             Image(
                 painter = painterResource(id = R.drawable.wont_icon),
                 contentDescription = "",
-                modifier = Modifier.weight(2f).fillMaxSize()
+                modifier = Modifier
+                    .weight(2f)
+                    .fillMaxSize()
             )
             Image(
                 painter = painterResource(id = R.drawable.wont),
                 contentDescription = "",
-                modifier = Modifier.weight(1f).fillMaxSize()
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize()
             )
         }
     }
 
     LaunchedEffect(true) {
-        val id = SharedPreferenceUtil(context).getString("studentId", "")
+        loginViewModel.checkIdExists(context)
         delay(1500)
-        if (id.equals("") || id.isNullOrBlank()) {
+        if (loginId.equals("") || loginId.isNullOrBlank()) {
             navController.navigate("loginScreen")
         } else {
-            navController.navigate("")
+            navController.navigate("mainScreen")
         }
     }
 }

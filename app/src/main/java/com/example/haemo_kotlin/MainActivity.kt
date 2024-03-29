@@ -101,7 +101,6 @@ fun Tab1Screen(viewModel: PostViewModel, loginViewModel: LoginViewModel) {
     val postList = viewModel.postModelList.collectAsState()
     Column() {
         Button(onClick = {
-            loginViewModel.login("2019152028", "a0967312!")
             Log.d("로그인", loginViewModel.loginState.toString())
         }) {
         }
