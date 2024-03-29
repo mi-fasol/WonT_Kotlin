@@ -2,6 +2,8 @@ package com.example.haemo_kotlin.network
 
 import com.example.haemo_kotlin.model.LoginModel
 import com.example.haemo_kotlin.model.PostModel
+import com.example.haemo_kotlin.model.UserModel
+import com.example.haemo_kotlin.model.UserResponseModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -18,4 +20,7 @@ interface ApiService {
 
     @POST("/login")
     suspend fun tryLogin(@Body loginModel: LoginModel) : Response<Boolean>
+
+    @POST("/user")
+    suspend fun registerUser(@Body user: UserModel) : Response<UserResponseModel>
 }

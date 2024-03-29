@@ -32,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class MainApplication: Application() {
+class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
     }
@@ -70,7 +70,11 @@ fun MainScreen(viewModel: PostViewModel, loginViewModel: LoginViewModel) {
 }
 
 @Composable
-fun TabScreen(selectedTab: MutableState<Int>, viewModel: PostViewModel, loginViewModel: LoginViewModel) {
+fun TabScreen(
+    selectedTab: MutableState<Int>,
+    viewModel: PostViewModel,
+    loginViewModel: LoginViewModel
+) {
     val tabs = listOf("Tab 1", "Tab 2")
 
     Column {
@@ -121,7 +125,7 @@ fun Tab1Screen(viewModel: PostViewModel, loginViewModel: LoginViewModel) {
 fun Tab2Screen(viewModel: PostViewModel) {
     val num = viewModel.num.collectAsState()
     val post = viewModel.postModel.collectAsState()
-    val title = if(post.value == null) "비어있음" else post.value!!.title
+    val title = if (post.value == null) "비어있음" else post.value!!.title
 
     LaunchedEffect(true) {
         viewModel.getOnePost(num.value)

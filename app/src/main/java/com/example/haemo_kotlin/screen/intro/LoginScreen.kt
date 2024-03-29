@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.util.EnterInfo
 import com.example.haemo_kotlin.viewModel.LoginViewModel
 import kotlinx.coroutines.launch
 
@@ -90,70 +91,21 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
                 )
             }
             Spacer(modifier = Modifier.height(30.dp))
-            EnterUserId(loginViewModel)
+            EnterInfo(
+                type = "ID",
+                value = loginViewModel.id.collectAsState().value,
+                onValueChange = { newValue ->
+                    loginViewModel.id.value = newValue
+                })
             Spacer(modifier = Modifier.height(10.dp))
-            EnterPwdField(loginViewModel)
+            EnterInfo(
+                type = "P/W",
+                value = loginViewModel.pwd.collectAsState().value,
+                onValueChange = { newValue ->
+                    loginViewModel.pwd.value = newValue
+                })
             Spacer(modifier = Modifier.height(30.dp))
             loginButton(loginViewModel, navController)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EnterUserId(loginViewModel: LoginViewModel) {
-    val id = loginViewModel.id.collectAsState().value
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-        ) {
-            Text("ID", fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = id,
-                onValueChange = { newId ->
-                    loginViewModel.id.value = newId
-                },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0xff82C0EA),
-                    unfocusedBorderColor = Color.LightGray,
-                    containerColor = Color.White
-                ),
-                shape = RoundedCornerShape(15.dp)
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EnterPwdField(loginViewModel: LoginViewModel) {
-    val pwd by loginViewModel.pwd.collectAsState()
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-        ) {
-            Text("P/W", fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = pwd,
-                onValueChange = { newPwd ->
-                    loginViewModel.pwd.value = newPwd
-                },
-                visualTransformation = PasswordVisualTransformation(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0xff82C0EA),
-                    unfocusedBorderColor = Color.LightGray,
-                    containerColor = Color.White
-                ),
-                shape = RoundedCornerShape(15.dp)
-            )
         }
     }
 }

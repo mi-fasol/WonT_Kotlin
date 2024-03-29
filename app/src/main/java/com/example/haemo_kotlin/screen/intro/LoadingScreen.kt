@@ -34,7 +34,7 @@ fun LoadingScreen(loginViewModel: LoginViewModel, navController: NavController) 
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
 
-    val loginId by loginViewModel.loginId.collectAsState()
+    val loginUser by loginViewModel.loginUser.collectAsState()
 
     Box(
         contentAlignment = Alignment.Center,
@@ -65,12 +65,18 @@ fun LoadingScreen(loginViewModel: LoginViewModel, navController: NavController) 
     }
 
     LaunchedEffect(true) {
-        loginViewModel.checkIdExists(context)
+        loginViewModel.checkUserExists(context)
         delay(1500)
-        if (loginId.equals("") || loginId.isNullOrBlank()) {
-            navController.navigate("loginScreen")
-        } else {
-            navController.navigate("mainScreen")
+        when (loginUser) {
+            LoginViewModel.LoginUserState.NONE -> {
+                navController.navigate("loginScreen")
+            }
+            LoginViewModel.LoginUserState.LOGIN -> {
+                navController.navigate("userRegisterScreen")
+            }
+            else -> {
+                navController.navigate("mainScreen")
+            }
         }
     }
 }
