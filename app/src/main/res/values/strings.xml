@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">haemo_kotlin</string>
+    <string name="title_activity_start">StartActivity</string>
+</resources>
