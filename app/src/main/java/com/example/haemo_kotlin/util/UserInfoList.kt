@@ -13,6 +13,17 @@ val userProfileList = listOf(
     R.drawable.user_rabbit
 )
 
+val userMyPageImageList = listOf(
+    R.drawable.round_dog,
+    R.drawable.round_cat,
+    R.drawable.round_chick,
+    R.drawable.round_neogul,
+    R.drawable.round_panda,
+    R.drawable.round_peng,
+    R.drawable.round_quokka,
+    R.drawable.round_rabbit
+)
+
 val userGenderList = listOf(
     "남자", "여자"
 )

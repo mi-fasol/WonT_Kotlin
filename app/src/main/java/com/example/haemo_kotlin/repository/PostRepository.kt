@@ -11,6 +11,10 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.getPost()
     }
 
+    suspend fun getTodayPost(): Response<List<PostModel>> {
+        return retrofitClient.service.getTodayPost()
+    }
+
     suspend fun getOnePost(idx: Int): Response<PostModel> {
         return retrofitClient.service.getOnePost(idx)
     }

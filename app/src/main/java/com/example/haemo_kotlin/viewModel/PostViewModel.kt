@@ -29,12 +29,14 @@ class PostViewModel @Inject constructor(
     private val _postModel = MutableStateFlow<PostModel?>(null)
     val postModel: StateFlow<PostModel?> = _postModel
 
-//    private val _formattedDate = MutableStateFlow<String?>(null)
-//    val formattedDate: StateFlow<String?> = _formattedDate
-
+    private val _todayPostList = MutableStateFlow<List<PostModel>>(emptyList())
+    val todayPostList : StateFlow<List<PostModel>> = _todayPostList
 
     private val _postModelState = MutableStateFlow<Resource<PostModel>>(Resource.loading(null))
     val postModelState: StateFlow<Resource<PostModel>> = _postModelState.asStateFlow()
+
+    private val _todayPostModelState = MutableStateFlow<Resource<List<PostModel>>>(Resource.loading(null))
+    val todayPostModelState: StateFlow<Resource<List<PostModel>>> = _todayPostModelState.asStateFlow()
 
 
     private val _postModelListState = MutableStateFlow<Resource<List<PostModel>>>(Resource.loading(null))
@@ -49,7 +51,7 @@ class PostViewModel @Inject constructor(
         num.value = 0
     }
 
-    fun getPost() {
+    suspend fun getPost() {
         viewModelScope.launch {
             _postModelState.value = Resource.loading(null)
             try {
@@ -66,6 +68,27 @@ class PostViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
                 _postModelListState.value = Resource.error(e.message ?: "An error occurred", null)
+            }
+        }
+    }
+
+    suspend fun getTodayPost() {
+        viewModelScope.launch {
+            _postModelState.value = Resource.loading(null)
+            try {
+                val response = repository.getTodayPost()
+                if (response.isSuccessful && response.body() != null) {
+                    val postList = response.body()
+                    _todayPostList.value = postList!!
+                    _todayPostModelState.value = Resource.success(postList)
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 에러 응답: $errorBody")
+                    _todayPostModelState.value = Resource.error(response.errorBody().toString(), null)
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+                _todayPostModelState.value = Resource.error(e.message ?: "An error occurred", null)
             }
         }
     }
@@ -90,6 +113,8 @@ class PostViewModel @Inject constructor(
             }
         }
     }
+
+
 
     fun convertDate(input: String) : String{
         val parsedDate = parseDateString(input, "yyyy년 MM월 dd일 hh시")

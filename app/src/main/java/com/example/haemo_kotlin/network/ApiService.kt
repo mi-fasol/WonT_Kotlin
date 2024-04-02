@@ -18,6 +18,9 @@ interface ApiService {
     @GET("post/{id}")
     suspend fun getOnePost(@Path("id") idx: Int): Response<PostModel>
 
+    @GET("post/24hours")
+    suspend fun getTodayPost(): Response<List<PostModel>>
+
     @POST("/login")
     suspend fun tryLogin(@Body loginModel: LoginModel) : Response<Boolean>
 

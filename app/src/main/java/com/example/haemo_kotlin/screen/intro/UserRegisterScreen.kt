@@ -2,6 +2,10 @@ package com.example.haemo_kotlin.screen.intro
 
 //noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
+import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavController
+import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.*
 import com.example.haemo_kotlin.viewModel.UserRegisterViewModel
@@ -233,10 +238,14 @@ fun UserRegisterButton(viewModel: UserRegisterViewModel, navController: NavContr
     val scaffoldState = rememberScaffoldState()
     val registerResult = viewModel.isRegisterSuccess.collectAsState().value
     val context = LocalContext.current
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        }
 
     LaunchedEffect(registerResult) {
         if (registerResult) {
-            navController.navigate("mainScreen")
+            launcher.launch(Intent(context, MainActivity::class.java))
+            (context as? ComponentActivity)?.finish()
         }
     }
 

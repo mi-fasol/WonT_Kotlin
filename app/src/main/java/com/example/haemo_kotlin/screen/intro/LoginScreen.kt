@@ -1,7 +1,11 @@
 package com.example.haemo_kotlin.screen.intro
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.EnterInfo
 import com.example.haemo_kotlin.viewModel.LoginViewModel
@@ -119,10 +124,14 @@ fun loginButton(loginViewModel: LoginViewModel, navController: NavController) {
     val loginResult by loginViewModel.isLoginSuccess.collectAsState()
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        }
 
     LaunchedEffect(loginResult) {
         if (loginResult) {
-            navController.navigate("mainScreen")
+            launcher.launch(Intent(context, MainActivity::class.java))
+            (context as? ComponentActivity)?.finish()
         }
     }
 
