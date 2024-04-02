@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -25,6 +28,10 @@ class PostViewModel @Inject constructor(
 
     private val _postModel = MutableStateFlow<PostModel?>(null)
     val postModel: StateFlow<PostModel?> = _postModel
+
+//    private val _formattedDate = MutableStateFlow<String?>(null)
+//    val formattedDate: StateFlow<String?> = _formattedDate
+
 
     private val _postModelState = MutableStateFlow<Resource<PostModel>>(Resource.loading(null))
     val postModelState: StateFlow<Resource<PostModel>> = _postModelState.asStateFlow()
@@ -42,7 +49,7 @@ class PostViewModel @Inject constructor(
         num.value = 0
     }
 
-    suspend fun getPost() {
+    fun getPost() {
         viewModelScope.launch {
             _postModelState.value = Resource.loading(null)
             try {
@@ -82,6 +89,23 @@ class PostViewModel @Inject constructor(
                 _postModelState.value = Resource.error(e.message ?: "An error occurred", null)
             }
         }
+    }
+
+    fun convertDate(input: String) : String{
+        val parsedDate = parseDateString(input, "yyyy년 MM월 dd일 hh시")
+        val formattedDate = formatDate(parsedDate, "yyyy.MM.dd hh시")
+
+        return formattedDate
+    }
+
+    fun parseDateString(dateString: String, format: String): Date {
+        val parser = SimpleDateFormat(format, Locale.KOREA)
+        return parser.parse(dateString) ?: Date()
+    }
+
+    fun formatDate(date: Date, format: String): String {
+        val formatter = SimpleDateFormat(format, Locale.KOREA)
+        return formatter.format(date)
     }
 
 }

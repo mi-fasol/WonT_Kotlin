@@ -2,7 +2,8 @@ package com.example.haemo_kotlin.model
 
 import com.google.gson.annotations.SerializedName
 
-data class PostModel(
+data class PostResponseModel(
+    @SerializedName("pid") val pId: Int,
     @SerializedName("title") val title: String,
     @SerializedName("content") val content: String,
     @SerializedName("nickname") val nickname: String,

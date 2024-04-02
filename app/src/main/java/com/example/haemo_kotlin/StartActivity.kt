@@ -20,6 +20,7 @@ import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.viewModel.LoginViewModel
 import com.example.haemo_kotlin.viewModel.PostViewModel
 import com.example.haemo_kotlin.viewModel.UserRegisterViewModel
+import com.example.haemo_kotlin.screen.main.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -65,7 +66,7 @@ class StartActivity : ComponentActivity() {
                             )
                         }
                         composable("mainScreen") {
-                            MainScreen(viewModel, loginViewModel)
+                            MainScreen(viewModel, navController)
                         }
                     }
                 }

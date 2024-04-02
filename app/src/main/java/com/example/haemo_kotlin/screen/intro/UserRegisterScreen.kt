@@ -56,15 +56,13 @@ import com.example.haemo_kotlin.viewModel.UserRegisterViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun UserRegisterScreen(viewModel: UserRegisterViewModel, navController: NavController) {
-    val context = LocalContext.current
-
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
 
     Scaffold(
         topBar = {
-            MainAppBar("회원가입", navController)
+            BackArrowAppBar("회원가입", navController)
         }
     ) {
         Box(

@@ -32,7 +32,6 @@ fun LoadingScreen(loginViewModel: LoginViewModel, navController: NavController) 
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
-    val screenHeight = configuration.screenHeightDp
 
     val loginUser by loginViewModel.loginUser.collectAsState()
 

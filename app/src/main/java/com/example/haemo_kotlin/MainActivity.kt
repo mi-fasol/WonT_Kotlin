@@ -23,8 +23,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.haemo_kotlin.model.LoginModel
+import com.example.haemo_kotlin.screen.intro.LoadingScreen
+import com.example.haemo_kotlin.screen.intro.LoginScreen
+import com.example.haemo_kotlin.screen.intro.UserRegisterScreen
+import com.example.haemo_kotlin.screen.main.MainScreen
 import com.example.haemo_kotlin.viewModel.PostViewModel
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.viewModel.LoginViewModel
@@ -48,90 +56,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Haemo_kotlinTheme {
-                // A surface container using the 'background' color from the theme
+                val navController = rememberNavController()
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = Color.White
                 ) {
-                    MainScreen(viewModel, loginViewModel)
+                    NavHost(navController = navController, startDestination = "mainScreen") {
+                        composable("mainScreen") {
+                            MainScreen(viewModel, navController)
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun MainScreen(viewModel: PostViewModel, loginViewModel: LoginViewModel) {
-    val selectedTab = remember { mutableIntStateOf(0) }
-
-//    App()
-
-    TabScreen(selectedTab = selectedTab, viewModel, loginViewModel)
-}
-
-@Composable
-fun TabScreen(
-    selectedTab: MutableState<Int>,
-    viewModel: PostViewModel,
-    loginViewModel: LoginViewModel
-) {
-    val tabs = listOf("Tab 1", "Tab 2")
-
-    Column {
-        TabRow(selectedTabIndex = selectedTab.value) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab.value == index,
-                    onClick = { selectedTab.value = index }
-                ) {
-                    Text(text = title)
-                }
-            }
-        }
-
-        when (selectedTab.value) {
-            0 -> Tab1Screen(viewModel, loginViewModel)
-            1 -> Tab2Screen(viewModel)
-        }
-    }
-}
-
-@Composable
-fun Tab1Screen(viewModel: PostViewModel, loginViewModel: LoginViewModel) {
-    LaunchedEffect(true) {
-        viewModel.getPost()
-    }
-
-    val postList = viewModel.postModelList.collectAsState()
-    Column() {
-        Button(onClick = {
-            Log.d("로그인", loginViewModel.loginState.toString())
-        }) {
-        }
-
-//        Button(onClick = {viewModel.setZero()}){}
-
-        LazyColumn() {
-            items(postList.value.size) { idx ->
-                Text(postList.value[idx].title)
-            }
-        }
-    }
-
-}
-
-@SuppressLint("SuspiciousIndentation")
-@Composable
-fun Tab2Screen(viewModel: PostViewModel) {
-    val num = viewModel.num.collectAsState()
-    val post = viewModel.postModel.collectAsState()
-    val title = if (post.value == null) "비어있음" else post.value!!.title
-
-    LaunchedEffect(true) {
-        viewModel.getOnePost(num.value)
-    }
-    Column() {
-        Text(num.value.toString())
-        Text(title)
     }
 }
