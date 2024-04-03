@@ -43,7 +43,11 @@ fun MainBottomNavigation(navController: NavController) {
             },
             selected = navController.currentDestination?.route == "mainScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.MainScreen.route)
+                navController.navigate(NavigationRoutes.MainScreen.route) {
+                    popUpTo(NavigationRoutes.MainScreen.route) {
+                        inclusive = true
+                    }
+                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
@@ -56,9 +60,13 @@ fun MainBottomNavigation(navController: NavController) {
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
-            selected = navController.currentDestination?.route == "meetingScreen",
+            selected = navController.currentDestination?.route == "clubScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.MeetingScreen.route)
+                navController.navigate(NavigationRoutes.ClubScreen.route) {
+                    popUpTo(NavigationRoutes.MainScreen.route) {
+                        inclusive = true
+                    }
+                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
@@ -73,7 +81,11 @@ fun MainBottomNavigation(navController: NavController) {
             },
             selected = navController.currentDestination?.route == "meetingScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.MeetingScreen.route)
+                navController.navigate(NavigationRoutes.MeetingScreen.route) {
+                    popUpTo(NavigationRoutes.MainScreen.route) {
+                        inclusive = true
+                    }
+                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
@@ -81,37 +93,27 @@ fun MainBottomNavigation(navController: NavController) {
         BottomNavigationItem(
             icon = {
                 val isSelected = navController.currentDestination?.route == "meetingScreen"
-                if (isSelected) {
-                    Icon(
-                        painter = painterResource(id = userMyPageImageList[0]),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size((screenWidth / 15).dp)
-                            .border(
-                                width = 1.dp,
-                                colorResource(R.color.mainColor),
-                                shape = CircleShape
-                            ),
-                        tint = Color.Unspecified
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(id = userMyPageImageList[0]),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size((screenWidth / 15).dp)
-                            .border(
-                                width = 1.dp,
-                                colorResource(R.color.mainGreyColor),
-                                shape = CircleShape
-                            ),
-                        tint = Color.Unspecified
-                    )
-                }
+                val borderColor = if (isSelected) R.color.mainColor else R.color.mainGreyColor
+                Icon(
+                    painter = painterResource(id = userMyPageImageList[0]),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size((screenWidth / 15).dp)
+                        .border(
+                            width = 1.dp,
+                            colorResource(borderColor),
+                            shape = CircleShape
+                        ),
+                    tint = Color.Unspecified
+                )
             },
             selected = navController.currentDestination?.route == "meetingScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.MeetingScreen.route)
+                navController.navigate(NavigationRoutes.MeetingScreen.route) {
+                    popUpTo(NavigationRoutes.MainScreen.route) {
+                        inclusive = true
+                    }
+                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
