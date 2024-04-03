@@ -16,10 +16,12 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.haemo_kotlin.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,8 +54,8 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
                 Text(
                     text = appBarText,
                     fontSize = 17.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xff545454)
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.mainColor)
                 )
         },
         actions = {
@@ -61,10 +63,11 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = Color(0xff545454)
+                    tint = colorResource(id = R.color.mainColor)
                 )
             }
         },
+        elevation = 0.dp,
         backgroundColor = Color.White,
     )
 }

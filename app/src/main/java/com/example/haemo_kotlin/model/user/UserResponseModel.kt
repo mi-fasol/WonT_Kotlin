@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.model
+package com.example.haemo_kotlin.model.user
 
 import com.google.gson.annotations.SerializedName
 

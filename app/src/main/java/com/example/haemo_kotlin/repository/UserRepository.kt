@@ -1,10 +1,8 @@
 package com.example.haemo_kotlin.repository
 
-import android.net.http.UrlRequest.Status
-import com.example.haemo_kotlin.model.LoginModel
-import com.example.haemo_kotlin.model.PostModel
-import com.example.haemo_kotlin.model.UserModel
-import com.example.haemo_kotlin.model.UserResponseModel
+import com.example.haemo_kotlin.model.user.LoginModel
+import com.example.haemo_kotlin.model.user.UserModel
+import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.RetrofitClient
 import retrofit2.Response
 import javax.inject.Inject

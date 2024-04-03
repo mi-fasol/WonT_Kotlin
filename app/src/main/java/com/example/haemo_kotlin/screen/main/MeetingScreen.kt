@@ -35,8 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.haemo_kotlin.model.PostModel
-import com.example.haemo_kotlin.util.MainBottomNavigation
+import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.viewModel.PostViewModel
 
@@ -58,9 +57,12 @@ fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
             MainPageAppBar("친구 구하는 곳", navController)
         }
     ) {
-        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-            Today24HoursBoard(todayPostList, postViewModel)
-            MeetingBoard(postList = postList, viewModel = postViewModel)
+        Column() {
+            Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
+            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                Today24HoursBoard(todayPostList, postViewModel)
+                MeetingBoard(postList = postList, viewModel = postViewModel)
+            }
         }
     }
 }

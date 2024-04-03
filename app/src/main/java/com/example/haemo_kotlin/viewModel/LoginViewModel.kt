@@ -1,13 +1,10 @@
 package com.example.haemo_kotlin.viewModel
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.MainActivity
-import com.example.haemo_kotlin.model.LoginModel
+import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil

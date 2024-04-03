@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.repository
 
-import com.example.haemo_kotlin.model.PostModel
+import com.example.haemo_kotlin.model.post.ClubPostModel
+import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.network.RetrofitClient
 import retrofit2.Response
 import javax.inject.Inject
@@ -19,4 +20,11 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.getOnePost(idx)
     }
 
+    suspend fun getClubPost(): Response<List<ClubPostModel>> {
+        return retrofitClient.service.getClubPost()
+    }
+
+    suspend fun getOneClubPost(idx: Int): Response<ClubPostModel> {
+        return retrofitClient.service.getOneClubPost(idx)
+    }
 }

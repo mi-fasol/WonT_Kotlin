@@ -13,9 +13,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.haemo_kotlin.screen.main.ClubScreen
 import com.example.haemo_kotlin.screen.main.MainScreen
 import com.example.haemo_kotlin.screen.main.MeetingScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
+import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.viewModel.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.LoginViewModel
 import com.example.haemo_kotlin.viewModel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +35,7 @@ class MainApplication : Application() {
 class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<PostViewModel>()
-    private val loginViewModel by viewModels<LoginViewModel>()
+    private val clubPostViewModel by viewModels<ClubPostViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -55,11 +58,14 @@ class MainActivity : ComponentActivity() {
                     color = Color.White
                 ) {
                     NavHost(navController = navController, startDestination = "mainScreen") {
-                        composable("mainScreen") {
+                        composable(NavigationRoutes.MainScreen.route) {
                             MainScreen(navController, viewModel)
                         }
-                        composable("meetingScreen") {
+                        composable(NavigationRoutes.MeetingScreen.route) {
                             MeetingScreen(viewModel, navController)
+                        }
+                        composable(NavigationRoutes.ClubScreen.route) {
+                            ClubScreen(clubPostViewModel, navController)
                         }
                     }
                 }

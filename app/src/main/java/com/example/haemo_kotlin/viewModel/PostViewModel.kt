@@ -3,7 +3,7 @@ package com.example.haemo_kotlin.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.model.PostModel
+import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

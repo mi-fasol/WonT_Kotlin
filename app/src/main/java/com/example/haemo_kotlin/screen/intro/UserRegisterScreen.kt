@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,61 +71,65 @@ fun UserRegisterScreen(viewModel: UserRegisterViewModel, navController: NavContr
             BackArrowAppBar("회원가입", navController)
         }
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(horizontal = 20.dp, vertical = 10.dp)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column {
+            Divider(thickness = 0.5.dp, color = colorResource(id = R.color.mainColor))
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.wont),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .width((screenWidth / 2).dp)
-                        .height((screenHeight / 7).dp)
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                Text("프로필", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
-                Spacer(Modifier.height(20.dp))
-                SelectUserImage(viewModel = viewModel, screenWidth)
-                Spacer(Modifier.height(20.dp))
-                EnterInfo(
-                    type = "닉네임",
-                    value = viewModel.nickname.collectAsState().value,
-                    onValueChange = { newValue ->
-                        viewModel.nickname.value = newValue
-                    })
-                Spacer(Modifier.height(10.dp))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    SelectDropDownMenu(
-                        type = "성별",
-                        text = "선택",
-                        list = userGenderList,
-                        modifier = Modifier.weight(1f),
-                        onValueChange = { newValue ->
-                            viewModel.gender.value = newValue
-                        }
+                    Image(
+                        painter = painterResource(id = R.drawable.wont),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .width((screenWidth / 2).dp)
+                            .height((screenHeight / 7).dp)
                     )
-                    Spacer(Modifier.width(10.dp))
-                    SelectDropDownMenu(
-                        type = "전공",
-                        text = "선택하기",
-                        list = userMajorList,
-                        modifier = Modifier.weight(2f),
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text("프로필", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+                    Spacer(Modifier.height(20.dp))
+                    SelectUserImage(viewModel = viewModel, screenWidth)
+                    Spacer(Modifier.height(20.dp))
+                    EnterInfo(
+                        type = "닉네임",
+                        value = viewModel.nickname.collectAsState().value,
                         onValueChange = { newValue ->
-                            viewModel.major.value = newValue
-                        }
-                    )
+                            viewModel.nickname.value = newValue
+                        })
+                    Spacer(Modifier.height(10.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        SelectDropDownMenu(
+                            type = "성별",
+                            text = "선택",
+                            list = userGenderList,
+                            modifier = Modifier.weight(1f),
+                            onValueChange = { newValue ->
+                                viewModel.gender.value = newValue
+                            }
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        SelectDropDownMenu(
+                            type = "전공",
+                            text = "선택하기",
+                            list = userMajorList,
+                            modifier = Modifier.weight(2f),
+                            onValueChange = { newValue ->
+                                viewModel.major.value = newValue
+                            }
+                        )
+                    }
+                    Spacer(Modifier.height(20.dp))
+                    UserRegisterButton(viewModel, navController)
                 }
-                Spacer(Modifier.height(20.dp))
-                UserRegisterButton(viewModel, navController)
             }
         }
     }
