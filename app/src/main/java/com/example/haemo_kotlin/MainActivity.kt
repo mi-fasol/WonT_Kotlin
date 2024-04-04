@@ -14,11 +14,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.haemo_kotlin.screen.main.ClubScreen
+import com.example.haemo_kotlin.screen.main.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.MainScreen
 import com.example.haemo_kotlin.screen.main.MeetingScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
+import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.LoginViewModel
 import com.example.haemo_kotlin.viewModel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<PostViewModel>()
     private val clubPostViewModel by viewModels<ClubPostViewModel>()
+    private val hotPlacePostViewModel by viewModels<HotPlacePostViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -66,6 +69,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.ClubScreen.route) {
                             ClubScreen(clubPostViewModel, navController)
+                        }
+                        composable(NavigationRoutes.HotPlaceScreen.route) {
+                            HotPlaceScreen(hotPlacePostViewModel, navController)
                         }
                     }
                 }

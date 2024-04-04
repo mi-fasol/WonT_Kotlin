@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.network
 
 import com.example.haemo_kotlin.model.post.ClubPostModel
+import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.user.UserModel
@@ -31,5 +32,14 @@ interface ApiService {
     suspend fun getClubPost(): Response<List<ClubPostModel>>
 
     @GET("club/{id}")
-    suspend fun getOneClubPost(@Path("id") idx: Int): Response<ClubPostModel>
+    suspend fun getClubPostById(@Path("id") idx: Int): Response<ClubPostModel>
+
+    @GET("hot")
+    suspend fun getHotPlacePost(): Response<List<HotPlacePostModel>>
+
+    @GET("hot/{id}")
+    suspend fun getHotPlacePostById(@Path("id") idx: Int): Response<HotPlacePostModel>
+
+    @GET("hot/popular")
+    suspend fun getPopularHotPlacePost(): Response<List<HotPlacePostModel>>
 }

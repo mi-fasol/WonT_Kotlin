@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.repository
 
 import com.example.haemo_kotlin.model.post.ClubPostModel
+import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.network.RetrofitClient
 import retrofit2.Response
@@ -25,6 +26,16 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
     }
 
     suspend fun getOneClubPost(idx: Int): Response<ClubPostModel> {
-        return retrofitClient.service.getOneClubPost(idx)
+        return retrofitClient.service.getClubPostById(idx)
+    }
+
+    suspend fun getHotPlacePost(): Response<List<HotPlacePostModel>> {
+        return retrofitClient.service.getHotPlacePost()
+    }
+    suspend fun getHotPlaceById(idx: Int): Response<HotPlacePostModel> {
+        return retrofitClient.service.getHotPlacePostById(idx)
+    }
+    suspend fun getPopularHotPlace(): Response<List<HotPlacePostModel>> {
+        return retrofitClient.service.getPopularHotPlacePost()
     }
 }

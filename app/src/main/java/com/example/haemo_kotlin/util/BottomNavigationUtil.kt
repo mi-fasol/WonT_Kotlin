@@ -79,9 +79,9 @@ fun MainBottomNavigation(navController: NavController) {
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
-            selected = navController.currentDestination?.route == "meetingScreen",
+            selected = navController.currentDestination?.route == "hotPlaceScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.MeetingScreen.route) {
+                navController.navigate(NavigationRoutes.HotPlaceScreen.route) {
                     popUpTo(NavigationRoutes.MainScreen.route) {
                         inclusive = true
                     }
