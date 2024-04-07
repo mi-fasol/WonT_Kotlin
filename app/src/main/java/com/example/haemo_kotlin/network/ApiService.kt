@@ -4,6 +4,7 @@ import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.model.post.PostModel
+import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import retrofit2.Response
@@ -14,16 +15,16 @@ import retrofit2.http.Path
 
 interface ApiService {
     @GET("post")
-    suspend fun getPost(): Response<List<PostModel>>
+    suspend fun getPost(): Response<List<PostResponseModel>>
 
     @GET("post/{id}")
-    suspend fun getOnePost(@Path("id") idx: Int): Response<PostModel>
+    suspend fun getOnePost(@Path("id") idx: Int): Response<PostResponseModel>
 
     @GET("post/postUser/{id}")
     suspend fun getPostingUser(@Path("id") idx: Int): Response<UserResponseModel>
 
     @GET("post/24hours")
-    suspend fun getTodayPost(): Response<List<PostModel>>
+    suspend fun getTodayPost(): Response<List<PostResponseModel>>
 
     @POST("/login")
     suspend fun tryLogin(@Body loginModel: LoginModel) : Response<Boolean>

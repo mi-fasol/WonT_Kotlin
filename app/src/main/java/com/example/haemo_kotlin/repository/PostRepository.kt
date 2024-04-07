@@ -3,6 +3,7 @@ package com.example.haemo_kotlin.repository
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.post.PostModel
+import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.RetrofitClient
 import retrofit2.Response
@@ -10,15 +11,15 @@ import javax.inject.Inject
 
 class PostRepository @Inject constructor(private val retrofitClient: RetrofitClient) {
 
-    suspend fun getPost(): Response<List<PostModel>> {
+    suspend fun getPost(): Response<List<PostResponseModel>> {
         return retrofitClient.service.getPost()
     }
 
-    suspend fun getTodayPost(): Response<List<PostModel>> {
+    suspend fun getTodayPost(): Response<List<PostResponseModel>> {
         return retrofitClient.service.getTodayPost()
     }
 
-    suspend fun getOnePost(idx: Int): Response<PostModel> {
+    suspend fun getOnePost(idx: Int): Response<PostResponseModel> {
         return retrofitClient.service.getOnePost(idx)
     }
 

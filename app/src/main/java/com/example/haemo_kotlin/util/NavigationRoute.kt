@@ -1,12 +1,15 @@
 package com.example.haemo_kotlin.util
 
 sealed class NavigationRoutes(val route: String) {
-    object LoadingScreen : NavigationRoutes("loadingScreen")
-    object RegisterScreen : NavigationRoutes("userRegisterScreen")
-    object LoginScreen : NavigationRoutes("loginScreen")
-    object MainScreen : NavigationRoutes("mainScreen")
-    object MeetingScreen : NavigationRoutes("meetingScreen")
-    object ClubScreen : NavigationRoutes("clubScreen")
-    object HotPlaceScreen : NavigationRoutes("hotPlaceScreen")
-    object MyPageScreen : NavigationRoutes("myPageScreen")
+    data object LoadingScreen : NavigationRoutes("loadingScreen")
+    data object RegisterScreen : NavigationRoutes("userRegisterScreen")
+    data object LoginScreen : NavigationRoutes("loginScreen")
+    data object MainScreen : NavigationRoutes("mainScreen")
+    data object MeetingScreen : NavigationRoutes("meetingScreen")
+    data object ClubScreen : NavigationRoutes("clubScreen")
+    data object HotPlaceScreen : NavigationRoutes("hotPlaceScreen")
+    data object MyPageScreen : NavigationRoutes("myPageScreen")
+    data object MeetingPostDetailScreen : NavigationRoutes("meetingDetailScreen/{pId}") {
+        fun createRoute(pId: Int) = "meetingDetailScreen/$pId"
+    }
 }

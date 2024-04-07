@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.model.post.PostModel
+import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.PostRepository
@@ -23,30 +24,30 @@ class PostViewModel @Inject constructor(
     private val repository: PostRepository
 ) : ViewModel() {
 
-    private val _postModelList = MutableStateFlow<List<PostModel>>(emptyList())
-    val postModelList: StateFlow<List<PostModel>> = _postModelList
+    private val _postModelList = MutableStateFlow<List<PostResponseModel>>(emptyList())
+    val postModelList: StateFlow<List<PostResponseModel>> = _postModelList
 
-    private val _postModel = MutableStateFlow<PostModel?>(null)
-    val postModel: StateFlow<PostModel?> = _postModel
+    private val _postModel = MutableStateFlow<PostResponseModel?>(null)
+    val postModel: StateFlow<PostResponseModel?> = _postModel
 
     private val _user = MutableStateFlow<UserResponseModel?>(null)
     val user: StateFlow<UserResponseModel?> = _user
 
-    private val _todayPostList = MutableStateFlow<List<PostModel>>(emptyList())
-    val todayPostList: StateFlow<List<PostModel>> = _todayPostList
+    private val _todayPostList = MutableStateFlow<List<PostResponseModel>>(emptyList())
+    val todayPostList: StateFlow<List<PostResponseModel>> = _todayPostList
 
-    private val _postModelState = MutableStateFlow<Resource<PostModel>>(Resource.loading(null))
-    val postModelState: StateFlow<Resource<PostModel>> = _postModelState.asStateFlow()
+    private val _postModelState = MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
+    val postModelState: StateFlow<Resource<PostResponseModel>> = _postModelState.asStateFlow()
 
     private val _todayPostModelState =
-        MutableStateFlow<Resource<List<PostModel>>>(Resource.loading(null))
-    val todayPostModelState: StateFlow<Resource<List<PostModel>>> =
+        MutableStateFlow<Resource<List<PostResponseModel>>>(Resource.loading(null))
+    val todayPostModelState: StateFlow<Resource<List<PostResponseModel>>> =
         _todayPostModelState.asStateFlow()
 
 
     private val _postModelListState =
-        MutableStateFlow<Resource<List<PostModel>>>(Resource.loading(null))
-    val postModelListState: StateFlow<Resource<List<PostModel>>> = _postModelListState.asStateFlow()
+        MutableStateFlow<Resource<List<PostResponseModel>>>(Resource.loading(null))
+    val postModelListState: StateFlow<Resource<List<PostResponseModel>>> = _postModelListState.asStateFlow()
 
     suspend fun getPost() {
         viewModelScope.launch {

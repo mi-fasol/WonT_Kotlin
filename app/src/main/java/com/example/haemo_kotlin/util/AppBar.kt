@@ -3,6 +3,7 @@ package com.example.haemo_kotlin.util
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -10,6 +11,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarColors
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,12 +54,12 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
 fun MainPageAppBar(appBarText: String, navController: NavController) {
     TopAppBar(
         title = {
-                Text(
-                    text = appBarText,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.mainColor)
-                )
+            Text(
+                text = appBarText,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.mainColor)
+            )
         },
         actions = {
             IconButton(onClick = {}) {
@@ -64,6 +67,38 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
                     tint = colorResource(id = R.color.mainColor)
+                )
+            }
+        },
+        elevation = 0.dp,
+        backgroundColor = Color.White,
+    )
+}
+
+@Composable
+fun PostDetailAppBar(navController: NavController) {
+    TopAppBar(
+        title = {
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = null,
+                    tint = Color(0xff545454)
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = {
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.wish_meeting_icon),
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.mainColor),
+                    modifier = Modifier.size(20.dp)
                 )
             }
         },

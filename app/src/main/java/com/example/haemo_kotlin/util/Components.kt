@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -89,8 +90,7 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
     val screenHeight = config.screenHeightDp
     Box(
         Modifier
-            .fillMaxWidth()
-            .height((screenHeight / 20).dp)
+            .fillMaxWidth().padding(vertical = 10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -103,7 +103,8 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
                 Icon(
                     painter = painterResource(id = userMyPageImageList[user.userImage]),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size((screenHeight/18).dp)
                 )
             }
             Column(verticalArrangement = Arrangement.Center) {
@@ -113,7 +114,9 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 12.5.sp
                 )
-                Row() {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(text = "${user.major} / ", fontSize = 8.5.sp, color = Color(0xff3f3f3f))
                     val iconColor =
                         if (user.gender == "남자") Color(0xff82c0e2) else Color(0xffFF9B9B)

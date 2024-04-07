@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.haemo_kotlin.screen.main.ClubScreen
 import com.example.haemo_kotlin.screen.main.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.MainScreen
+import com.example.haemo_kotlin.screen.main.MeetingPostDetailScreen
 import com.example.haemo_kotlin.screen.main.MeetingScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
@@ -78,6 +81,16 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.MyPageScreen.route) {
                             MyPageScreen(userViewModel, navController)
+                        }
+                        composable(NavigationRoutes.MeetingPostDetailScreen.route, arguments = listOf(
+                            navArgument("pId") { type = NavType.IntType }
+                        )
+                        ) { entry ->
+                            MeetingPostDetailScreen(
+                                postViewModel = viewModel,
+                                navController = navController,
+                                pId = entry.arguments?.getInt("pId")!!
+                            )
                         }
                     }
                 }

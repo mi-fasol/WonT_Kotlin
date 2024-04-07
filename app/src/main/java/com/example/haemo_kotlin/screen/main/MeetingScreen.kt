@@ -2,6 +2,7 @@ package com.example.haemo_kotlin.screen.main
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,10 +39,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.model.post.PostModel
+import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
+import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.PostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -74,11 +77,11 @@ fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
         ) {
             Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
             when (postListState) {
-                is Resource.Error<List<PostModel>> -> {
+                is Resource.Error<List<PostResponseModel>> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
                 }
 
-                is Resource.Loading<List<PostModel>> -> {
+                is Resource.Loading<List<PostResponseModel>> -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -89,8 +92,12 @@ fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
 
                 else -> {
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                        Today24HoursBoard(todayPostList, postViewModel)
-                        MeetingBoard(postList = postList, viewModel = postViewModel)
+                        Today24HoursBoard(todayPostList, postViewModel, navController)
+                        MeetingBoard(
+                            postList = postList,
+                            viewModel = postViewModel,
+                            navController = navController
+                        )
                     }
                 }
             }
@@ -99,7 +106,11 @@ fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
 }
 
 @Composable
-fun Today24HoursBoard(postList: List<PostModel>, viewModel: PostViewModel) {
+fun Today24HoursBoard(
+    postList: List<PostResponseModel>,
+    viewModel: PostViewModel,
+    navController: NavController
+) {
     when (postList.size) {
         0 -> {
             Box {}
@@ -112,7 +123,7 @@ fun Today24HoursBoard(postList: List<PostModel>, viewModel: PostViewModel) {
                 Text("공지 24시간", fontSize = 13.sp, color = Color(0xff393939))
                 LazyRow {
                     items(postList.size) { idx ->
-                        TodayNotice(postList[idx], viewModel)
+                        TodayNotice(postList[idx], viewModel, navController)
                     }
                 }
             }
@@ -121,7 +132,7 @@ fun Today24HoursBoard(postList: List<PostModel>, viewModel: PostViewModel) {
 }
 
 @Composable
-fun TodayNotice(post: PostModel, viewModel: PostViewModel) {
+fun TodayNotice(post: PostResponseModel, viewModel: PostViewModel, navController: NavController) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -133,6 +144,9 @@ fun TodayNotice(post: PostModel, viewModel: PostViewModel) {
             Modifier
                 .padding(top = 5.dp, bottom = 15.dp, end = 10.dp)
                 .height((screenHeight / 5.5).dp)
+                .clickable {
+                    navController.navigate(NavigationRoutes.MeetingPostDetailScreen.createRoute(post.pId))
+                }
                 .width((screenWidth / 3).dp),
             shape = RoundedCornerShape(15.dp),
             border = BorderStroke(1.dp, Color(0xff82C0EA))
@@ -168,7 +182,11 @@ fun TodayNotice(post: PostModel, viewModel: PostViewModel) {
 }
 
 @Composable
-fun MeetingBoard(postList: List<PostModel>, viewModel: PostViewModel) {
+fun MeetingBoard(
+    postList: List<PostResponseModel>,
+    viewModel: PostViewModel,
+    navController: NavController
+) {
     when (postList.size) {
         0 -> {
             ErrorScreen("등록된 글이 아직 없어요!")
@@ -177,7 +195,7 @@ fun MeetingBoard(postList: List<PostModel>, viewModel: PostViewModel) {
         else -> {
             LazyColumn {
                 items(postList.size) { idx ->
-                    MeetingBoardItem(postList[idx], viewModel)
+                    MeetingBoardItem(postList[idx], viewModel, navController)
                     Divider()
                 }
             }
@@ -186,13 +204,20 @@ fun MeetingBoard(postList: List<PostModel>, viewModel: PostViewModel) {
 }
 
 @Composable
-fun MeetingBoardItem(post: PostModel, viewModel: PostViewModel) {
+fun MeetingBoardItem(
+    post: PostResponseModel,
+    viewModel: PostViewModel,
+    navController: NavController
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
     Box(
         modifier = Modifier
             .height((screenHeight / 10).dp)
+            .clickable {
+                navController.navigate(NavigationRoutes.MeetingPostDetailScreen.createRoute(post.pId))
+            }
     ) {
         Column(
             Modifier
