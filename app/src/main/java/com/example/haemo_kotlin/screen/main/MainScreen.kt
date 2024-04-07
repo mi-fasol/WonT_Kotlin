@@ -15,7 +15,6 @@ import com.example.haemo_kotlin.viewModel.PostViewModel
 @Composable
 fun MainScreen(navController: NavController, postViewModel: PostViewModel) {
     Scaffold(
-        bottomBar = { MainBottomNavigation(navController = navController) }
     ) { innerPadding ->
         Box(
             modifier = Modifier

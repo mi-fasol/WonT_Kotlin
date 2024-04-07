@@ -1,7 +1,6 @@
 package com.example.haemo_kotlin.screen.main
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -47,7 +48,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.ClubPostModel
-import com.example.haemo_kotlin.model.post.containsHangulSearch
+import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
@@ -58,6 +60,7 @@ fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
     val postList: List<ClubPostModel> = postViewModel.clubPostList.collectAsState().value
     var searchText by remember { mutableStateOf("") }
     var filteredPosts by remember { mutableStateOf(postList) }
+    val postListState = postViewModel.clubPostListState.collectAsState().value
     val list = if (searchText.isNotBlank()) filteredPosts else postList
 
     LaunchedEffect(Unit) {
@@ -71,22 +74,44 @@ fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
         bottomBar = {
             MainBottomNavigation(navController = navController)
         }
-    ) {
-        Column() {
-            Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
-            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                SearchBarWidget(
-                    value = searchText,
-                    onValueChange = {
-                        searchText = it
-                        filteredPosts = postList.filter { post ->
-//                        post.containsHangulSearch(searchText)
-                            post.title.contains(it)
-                        }
-                    }
+    ) {innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(
+                    bottom = innerPadding.calculateBottomPadding() + 10.dp
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                ClubBoard(postList = list, viewModel = postViewModel)
+        ) {
+            Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
+            when (postListState) {
+                is Resource.Error<List<ClubPostModel>> -> {
+                    ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
+                }
+
+                is Resource.Loading<List<ClubPostModel>> -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                else -> {
+                    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                        SearchBarWidget(
+                            value = searchText,
+                            onValueChange = {
+                                searchText = it
+                                filteredPosts = postList.filter { post ->
+//                        post.containsHangulSearch(searchText)
+                                    post.title.contains(it)
+                                }
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        ClubBoard(postList = list, viewModel = postViewModel)
+                    }
+                }
             }
         }
     }
@@ -100,7 +125,6 @@ fun SearchBarWidget(
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
-    val screenHeight = config.screenHeightDp
 
     Box(
         Modifier
@@ -226,7 +250,6 @@ fun ClubBoardItem(post: ClubPostModel, viewModel: ClubPostViewModel) {
                     }
                 }
             }
-
         }
     }
 }

@@ -17,12 +17,14 @@ import com.example.haemo_kotlin.screen.main.ClubScreen
 import com.example.haemo_kotlin.screen.main.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.MainScreen
 import com.example.haemo_kotlin.screen.main.MeetingScreen
+import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.LoginViewModel
 import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
@@ -39,6 +41,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<PostViewModel>()
     private val clubPostViewModel by viewModels<ClubPostViewModel>()
     private val hotPlacePostViewModel by viewModels<HotPlacePostViewModel>()
+    private val userViewModel by viewModels<UserViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -72,6 +75,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.HotPlaceScreen.route) {
                             HotPlaceScreen(hotPlacePostViewModel, navController)
+                        }
+                        composable(NavigationRoutes.MyPageScreen.route) {
+                            MyPageScreen(userViewModel, navController)
                         }
                     }
                 }

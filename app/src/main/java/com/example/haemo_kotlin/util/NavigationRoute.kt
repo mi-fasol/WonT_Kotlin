@@ -8,4 +8,5 @@ sealed class NavigationRoutes(val route: String) {
     object MeetingScreen : NavigationRoutes("meetingScreen")
     object ClubScreen : NavigationRoutes("clubScreen")
     object HotPlaceScreen : NavigationRoutes("hotPlaceScreen")
+    object MyPageScreen : NavigationRoutes("myPageScreen")
 }

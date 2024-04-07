@@ -26,6 +26,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -52,8 +53,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.post.PostModel
+import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
@@ -64,6 +68,7 @@ import com.example.haemo_kotlin.viewModel.PostViewModel
 fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavController) {
     val postList = postViewModel.hotPlacePostList.collectAsState().value
     val popularPostList = postViewModel.popularHotPlace.collectAsState().value
+    val postListState = postViewModel.hotPlacePostListState.collectAsState().value
 
     LaunchedEffect(postList) {
         postViewModel.getHotPlacePost()
@@ -86,9 +91,26 @@ fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavContr
                     )
             ) {
                 Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
-                Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                    PopularPlace(popularPostList, postViewModel)
-                    HotPlaceBoard(postList = postList, viewModel = postViewModel)
+                when (postListState) {
+                    is Resource.Error<List<HotPlacePostModel>> -> {
+                        ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
+                    }
+
+                    is Resource.Loading<List<HotPlacePostModel>> -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    else -> {
+                        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                            PopularPlace(popularPostList, postViewModel)
+                            HotPlaceBoard(postList = postList, viewModel = postViewModel)
+                        }
+                    }
                 }
             }
         }

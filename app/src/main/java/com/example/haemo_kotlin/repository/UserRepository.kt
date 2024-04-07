@@ -17,4 +17,8 @@ class UserRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.registerUser(user)
     }
 
+    suspend fun getUserInfoById(uId: Int) :Response<UserResponseModel>{
+        return retrofitClient.service.getUserInfoById(uId)
+    }
+
 }

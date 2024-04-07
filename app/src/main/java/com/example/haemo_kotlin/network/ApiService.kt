@@ -28,6 +28,10 @@ interface ApiService {
     @POST("/user")
     suspend fun registerUser(@Body user: UserModel) : Response<UserResponseModel>
 
+    @GET("/user/find/{id}")
+    suspend fun getUserInfoById(@Path("id") uId: Int) : Response<UserResponseModel>
+
+
     @GET("club")
     suspend fun getClubPost(): Response<List<ClubPostModel>>
 

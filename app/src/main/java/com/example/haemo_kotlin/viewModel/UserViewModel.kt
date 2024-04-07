@@ -2,8 +2,10 @@ package com.example.haemo_kotlin.viewModel
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.user.UserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
@@ -21,7 +23,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class UserRegisterViewModel @Inject constructor(
+class UserViewModel @Inject constructor(
     private val repository: UserRepository
 ) : ViewModel() {
 
@@ -30,6 +32,13 @@ class UserRegisterViewModel @Inject constructor(
     private val _registerState =
         MutableStateFlow<Resource<UserResponseModel>>(Resource.loading(null))
     val registerState: StateFlow<Resource<UserResponseModel>> = _registerState.asStateFlow()
+
+    private val _fetchUserState =
+        MutableStateFlow<Resource<UserResponseModel>>(Resource.loading(null))
+    val fetchUserState: StateFlow<Resource<UserResponseModel>> = _fetchUserState.asStateFlow()
+
+    private val _user = MutableStateFlow<UserResponseModel?>(null)
+    val user : StateFlow<UserResponseModel?> = _user
 
     private val _isRegisterSuccess = MutableStateFlow<Boolean>(false)
     val isRegisterSuccess: StateFlow<Boolean> = _isRegisterSuccess.asStateFlow()
@@ -65,6 +74,31 @@ class UserRegisterViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
                 _registerState.value = Resource.error(e.message ?: "An error occurred", null)
+            }
+        }
+    }
+
+
+    fun fetchUserInfoById(context: Context) {
+        val id = SharedPreferenceUtil(context).getInt("uId", 0)
+        Log.d("미란", id.toString())
+        viewModelScope.launch {
+            _registerState.value = Resource.loading(null)
+            try {
+                val response = repository.getUserInfoById(id)
+                if (response.isSuccessful && response.body() != null) {
+                    val responseUser = response.body()
+                    _user.value = responseUser
+                    _fetchUserState.value = Resource.success(response.body())
+                    Log.d("유저", responseUser.toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                    _fetchUserState.value = Resource.error(response.errorBody().toString(), null)
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+                _fetchUserState.value = Resource.error(e.message ?: "An error occurred", null)
             }
         }
     }

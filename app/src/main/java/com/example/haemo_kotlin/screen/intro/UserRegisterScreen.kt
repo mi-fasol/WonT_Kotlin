@@ -57,11 +57,11 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.*
-import com.example.haemo_kotlin.viewModel.UserRegisterViewModel
+import com.example.haemo_kotlin.viewModel.UserViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun UserRegisterScreen(viewModel: UserRegisterViewModel, navController: NavController) {
+fun UserRegisterScreen(viewModel: UserViewModel, navController: NavController) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -136,7 +136,7 @@ fun UserRegisterScreen(viewModel: UserRegisterViewModel, navController: NavContr
 }
 
 @Composable
-fun SelectUserImage(viewModel: UserRegisterViewModel, width: Int) {
+fun SelectUserImage(viewModel: UserViewModel, width: Int) {
     val image = viewModel.image.collectAsState()
 
     Row(
@@ -235,7 +235,7 @@ fun SelectDropDownMenu(
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun UserRegisterButton(viewModel: UserRegisterViewModel, navController: NavController) {
+fun UserRegisterButton(viewModel: UserViewModel, navController: NavController) {
     val nickname by viewModel.nickname.collectAsState()
     val gender by viewModel.gender.collectAsState()
     val major by viewModel.major.collectAsState()

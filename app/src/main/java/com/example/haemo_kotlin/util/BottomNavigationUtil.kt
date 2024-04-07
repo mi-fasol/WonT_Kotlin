@@ -107,10 +107,10 @@ fun MainBottomNavigation(navController: NavController) {
                     tint = Color.Unspecified
                 )
             },
-            selected = navController.currentDestination?.route == "meetingScreen",
+            selected = navController.currentDestination?.route == "myPageScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.MeetingScreen.route) {
-                    popUpTo(NavigationRoutes.MainScreen.route) {
+                navController.navigate(NavigationRoutes.MyPageScreen.route) {
+                    popUpTo(NavigationRoutes.MyPageScreen.route) {
                         inclusive = true
                     }
                 }
