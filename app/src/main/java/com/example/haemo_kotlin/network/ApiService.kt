@@ -19,6 +19,9 @@ interface ApiService {
     @GET("post/{id}")
     suspend fun getOnePost(@Path("id") idx: Int): Response<PostModel>
 
+    @GET("post/postUser/{id}")
+    suspend fun getPostingUser(@Path("id") idx: Int): Response<UserResponseModel>
+
     @GET("post/24hours")
     suspend fun getTodayPost(): Response<List<PostModel>>
 

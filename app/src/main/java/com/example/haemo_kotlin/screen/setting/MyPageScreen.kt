@@ -1,17 +1,12 @@
 package com.example.haemo_kotlin.screen.setting
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,29 +17,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,26 +32,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
-import com.example.haemo_kotlin.screen.main.MeetingBoard
-import com.example.haemo_kotlin.screen.main.Today24HoursBoard
-import com.example.haemo_kotlin.util.EnterInfo
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.userProfileList
-import com.example.haemo_kotlin.viewModel.LoginViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
-import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -87,15 +57,14 @@ fun MyPageScreen(viewModel: UserViewModel, navController: NavController) {
         viewModel.fetchUserInfoById(context)
     }
 
-    androidx.compose.material.Scaffold(
+    Scaffold(
         topBar = {
             MainPageAppBar("마이페이지", navController)
         },
         bottomBar = { MainBottomNavigation(navController = navController) },
         modifier = Modifier.background(Color(0xfff4f4f4))
     ) {
-        Column(
-        ) {
+        Column {
             Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
             when (userState) {
                 is Resource.Error<UserResponseModel> -> {

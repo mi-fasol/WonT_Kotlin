@@ -17,28 +17,3 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EnterInfo(type: String, value: String, onValueChange: (String) -> Unit) {
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-        ) {
-            Text(type, fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = value,
-                onValueChange = onValueChange,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0xff82C0EA),
-                    unfocusedBorderColor = Color.LightGray,
-                    containerColor = Color.White
-                ),
-                shape = RoundedCornerShape(15.dp)
-            )
-        }
-    }
-}
