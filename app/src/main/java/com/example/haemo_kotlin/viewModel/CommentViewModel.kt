@@ -1,0 +1,71 @@
+package com.example.haemo_kotlin.viewModel
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
+import com.example.haemo_kotlin.model.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.post.PostModel
+import com.example.haemo_kotlin.model.post.PostResponseModel
+import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.repository.CommentRepository
+import com.example.haemo_kotlin.repository.PostRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
+
+
+@HiltViewModel
+class CommentViewModel @Inject constructor(
+    private val repository: CommentRepository
+) : ViewModel() {
+
+    val content = MutableStateFlow("")
+
+    private val _commentList = MutableStateFlow<List<CommentResponseModel>>(emptyList())
+    val commentList: StateFlow<List<CommentResponseModel>> = _commentList
+
+    private val _userList = MutableStateFlow<List<UserResponseModel>>(emptyList())
+    val userList : StateFlow<List<UserResponseModel>> = _userList
+
+    suspend fun getCommentListByPId(pId: Int, type: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getCommentListByPId(pId, type)
+                if (response.isSuccessful && response.body() != null) {
+                    val commentList = response.body()
+                    _commentList.value = commentList!!
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getCommentUser(pId: Int, type: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getCommentUser(pId)
+                if (response.isSuccessful && response.body() != null) {
+                    val response = response.body()
+                    _userList.value = response!!
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+}
