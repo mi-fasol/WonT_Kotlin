@@ -3,6 +3,8 @@ package com.example.haemo_kotlin.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
+import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
@@ -38,6 +40,13 @@ class PostViewModel @Inject constructor(
 
     private val _postModelState = MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
     val postModelState: StateFlow<Resource<PostResponseModel>> = _postModelState.asStateFlow()
+
+    private val _acceptationList = MutableStateFlow<List<AcceptationResponseModel>>(emptyList())
+    val acceptationList: StateFlow<List<AcceptationResponseModel>> = _acceptationList
+
+    private val _commentList = MutableStateFlow<List<CommentResponseModel>>(emptyList())
+    val commentList: StateFlow<List<CommentResponseModel>> = _commentList
+
 
     private val _todayPostModelState =
         MutableStateFlow<Resource<List<PostResponseModel>>>(Resource.loading(null))
@@ -122,6 +131,40 @@ class PostViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     val user = response.body()
                     _user.value = user!!
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getAcceptationUserByPId(pId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getJoinUserByPId(pId)
+                if (response.isSuccessful && response.body() != null) {
+                    val acceptList = response.body()
+                    _acceptationList.value = acceptList!!
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getCommentListByPId(pId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getCommentListByPId(pId)
+                if (response.isSuccessful && response.body() != null) {
+                    val commentList = response.body()
+                    _commentList.value = commentList!!
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 하나 에러 응답: $errorBody")

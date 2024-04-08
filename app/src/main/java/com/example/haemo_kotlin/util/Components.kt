@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.util
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +13,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -25,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -90,7 +97,8 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
     val screenHeight = config.screenHeightDp
     Box(
         Modifier
-            .fillMaxWidth().padding(vertical = 10.dp)
+            .fillMaxWidth()
+            .padding(vertical = 10.dp, horizontal = 20.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -104,7 +112,7 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
                     painter = painterResource(id = userMyPageImageList[user.userImage]),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = Modifier.size((screenHeight/18).dp)
+                    modifier = Modifier.size((screenHeight / 18).dp)
                 )
             }
             Column(verticalArrangement = Arrangement.Center) {
@@ -128,6 +136,64 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
                     )
                     Text(text = " / $date", fontSize = 8.5.sp, color = Color(0xff3f3f3f))
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SendReply(type: String, postType: Int, value: String, onValueChange: (String) -> Unit) {
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+//                decorationBox = { ... },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(10f)
+                    .height((screenWidth / 9).dp)
+                    .background(Color(0xffededed), RoundedCornerShape(25.dp))
+                    .padding(10.dp)
+            )
+//            OutlinedTextField(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .weight(10f),
+//                value = value,
+//                onValueChange = onValueChange,
+//                colors = TextFieldDefaults.outlinedTextFieldColors(
+//                    focusedBorderColor = Color(0xff82C0EA),
+//                    unfocusedBorderColor = Color.LightGray,
+//                    containerColor = Color.White
+//                ),
+//                shape = RoundedCornerShape(15.dp)
+//            )
+            FilledIconButton(
+                onClick = { /*TODO*/ },
+                shape = IconButtonDefaults.filledShape,
+                colors = IconButtonColors(
+                    containerColor = colorResource(id = R.color.mainColor),
+                    contentColor = Color.White,
+                    disabledContainerColor = colorResource(id = R.color.mainColor),
+                    disabledContentColor = Color.White
+                ),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.send_comment_icon),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size((screenWidth / 20).dp)
+                )
             }
         }
     }

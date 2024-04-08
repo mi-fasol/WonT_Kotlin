@@ -1,5 +1,7 @@
 package com.example.haemo_kotlin.repository
 
+import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
+import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.post.PostModel
@@ -44,5 +46,13 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
     }
     suspend fun getPopularHotPlace(): Response<List<HotPlacePostModel>> {
         return retrofitClient.service.getPopularHotPlacePost()
+    }
+
+    suspend fun getJoinUserByPId(pId: Int): Response<List<AcceptationResponseModel>> {
+        return retrofitClient.service.getJoinUserByPId(pId)
+    }
+
+    suspend fun getCommentListByPId(pId: Int): Response<List<CommentResponseModel>> {
+        return retrofitClient.service.getCommentListByPId(pId)
     }
 }

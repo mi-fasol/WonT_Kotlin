@@ -1,5 +1,7 @@
 package com.example.haemo_kotlin.network
 
+import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
+import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.user.LoginModel
@@ -35,6 +37,9 @@ interface ApiService {
     @GET("/user/find/{id}")
     suspend fun getUserInfoById(@Path("id") uId: Int) : Response<UserResponseModel>
 
+    @GET("/user/{nickname}")
+    suspend fun getUserByNickname(@Path("nickname") nickname: String) : Response<UserResponseModel>
+
 
     @GET("club")
     suspend fun getClubPost(): Response<List<ClubPostModel>>
@@ -50,4 +55,13 @@ interface ApiService {
 
     @GET("hot/popular")
     suspend fun getPopularHotPlacePost(): Response<List<HotPlacePostModel>>
+
+    @GET("accept/{id}")
+    suspend fun getJoinUserByPId(@Path("id") pId: Int): Response<List<AcceptationResponseModel>>
+
+    @GET("postComment/commentPost/{id}")
+    suspend fun getCommentListByPId(@Path("id") pId: Int): Response<List<CommentResponseModel>>
+
+    @GET("postComment/commentUser/{id}")
+    suspend fun getCommentUserList(@Path("id") pId: Int): Response<List<UserResponseModel>>
 }

@@ -24,6 +24,7 @@ import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
+import com.example.haemo_kotlin.viewModel.CommentViewModel
 import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.LoginViewModel
 import com.example.haemo_kotlin.viewModel.PostViewModel
@@ -45,6 +46,7 @@ class MainActivity : ComponentActivity() {
     private val clubPostViewModel by viewModels<ClubPostViewModel>()
     private val hotPlacePostViewModel by viewModels<HotPlacePostViewModel>()
     private val userViewModel by viewModels<UserViewModel>()
+    private val commentViewModel by viewModels<CommentViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -88,6 +90,7 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             MeetingPostDetailScreen(
                                 postViewModel = viewModel,
+                                commentViewModel = commentViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!
                             )
