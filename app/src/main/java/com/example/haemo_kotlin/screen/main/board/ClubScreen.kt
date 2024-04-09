@@ -1,9 +1,10 @@
-package com.example.haemo_kotlin.screen.main
+package com.example.haemo_kotlin.screen.main.board
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,23 +49,25 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.ClubPostModel
+import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
+import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
-    val postList: List<ClubPostModel> = postViewModel.clubPostList.collectAsState().value
+    val postList: List<ClubPostResponseModel> = postViewModel.clubPostList.collectAsState().value
     var searchText by remember { mutableStateOf("") }
     var filteredPosts by remember { mutableStateOf(postList) }
     val postListState = postViewModel.clubPostListState.collectAsState().value
     val list = if (searchText.isNotBlank()) filteredPosts else postList
 
     LaunchedEffect(Unit) {
-        postViewModel.getClubPost()
+        postViewModel.getClubPostList()
     }
 
     Scaffold(
@@ -83,11 +86,11 @@ fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
         ) {
             Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
             when (postListState) {
-                is Resource.Error<List<ClubPostModel>> -> {
+                is Resource.Error<List<ClubPostResponseModel>> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
                 }
 
-                is Resource.Loading<List<ClubPostModel>> -> {
+                is Resource.Loading<List<ClubPostResponseModel>> -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -109,7 +112,7 @@ fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
                             }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        ClubBoard(postList = list, viewModel = postViewModel)
+                        ClubBoard(postList = list, viewModel = postViewModel, navController)
                     }
                 }
             }
@@ -167,25 +170,27 @@ fun SearchBarWidget(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ClubBoard(postList: List<ClubPostModel>, viewModel: ClubPostViewModel) {
+fun ClubBoard(postList: List<ClubPostResponseModel>, viewModel: ClubPostViewModel, navController: NavController) {
     LazyColumn(
     ) {
         items(postList.size) { idx ->
-            ClubBoardItem(postList[idx], viewModel)
+            ClubBoardItem(postList[idx], viewModel, navController)
             Divider()
         }
     }
 }
 
 @Composable
-fun ClubBoardItem(post: ClubPostModel, viewModel: ClubPostViewModel) {
+fun ClubBoardItem(post: ClubPostResponseModel, viewModel: ClubPostViewModel, navController: NavController) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
     Box(
         modifier = Modifier
             .height((screenHeight / 7).dp)
-            .padding(vertical = 18.dp, horizontal = 3.dp)
+            .padding(vertical = 18.dp, horizontal = 3.dp).clickable {
+                navController.navigate(NavigationRoutes.ClubPostDetailScreen.createRoute(post.pId))
+            }
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

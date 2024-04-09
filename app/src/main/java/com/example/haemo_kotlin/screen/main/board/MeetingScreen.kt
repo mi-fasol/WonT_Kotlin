@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.screen.main
+package com.example.haemo_kotlin.screen.main.board
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen

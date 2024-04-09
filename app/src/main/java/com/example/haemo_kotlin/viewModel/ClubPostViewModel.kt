@@ -3,22 +3,17 @@ package com.example.haemo_kotlin.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.model.HangulUtils
 import com.example.haemo_kotlin.model.post.ClubPostModel
+import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.containsHangulSearch
+import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import kotlin.collections.joinToString
 import javax.inject.Inject
 
 
@@ -27,18 +22,21 @@ class ClubPostViewModel @Inject constructor(
     private val repository: PostRepository
 ) : ViewModel() {
 
-    private val _clubPostList = MutableStateFlow<List<ClubPostModel>>(emptyList())
-    val clubPostList: StateFlow<List<ClubPostModel>> = _clubPostList.asStateFlow()
+    private val _clubPostList = MutableStateFlow<List<ClubPostResponseModel>>(emptyList())
+    val clubPostList: StateFlow<List<ClubPostResponseModel>> = _clubPostList.asStateFlow()
 
-    private val _clubPost = MutableStateFlow<ClubPostModel?>(null)
-    val postModel: StateFlow<ClubPostModel?> = _clubPost.asStateFlow()
+    private val _clubPost = MutableStateFlow<ClubPostResponseModel?>(null)
+    val clubPost: StateFlow<ClubPostResponseModel?> = _clubPost.asStateFlow()
 
-    private val _clubPostState = MutableStateFlow<Resource<ClubPostModel>>(Resource.loading(null))
-    val clubPostState: StateFlow<Resource<ClubPostModel>> = _clubPostState.asStateFlow()
+    private val _user = MutableStateFlow<UserResponseModel?>(null)
+    val user: StateFlow<UserResponseModel?> = _user.asStateFlow()
+
+    private val _clubPostState = MutableStateFlow<Resource<ClubPostResponseModel>>(Resource.loading(null))
+    val clubPostState: StateFlow<Resource<ClubPostResponseModel>> = _clubPostState.asStateFlow()
 
     private val _clubPostListState =
-        MutableStateFlow<Resource<List<ClubPostModel>>>(Resource.loading(null))
-    val clubPostListState: StateFlow<Resource<List<ClubPostModel>>> =
+        MutableStateFlow<Resource<List<ClubPostResponseModel>>>(Resource.loading(null))
+    val clubPostListState: StateFlow<Resource<List<ClubPostResponseModel>>> =
         _clubPostListState.asStateFlow()
 
     private val _isSearching = MutableStateFlow(false)
@@ -49,24 +47,24 @@ class ClubPostViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getClubPost()
+            getClubPostList()
         }
     }
 
-    fun isHangul(c: Char): Boolean {
-        return c.toInt() in 0xAC00..0xD7A3 || c in 'ㄱ'..'ㅣ'
-    }
-
-    fun getHangulInitialSound(c: Char): Char {
-        val init = ((c.toInt() - 0xAC00) / 28 / 21).toChar()
-        return if (init in 'ㄱ'..'ㅎ') init + '가'.toInt() - 'ㄱ'.toInt() else init
-    }
-
-    fun filterPostsByTitle(searchText: String): List<ClubPostModel> {
-        return _clubPostList.value.filter { post ->
-            post.containsHangulSearch(searchText)
-        }
-    }
+//    fun isHangul(c: Char): Boolean {
+//        return c.toInt() in 0xAC00..0xD7A3 || c in 'ㄱ'..'ㅣ'
+//    }
+//
+//    fun getHangulInitialSound(c: Char): Char {
+//        val init = ((c.toInt() - 0xAC00) / 28 / 21).toChar()
+//        return if (init in 'ㄱ'..'ㅎ') init + '가'.toInt() - 'ㄱ'.toInt() else init
+//    }
+//
+//    fun filterPostsByTitle(searchText: String): List<ClubPostResponseModel> {
+//        return _clubPostList.value.filter { post ->
+//            post.containsHangulSearch(searchText)
+//        }
+//    }
 
 //    fun onSearchTextChange(text: String) {
 //        _searchText.value = text
@@ -153,7 +151,7 @@ class ClubPostViewModel @Inject constructor(
 //        initialValue = _clubPostList.value
 //    )
 
-    suspend fun getClubPost() {
+    suspend fun getClubPostList() {
         viewModelScope.launch {
             _clubPostListState.value = Resource.loading(null)
             try {
@@ -174,7 +172,7 @@ class ClubPostViewModel @Inject constructor(
         }
     }
 
-    suspend fun getOnePost(idx: Int) {
+    suspend fun getOneClubPost(idx: Int) {
         viewModelScope.launch {
             _clubPostState.value = Resource.loading(null)
             try {
@@ -191,6 +189,23 @@ class ClubPostViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
                 _clubPostState.value = Resource.error(e.message ?: "An error occurred", null)
+            }
+        }
+    }
+
+    suspend fun getClubPostingUser(pId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getPostingUser(pId)
+                if (response.isSuccessful && response.body() != null) {
+                    val user = response.body()
+                    _user.value = user!!
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
             }
         }
     }

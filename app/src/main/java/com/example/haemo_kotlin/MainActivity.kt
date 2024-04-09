@@ -15,18 +15,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.haemo_kotlin.screen.main.ClubScreen
-import com.example.haemo_kotlin.screen.main.HotPlaceScreen
-import com.example.haemo_kotlin.screen.main.MainScreen
-import com.example.haemo_kotlin.screen.main.MeetingPostDetailScreen
-import com.example.haemo_kotlin.screen.main.MeetingScreen
+import com.example.haemo_kotlin.screen.main.board.ClubPostDetailScreen
+import com.example.haemo_kotlin.screen.main.board.ClubScreen
+import com.example.haemo_kotlin.screen.main.board.HotPlaceScreen
+import com.example.haemo_kotlin.screen.main.board.MainScreen
+import com.example.haemo_kotlin.screen.main.board.MeetingPostDetailScreen
+import com.example.haemo_kotlin.screen.main.board.MeetingScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.CommentViewModel
 import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
-import com.example.haemo_kotlin.viewModel.LoginViewModel
 import com.example.haemo_kotlin.viewModel.PostViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -90,6 +90,17 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             MeetingPostDetailScreen(
                                 postViewModel = viewModel,
+                                commentViewModel = commentViewModel,
+                                navController = navController,
+                                pId = entry.arguments?.getInt("pId")!!
+                            )
+                        }
+                        composable(NavigationRoutes.ClubPostDetailScreen.route, arguments = listOf(
+                            navArgument("pId") { type = NavType.IntType }
+                        )
+                        ) { entry ->
+                            ClubPostDetailScreen(
+                                postViewModel = clubPostViewModel,
                                 commentViewModel = commentViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!

@@ -7,8 +7,9 @@ data class ClubPostResponseModel(
     @SerializedName("title") val title: String,
     @SerializedName("content") val content: String,
     @SerializedName("nickname") val nickname: String,
+    @SerializedName("date") val date: String,
     @SerializedName("person") val person: Int,
-    @SerializedName("description") val category: String,
+    @SerializedName("description") val description: String,
     @SerializedName("image") val image: String?,
     @SerializedName("wishClubCnt") val wish: Int
 )

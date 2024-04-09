@@ -1,6 +1,5 @@
-package com.example.haemo_kotlin.screen.main
+package com.example.haemo_kotlin.screen.main.board
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,15 +14,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,10 +45,7 @@ import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
-import com.example.haemo_kotlin.util.EnterInfo
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.util.MainBottomNavigation
-import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
@@ -110,7 +106,7 @@ fun MeetingPostDetailScreen(
 
                 else -> {
                     if (user != null && post != null) {
-                        Column(modifier = Modifier) {
+                        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                             PostUserInfo(user, post.date)
                             PostInfo(post, accept)
                             Spacer(modifier = Modifier.height(15.dp))
@@ -182,8 +178,8 @@ fun CommentWidget(type: Int, pId: Int, commentViewModel: CommentViewModel) {
     val commentList = commentViewModel.commentList.collectAsState().value
     val userList = commentViewModel.userList.collectAsState().value
     LaunchedEffect(commentList) {
-        commentViewModel.getCommentListByPId(pId, type)
-        commentViewModel.getCommentUser(pId, type)
+        commentViewModel.getCommentListByPId(pId)
+        commentViewModel.getCommentUser(pId)
     }
     Column() {
         Row() {
@@ -199,14 +195,9 @@ fun CommentWidget(type: Int, pId: Int, commentViewModel: CommentViewModel) {
             )
         }
         if (commentList.isNotEmpty()) {
-            LazyColumn {
-                items(commentList.size) { idx ->
-                    CommentWidgetItem(
-                        commentList[idx],
-                        userList[idx]
-                    )
-                    Divider()
-                }
+            commentList.forEachIndexed { index, comment ->
+                userList.getOrNull(index)?.let { CommentWidgetItem(comment, it) }
+                Divider()
             }
         }
     }

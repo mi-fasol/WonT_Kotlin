@@ -2,7 +2,9 @@ package com.example.haemo_kotlin.network
 
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.comment.club.ClubCommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
+import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.model.post.PostModel
@@ -42,10 +44,10 @@ interface ApiService {
 
 
     @GET("club")
-    suspend fun getClubPost(): Response<List<ClubPostModel>>
+    suspend fun getClubPost(): Response<List<ClubPostResponseModel>>
 
     @GET("club/{id}")
-    suspend fun getClubPostById(@Path("id") idx: Int): Response<ClubPostModel>
+    suspend fun getClubPostById(@Path("id") idx: Int): Response<ClubPostResponseModel>
 
     @GET("hot")
     suspend fun getHotPlacePost(): Response<List<HotPlacePostModel>>
@@ -62,6 +64,12 @@ interface ApiService {
     @GET("postComment/commentPost/{id}")
     suspend fun getCommentListByPId(@Path("id") pId: Int): Response<List<CommentResponseModel>>
 
+    @GET("clubComment/commentPost/{id}")
+    suspend fun getClubCommentListByPId(@Path("id") pId: Int): Response<List<ClubCommentResponseModel>>
+
     @GET("postComment/commentUser/{id}")
     suspend fun getCommentUserList(@Path("id") pId: Int): Response<List<UserResponseModel>>
+
+    @GET("clubComment/commentUser/{id}")
+    suspend fun getClubCommentUserList(@Path("id") pId: Int): Response<List<UserResponseModel>>
 }
