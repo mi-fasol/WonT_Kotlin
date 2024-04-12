@@ -10,4 +10,5 @@
     <color name="mainColor">#FF82C0EA</color>
     <color name="mainTextColor">#FF393939</color>
     <color name="mainGreyColor">#FF595959</color>
+    <color name="myBoardColor">#FF818181</color>
 </resources>

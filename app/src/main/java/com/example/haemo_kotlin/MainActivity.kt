@@ -21,6 +21,7 @@ import com.example.haemo_kotlin.screen.main.board.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.board.MainScreen
 import com.example.haemo_kotlin.screen.main.board.MeetingPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.MeetingScreen
+import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
@@ -84,9 +85,10 @@ class MainActivity : ComponentActivity() {
                         composable(NavigationRoutes.MyPageScreen.route) {
                             MyPageScreen(userViewModel, navController)
                         }
-                        composable(NavigationRoutes.MeetingPostDetailScreen.route, arguments = listOf(
-                            navArgument("pId") { type = NavType.IntType }
-                        )
+                        composable(NavigationRoutes.MeetingPostDetailScreen.route,
+                            arguments = listOf(
+                                navArgument("pId") { type = NavType.IntType }
+                            )
                         ) { entry ->
                             MeetingPostDetailScreen(
                                 postViewModel = viewModel,
@@ -104,6 +106,16 @@ class MainActivity : ComponentActivity() {
                                 commentViewModel = commentViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!
+                            )
+                        }
+                        composable(NavigationRoutes.MyMeetingBoardScreen.route, arguments = listOf(
+                            navArgument("nickname") { type = NavType.StringType }
+                        )
+                        ) { entry ->
+                            MyMeetingBoardScreen(
+                                postViewModel = viewModel,
+                                navController = navController,
+                                nickname = entry.arguments?.getString("nickname")!!
                             )
                         }
                     }

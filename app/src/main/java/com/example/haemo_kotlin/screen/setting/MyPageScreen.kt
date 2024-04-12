@@ -41,6 +41,7 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
+import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.userProfileList
 import com.example.haemo_kotlin.viewModel.UserViewModel
 
@@ -89,7 +90,7 @@ fun MyPageScreen(viewModel: UserViewModel, navController: NavController) {
                         ) {
                             UserProfile(user = user)
                             Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
-                            MyPageList(user.uId)
+                            MyPageList(user.uId, user.nickname, navController)
                         }
                     }
                 }
@@ -142,15 +143,17 @@ fun UserProfile(user: UserResponseModel) {
 }
 
 @Composable
-fun MyPageList(uId: Int) {
+fun MyPageList(uId: Int, nickname: String, navController: NavController) {
     Box(
-        Modifier.background(Color(0xfff4f4f4)).fillMaxHeight()
-    ){
+        Modifier
+            .background(Color(0xfff4f4f4))
+            .fillMaxHeight()
+    ) {
         LazyColumn(
             Modifier.padding(bottom = 10.dp)
         ) {
             items(4) { idx ->
-                MyPageListItem(idx)
+                MyPageListItem(idx, uId, nickname, navController)
                 Spacer(Modifier.height(5.dp))
             }
         }
@@ -159,20 +162,30 @@ fun MyPageList(uId: Int) {
 
 
 @Composable
-fun MyPageListItem(idx: Int) {
+fun MyPageListItem(idx: Int, uId : Int, nickname: String, navController: NavController) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
-    val textList = listOf<String>("내가 작성한 글", "찜한 장소", "가고 싶은 모임", "가고 싶은 소모임")
+    val textList = listOf("내가 작성한 글", "찜한 장소", "가고 싶은 모임", "가고 싶은 소모임")
+    val navigationRoutes = listOf(
+        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
+        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
+        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
+        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname)
+    )
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .background(Color.White)
             .fillMaxWidth()
             .height((screenHeight / 16).dp)
-            .clickable { }) {
+            .clickable {
+                navController.navigate(navigationRoutes[idx])
+            }) {
         Row(
-            Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = textList[idx], fontSize = 16.5.sp, color = Color(0xff515151))
