@@ -1,7 +1,9 @@
 package com.example.haemo_kotlin.util
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
@@ -35,7 +37,8 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
             IconButton(onClick = {}) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
                 )
             }
         },
@@ -104,5 +107,37 @@ fun PostDetailAppBar(navController: NavController) {
         },
         elevation = 0.dp,
         backgroundColor = Color.White,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyPageListAppBar(navController: NavController) {
+    CenterAlignedTopAppBar(
+        title = {
+            Image(
+                painter = painterResource(id = R.drawable.wont),
+                contentDescription = null,
+                modifier = Modifier.fillMaxHeight()
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        },
+        colors = TopAppBarColors(
+            containerColor = Color.White,
+            scrolledContainerColor = Color.Transparent,
+            navigationIconContentColor = Color(0xff545454),
+            titleContentColor = Color(0xff595959),
+            actionIconContentColor = Color.Transparent
+        )
     )
 }

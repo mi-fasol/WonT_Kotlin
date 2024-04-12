@@ -44,6 +44,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.PostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -167,7 +168,7 @@ fun TodayNotice(post: PostResponseModel, viewModel: PostViewModel, navController
                             modifier = Modifier.size(12.dp)
                         )
                         Text(
-                            viewModel.convertDate(post.deadline),
+                            convertDate(post.deadline),
                             fontSize = 12.sp,
                             color = Color(0xff595959),
                             modifier = Modifier.weight(8f),
@@ -211,6 +212,7 @@ fun MeetingBoardItem(
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+    val date = convertDate(post.date)
     Box(
         modifier = Modifier
             .height((screenHeight / 10).dp)
@@ -259,7 +261,7 @@ fun MeetingBoardItem(
                     color = Color(0xff999999)
                 )
                 Text(
-                    viewModel.convertDate(post.date), fontSize = 12.5.sp,
+                    date, fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff595959)
                 )

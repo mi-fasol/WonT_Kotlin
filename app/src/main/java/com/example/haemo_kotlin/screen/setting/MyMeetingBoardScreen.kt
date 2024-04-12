@@ -41,11 +41,13 @@ import com.example.haemo_kotlin.screen.main.board.MeetingBoardItem
 import com.example.haemo_kotlin.screen.main.board.PostInfo
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
+import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.CommentViewModel
 import com.example.haemo_kotlin.viewModel.PostViewModel
 
@@ -65,7 +67,7 @@ fun MyMeetingBoardScreen(
 
     Scaffold(
         topBar = {
-            PostDetailAppBar(navController)
+            MyPageListAppBar(navController)
         },
         bottomBar = {
             MainBottomNavigation(navController = navController)
@@ -194,7 +196,7 @@ fun MyMeetingBoardItem(
                     color = Color(0xff999999)
                 )
                 Text(
-                    viewModel.convertDate(post.date), fontSize = 12.5.sp,
+                    convertDate(post.date), fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff595959)
                 )
