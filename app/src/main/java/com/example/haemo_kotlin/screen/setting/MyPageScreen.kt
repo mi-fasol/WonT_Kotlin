@@ -170,7 +170,7 @@ fun MyPageListItem(idx: Int, uId : Int, nickname: String, navController: NavCont
     val navigationRoutes = listOf(
         NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
         NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
-        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
+        NavigationRoutes.MyWishMeetingScreen.createRoute(uId),
         NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname)
     )
     Box(

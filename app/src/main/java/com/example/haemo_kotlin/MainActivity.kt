@@ -23,6 +23,7 @@ import com.example.haemo_kotlin.screen.main.board.MeetingPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.MeetingScreen
 import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
+import com.example.haemo_kotlin.screen.setting.MyWishMeetingScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
@@ -30,6 +31,7 @@ import com.example.haemo_kotlin.viewModel.CommentViewModel
 import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.PostViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
+import com.example.haemo_kotlin.viewModel.WishViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
@@ -48,6 +50,7 @@ class MainActivity : ComponentActivity() {
     private val hotPlacePostViewModel by viewModels<HotPlacePostViewModel>()
     private val userViewModel by viewModels<UserViewModel>()
     private val commentViewModel by viewModels<CommentViewModel>()
+    private val wishViewModel by viewModels<WishViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -116,6 +119,16 @@ class MainActivity : ComponentActivity() {
                                 postViewModel = viewModel,
                                 navController = navController,
                                 nickname = entry.arguments?.getString("nickname")!!
+                            )
+                        }
+                        composable(NavigationRoutes.MyWishMeetingScreen.route, arguments = listOf(
+                            navArgument("uId") { type = NavType.IntType }
+                        )
+                        ) { entry ->
+                            MyWishMeetingScreen(
+                                wishViewModel = wishViewModel,
+                                navController = navController,
+                                uId = entry.arguments?.getInt("uId")!!
                             )
                         }
                     }
