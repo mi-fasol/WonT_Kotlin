@@ -6,6 +6,7 @@ import com.example.haemo_kotlin.model.comment.club.ClubCommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
+import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
@@ -72,4 +73,13 @@ interface ApiService {
 
     @GET("clubComment/commentUser/{id}")
     suspend fun getClubCommentUserList(@Path("id") pId: Int): Response<List<UserResponseModel>>
+
+    // wish
+
+    @GET("wishMeeting/myList/{id}")
+    suspend fun getWishMeetingPost(@Path("id") uId: Int): Response<List<PostResponseModel>>
+    @GET("wishClub/myList/{id}")
+    suspend fun getWishClubPost(@Path("id") uId: Int): Response<List<ClubPostResponseModel>>
+    @GET("wish/myList/{id}")
+    suspend fun getWishHotPlacePost(@Path("id") uId: Int): Response<List<HotPlaceResponsePostModel>>
 }
