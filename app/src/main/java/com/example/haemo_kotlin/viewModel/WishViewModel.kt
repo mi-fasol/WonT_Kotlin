@@ -44,6 +44,14 @@ class WishViewModel @Inject constructor(
         MutableStateFlow<Resource<List<PostResponseModel>>>(Resource.loading(null))
     val postModelListState: StateFlow<Resource<List<PostResponseModel>>> = _postModelListState.asStateFlow()
 
+    private val _clubModelListState =
+        MutableStateFlow<Resource<List<ClubPostResponseModel>>>(Resource.loading(null))
+    val clubModelListState: StateFlow<Resource<List<ClubPostResponseModel>>> = _clubModelListState.asStateFlow()
+
+    private val _hotPlaceModelListState =
+        MutableStateFlow<Resource<List<HotPlaceResponsePostModel>>>(Resource.loading(null))
+    val hotPlaceModelListState: StateFlow<Resource<List<HotPlaceResponsePostModel>>> = _hotPlaceModelListState.asStateFlow()
+
     suspend fun getWishMeeting(uId: Int) {
         viewModelScope.launch {
             _postModelState.value = Resource.loading(null)
@@ -62,6 +70,50 @@ class WishViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
                 _postModelListState.value = Resource.error(e.message ?: "An error occurred", null)
+            }
+        }
+    }
+
+    suspend fun getWishClub(uId: Int) {
+        viewModelScope.launch {
+            _postModelState.value = Resource.loading(null)
+            try {
+                val response = repository.getWishClubPost(uId)
+                if (response.isSuccessful && response.body() != null) {
+                    val postList = response.body()
+                    _wishClubList.value = postList!!
+                    _clubModelListState.value = Resource.success(postList)
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 에러 응답: $errorBody")
+                    _clubModelListState.value =
+                        Resource.error(response.errorBody().toString(), null)
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+                _clubModelListState.value = Resource.error(e.message ?: "An error occurred", null)
+            }
+        }
+    }
+
+    suspend fun getWishHotPlace(uId: Int) {
+        viewModelScope.launch {
+            _postModelState.value = Resource.loading(null)
+            try {
+                val response = repository.getWishHotPlacePost(uId)
+                if (response.isSuccessful && response.body() != null) {
+                    val postList = response.body()
+                    _wishHotPlaceList.value = postList!!
+                    _hotPlaceModelListState.value = Resource.success(postList)
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 에러 응답: $errorBody")
+                    _hotPlaceModelListState.value =
+                        Resource.error(response.errorBody().toString(), null)
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+                _hotPlaceModelListState.value = Resource.error(e.message ?: "An error occurred", null)
             }
         }
     }

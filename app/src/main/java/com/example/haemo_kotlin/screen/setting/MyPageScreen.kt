@@ -171,7 +171,7 @@ fun MyPageListItem(idx: Int, uId : Int, nickname: String, navController: NavCont
         NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
         NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
         NavigationRoutes.MyWishMeetingScreen.createRoute(uId),
-        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname)
+        NavigationRoutes.MyWishClubScreen.createRoute(uId)
     )
     Box(
         contentAlignment = Alignment.Center,
