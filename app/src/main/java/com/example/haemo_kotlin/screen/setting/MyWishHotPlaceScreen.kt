@@ -1,68 +1,78 @@
 package com.example.haemo_kotlin.screen.setting
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
-import com.example.haemo_kotlin.screen.main.board.CommentWidget
-import com.example.haemo_kotlin.screen.main.board.MeetingBoardItem
-import com.example.haemo_kotlin.screen.main.board.PostInfo
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.PostDetailAppBar
-import com.example.haemo_kotlin.util.PostUserInfo
-import com.example.haemo_kotlin.util.SendReply
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.convertDate
-import com.example.haemo_kotlin.viewModel.CommentViewModel
-import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.WishViewModel
 
 @Composable
-fun MyMeetingBoardScreen(
-    postViewModel: PostViewModel,
+fun MyWishHotPlaceScreen(
+    wishViewModel: WishViewModel,
     navController: NavController,
-    nickname: String,
+    uId: Int,
 ) {
-    val post = postViewModel.postModelList.collectAsState().value
-    val postState = postViewModel.postModelListState.collectAsState().value
+    val post = wishViewModel.wishHotPlaceList.collectAsState().value
+    val postState = wishViewModel.hotPlaceModelListState.collectAsState().value
 
 
     LaunchedEffect(post) {
-        postViewModel.getPost()
+        wishViewModel.getWishHotPlace(uId)
     }
 
     Scaffold(
@@ -81,11 +91,11 @@ fun MyMeetingBoardScreen(
         ) {
             Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
             when (postState) {
-                is Resource.Error<List<PostResponseModel>> -> {
+                is Resource.Error<List<HotPlaceResponsePostModel>> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
                 }
 
-                is Resource.Loading<List<PostResponseModel>> -> {
+                is Resource.Loading<List<HotPlaceResponsePostModel>> -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -96,18 +106,21 @@ fun MyMeetingBoardScreen(
 
                 else -> {
                     when (post.size) {
-                        0 -> {
-                            ErrorScreen("등록한 글이 아직 없어요!")
-                        }
+                        0 ->
+                            Box(
+                                Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                ErrorScreen("찜한 장소가 아직 없어요!")
+                            }
 
-                        else -> {
+                        else ->
                             Column(
                                 modifier = Modifier
-                                    .verticalScroll(rememberScrollState())
                                     .padding(horizontal = 10.dp)
                             ) {
                                 Text(
-                                    "내가 작성한 글",
+                                    "가고 싶은 모임",
                                     fontSize = 17.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = colorResource(
@@ -116,9 +129,8 @@ fun MyMeetingBoardScreen(
                                     modifier = Modifier.padding(vertical = 15.dp)
                                 )
                                 Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                                MyMeetingBoardList(post, nickname, postViewModel, navController)
+                                MyWishHotPlaceList(post, uId, wishViewModel, navController)
                             }
-                        }
                     }
                 }
             }
@@ -127,85 +139,88 @@ fun MyMeetingBoardScreen(
 }
 
 @Composable
-fun MyMeetingBoardList(
-    postList: List<PostResponseModel>, nickname: String, postViewModel: PostViewModel,
+fun MyWishHotPlaceList(
+    postList: List<HotPlaceResponsePostModel>, uId: Int, viewModel: WishViewModel,
     navController: NavController
 ) {
     val context = LocalContext.current
-    val list = postList.filter {
-        it.nickname == nickname
-    }
-    Column {
-        list.forEachIndexed { _, post ->
-            MyMeetingBoardItem(post, postViewModel, navController)
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        verticalItemSpacing = 5.dp,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 5.dp),
+        content = {
+            items(postList.size) { idx ->
+                MyWishHotPlaceItem(postList[idx], viewModel, navController)
+            }
         }
-    }
+    )
 }
 
 @Composable
-fun MyMeetingBoardItem(
-    post: PostResponseModel,
-    viewModel: PostViewModel,
+fun MyWishHotPlaceItem(
+    post: HotPlaceResponsePostModel,
+    viewModel: WishViewModel,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+    val buttonClick = remember {
+        mutableStateOf(false)
+    }
+    val buttonColor = if(buttonClick.value) R.color.white else R.color.mainColor
     Box(
         modifier = Modifier
-            .height((screenHeight / 9).dp)
+            .height((screenHeight / 6).dp)
+            .padding(top = 15.dp)
+            .width((screenWidth / 3.5).dp)
             .clickable {
-                navController.navigate(NavigationRoutes.MeetingPostDetailScreen.createRoute(post.pId))
-            }
-            .padding(top = 10.dp)
-            .border(width = 1.dp, color = Color(0xffd9d9d9), shape = RoundedCornerShape(15.dp))
+                //    navController.navigate(NavigationRoutes.HotPlaceDetailScreen)
+            },
     ) {
-        Column(
-            Modifier
-                .padding(vertical = 15.dp, horizontal = 10.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(15.dp)),
+                elevation = 0.dp,
             ) {
-                Text(
-                    text = post.title,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xff595959),
+                Image(
+                    painter = painterResource(id = R.drawable.dummy_image),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .weight(10f)
-                        .fillMaxWidth()
-                )
-                Text(
-                    "3/${post.person}", fontSize = 12.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xff82C0EA),
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .background(Color.Black, RoundedCornerShape(15.dp))
+                        .alpha(0.7f)
                 )
             }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
+            Column(
+                Modifier
+                    .padding(13.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "${post.person}명",
-                    fontSize = 11.5.sp,
-//                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xff999999)
+                Icon(
+                    Icons.Default.Favorite,
+                    contentDescription = null,
+                    tint = colorResource(id = buttonColor),
+                    modifier = Modifier
+                        .size((screenWidth / 20).dp)
+                        .fillMaxWidth()
+                        .align(Alignment.End)
+                        .clickable {
+                            buttonClick.value = !buttonClick.value
+                        }
                 )
                 Text(
-                    convertDate(post.date), fontSize = 12.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xff595959)
+                    post.title,
+                    fontSize = 14.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
     }
-}

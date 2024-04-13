@@ -95,7 +95,7 @@ fun MyWishMeetingScreen(
                                 Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                ErrorScreen("찜한 소모임이 아직 없어요!")
+                                ErrorScreen("찜한 모임이 아직 없어요!")
                             }
 
                         else ->

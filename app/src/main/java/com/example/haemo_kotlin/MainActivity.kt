@@ -24,6 +24,7 @@ import com.example.haemo_kotlin.screen.main.board.MeetingScreen
 import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.screen.setting.MyWishClubScreen
+import com.example.haemo_kotlin.screen.setting.MyWishHotPlaceScreen
 import com.example.haemo_kotlin.screen.setting.MyWishMeetingScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
@@ -137,6 +138,16 @@ class MainActivity : ComponentActivity() {
                         )
                         ) { entry ->
                             MyWishClubScreen(
+                                wishViewModel = wishViewModel,
+                                navController = navController,
+                                uId = entry.arguments?.getInt("uId")!!
+                            )
+                        }
+                        composable(NavigationRoutes.MyWishHotPlaceScreen.route, arguments = listOf(
+                            navArgument("uId") { type = NavType.IntType }
+                        )
+                        ) { entry ->
+                            MyWishHotPlaceScreen(
                                 wishViewModel = wishViewModel,
                                 navController = navController,
                                 uId = entry.arguments?.getInt("uId")!!
