@@ -3,6 +3,7 @@ package com.example.haemo_kotlin.screen.main.board
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -30,13 +31,17 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -126,6 +131,9 @@ fun PopularPlace(postList: List<HotPlacePostModel>, viewModel: HotPlacePostViewM
                 ) {
                     items(postList.size) { idx ->
                         PopularPlaceItem(postList[idx], viewModel)
+                        if(idx < postList.size-1){
+                            Spacer(modifier = Modifier.width(15.dp))
+                        }
                     }
                 }
             }
@@ -141,11 +149,10 @@ fun PopularPlaceItem(post: HotPlacePostModel, viewModel: HotPlacePostViewModel) 
     Row {
         Box(
             modifier = Modifier
-                .height((screenHeight / 3.4).dp)
+                .height((screenHeight / 3.32).dp)
                 .padding(top = 5.dp, bottom = 15.dp)
-                .width((screenWidth / 2).dp)
+                .width((screenWidth / 2.15).dp)
                 .background(Color.Unspecified, RoundedCornerShape(15.dp))
-                .graphicsLayer(alpha = 0.8f),
         ) {
             Box(
                 modifier = Modifier
@@ -165,59 +172,67 @@ fun PopularPlaceItem(post: HotPlacePostModel, viewModel: HotPlacePostViewModel) 
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.Unspecified, RoundedCornerShape(15.dp))
-                    )
-                }
-                Column(
-                    Modifier
-                        .padding(13.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Icon(
-                        Icons.Default.Favorite,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size((screenWidth / 20).dp)
-                            .fillMaxWidth()
-                            .align(Alignment.End)
+                            .background(Color.Black, RoundedCornerShape(15.dp))
+                            .alpha(0.7f)
                     )
                     Column(
+                        Modifier
+                            .padding(13.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            post.title,
-                            fontSize = 18.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
+                        Icon(
+                            Icons.Default.Favorite,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size((screenWidth / 20).dp)
+                                .fillMaxWidth()
+                                .align(Alignment.End)
                         )
-                        Text(
-                            post.content,
-                            color = Color.White,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Column(
+                        ) {
+                            Text(
+                                post.title,
+                                fontSize = 18.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                post.content,
+                                color = Color.White,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                 }
             }
         }
-        Spacer(modifier = Modifier.width(10.dp))
     }
 }
 
 @Composable
 fun HotPlaceBoard(postList: List<HotPlacePostModel>, viewModel: HotPlacePostViewModel) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = 5.dp,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.fillMaxWidth(),
-        content = {
-            items(postList.size) { idx ->
-                HotPlaceBoardItem(postList[idx], viewModel)
+    Column {
+        Text(
+            "이런 장소는 어때요?", fontSize = 15.sp,
+            color = Color(0xff414141),
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(top = 5.dp)
+        )
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            verticalItemSpacing = 5.dp,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                items(postList.size) { idx ->
+                    HotPlaceBoardItem(postList[idx], viewModel)
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -225,35 +240,34 @@ fun HotPlaceBoardItem(post: HotPlacePostModel, viewModel: HotPlacePostViewModel)
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+    val buttonClick = remember {
+        mutableStateOf(false)
+    }
+    val buttonColor = if (buttonClick.value) R.color.white else R.color.mainColor
     Box(
         modifier = Modifier
-            .height((screenHeight / 5.5).dp)
-            .padding(top = 5.dp, bottom = 15.dp)
+            .height((screenHeight / 5.8).dp)
+            .padding(top = 15.dp)
             .width((screenWidth / 3.5).dp)
-            .background(Color.Unspecified, RoundedCornerShape(15.dp))
-            .graphicsLayer(alpha = 0.8f),
+            .clickable {
+                //    navController.navigate(NavigationRoutes.HotPlaceDetailScreen)
+            },
     ) {
-        Box(
+        Card(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Unspecified, RoundedCornerShape(15.dp)),
-            contentAlignment = Alignment.Center,
+                .clip(RoundedCornerShape(15.dp)),
+            elevation = 0.dp,
         ) {
-            Card(
+            Image(
+                painter = painterResource(id = R.drawable.dummy_image),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(15.dp)),
-                elevation = 0.dp,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.dummy_image),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Unspecified, RoundedCornerShape(15.dp))
-                )
-            }
+                    .background(Color.Black, RoundedCornerShape(15.dp))
+                    .alpha(0.7f)
+            )
             Column(
                 Modifier
                     .padding(13.dp)
@@ -263,15 +277,18 @@ fun HotPlaceBoardItem(post: HotPlacePostModel, viewModel: HotPlacePostViewModel)
                 Icon(
                     Icons.Default.Favorite,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = colorResource(id = buttonColor),
                     modifier = Modifier
                         .size((screenWidth / 20).dp)
                         .fillMaxWidth()
                         .align(Alignment.End)
+                        .clickable {
+                            buttonClick.value = !buttonClick.value
+                        }
                 )
                 Text(
                     post.title,
-                    fontSize = 18.sp,
+                    fontSize = 14.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )

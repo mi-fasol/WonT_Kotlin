@@ -171,7 +171,7 @@ fun MyWishHotPlaceItem(
     val buttonClick = remember {
         mutableStateOf(false)
     }
-    val buttonColor = if(buttonClick.value) R.color.white else R.color.mainColor
+    val buttonColor = if (buttonClick.value) R.color.white else R.color.mainColor
     Box(
         modifier = Modifier
             .height((screenHeight / 6).dp)
@@ -181,46 +181,46 @@ fun MyWishHotPlaceItem(
                 //    navController.navigate(NavigationRoutes.HotPlaceDetailScreen)
             },
     ) {
-            Card(
+        Card(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(15.dp)),
+            elevation = 0.dp,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.dummy_image),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(15.dp)),
-                elevation = 0.dp,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.dummy_image),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black, RoundedCornerShape(15.dp))
-                        .alpha(0.7f)
-                )
-            }
-            Column(
-                Modifier
-                    .padding(13.dp)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Icon(
-                    Icons.Default.Favorite,
-                    contentDescription = null,
-                    tint = colorResource(id = buttonColor),
-                    modifier = Modifier
-                        .size((screenWidth / 20).dp)
-                        .fillMaxWidth()
-                        .align(Alignment.End)
-                        .clickable {
-                            buttonClick.value = !buttonClick.value
-                        }
-                )
-                Text(
-                    post.title,
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                    .background(Color.Black, RoundedCornerShape(15.dp))
+                    .alpha(0.7f)
+            )
+        }
+        Column(
+            Modifier
+                .padding(13.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                Icons.Default.Favorite,
+                contentDescription = null,
+                tint = colorResource(id = buttonColor),
+                modifier = Modifier
+                    .size((screenWidth / 20).dp)
+                    .fillMaxWidth()
+                    .align(Alignment.End)
+                    .clickable {
+                        buttonClick.value = !buttonClick.value
+                    }
+            )
+            Text(
+                post.title,
+                fontSize = 14.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
+}
