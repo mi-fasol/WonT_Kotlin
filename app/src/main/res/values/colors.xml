@@ -11,4 +11,5 @@
     <color name="mainTextColor">#FF393939</color>
     <color name="mainGreyColor">#FF595959</color>
     <color name="myBoardColor">#FF818181</color>
+    <color name="postRegisterTextColor">#FFC8C8C8</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.util
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -38,7 +39,7 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(35.dp)
                 )
             }
         },
@@ -84,15 +85,16 @@ fun PostDetailAppBar(navController: NavController) {
         title = {
         },
         navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = null,
-                    tint = Color(0xff545454)
-                )
-            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(35.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    },
+                tint = Color(0xff545454)
+            )
         },
         actions = {
             IconButton(onClick = {
@@ -122,21 +124,55 @@ fun MyPageListAppBar(navController: NavController) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(35.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    }
+            )
         },
         colors = TopAppBarColors(
             containerColor = Color.White,
             scrolledContainerColor = Color.Transparent,
             navigationIconContentColor = Color(0xff545454),
             titleContentColor = Color(0xff595959),
+            actionIconContentColor = Color.Transparent
+        )
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PostRegisterAppBar(appBarText: String, navController: NavController) {
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = appBarText,
+                fontSize = 19.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        },
+        navigationIcon = {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(35.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    },
+                tint = Color.White
+            )
+        },
+        colors = TopAppBarColors(
+            containerColor = colorResource(id = R.color.mainColor),
+            scrolledContainerColor = Color.Transparent,
+            navigationIconContentColor = Color.White,
+            titleContentColor = Color.White,
             actionIconContentColor = Color.Transparent
         )
     )

@@ -1,6 +1,6 @@
 package com.example.haemo_kotlin.model.post
 
-import com.example.haemo_kotlin.model.HangulUtils
+import com.example.haemo_kotlin.util.HangulUtils
 import com.google.gson.annotations.SerializedName
 
 data class ClubPostModel(

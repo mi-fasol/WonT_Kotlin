@@ -1,6 +1,5 @@
 package com.example.haemo_kotlin.model.post
 
-import com.example.haemo_kotlin.model.HangulUtils
 import com.google.gson.annotations.SerializedName
 
 data class HotPlacePostModel(
