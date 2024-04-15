@@ -55,6 +55,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.PostRegisterFloatingButton
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -74,10 +75,11 @@ fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
         topBar = {
             MainPageAppBar("소모임/동아리 게시판", navController)
         },
-        bottomBar = {
-            MainBottomNavigation(navController = navController)
-        }
-    ) {innerPadding ->
+//        bottomBar = {
+//            MainBottomNavigation(navController = navController)
+//        },
+//        floatingActionButton = { PostRegisterFloatingButton(navController) }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(
@@ -170,7 +172,11 @@ fun SearchBarWidget(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ClubBoard(postList: List<ClubPostResponseModel>, viewModel: ClubPostViewModel, navController: NavController) {
+fun ClubBoard(
+    postList: List<ClubPostResponseModel>,
+    viewModel: ClubPostViewModel,
+    navController: NavController
+) {
     LazyColumn(
     ) {
         items(postList.size) { idx ->
@@ -181,14 +187,19 @@ fun ClubBoard(postList: List<ClubPostResponseModel>, viewModel: ClubPostViewMode
 }
 
 @Composable
-fun ClubBoardItem(post: ClubPostResponseModel, viewModel: ClubPostViewModel, navController: NavController) {
+fun ClubBoardItem(
+    post: ClubPostResponseModel,
+    viewModel: ClubPostViewModel,
+    navController: NavController
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
     Box(
         modifier = Modifier
             .height((screenHeight / 7).dp)
-            .padding(vertical = 18.dp, horizontal = 3.dp).clickable {
+            .padding(vertical = 18.dp, horizontal = 3.dp)
+            .clickable {
                 navController.navigate(NavigationRoutes.ClubPostDetailScreen.createRoute(post.pId))
             }
     ) {

@@ -62,7 +62,7 @@ fun MyPageScreen(viewModel: UserViewModel, navController: NavController) {
         topBar = {
             MainPageAppBar("마이페이지", navController)
         },
-        bottomBar = { MainBottomNavigation(navController = navController) },
+//        bottomBar = { MainBottomNavigation(navController = navController) },
         modifier = Modifier.background(Color(0xfff4f4f4))
     ) {
         Column {

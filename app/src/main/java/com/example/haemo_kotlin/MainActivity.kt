@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController = navController, startDestination = "mainScreen") {
                         composable(NavigationRoutes.MainScreen.route) {
-                            MainScreen(navController, viewModel)
+                            MainScreen(navController, viewModel, clubPostViewModel, hotPlacePostViewModel, userViewModel)
                         }
                         composable(NavigationRoutes.MeetingScreen.route) {
                             MeetingScreen(viewModel, navController)

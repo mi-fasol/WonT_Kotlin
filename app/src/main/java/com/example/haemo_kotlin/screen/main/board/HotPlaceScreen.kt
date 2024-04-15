@@ -54,6 +54,7 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
+import com.example.haemo_kotlin.util.PostRegisterFloatingButton
 import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -74,7 +75,8 @@ fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavContr
         topBar = {
             MainPageAppBar("요즘 핫한 핫플레이스", navController)
         },
-        bottomBar = { MainBottomNavigation(navController = navController) },
+//        bottomBar = { MainBottomNavigation(navController = navController) },
+//        floatingActionButton = { PostRegisterFloatingButton(navController) }
     ) { innerPadding ->
         BoxWithConstraints {
             Column(
@@ -131,7 +133,7 @@ fun PopularPlace(postList: List<HotPlacePostModel>, viewModel: HotPlacePostViewM
                 ) {
                     items(postList.size) { idx ->
                         PopularPlaceItem(postList[idx], viewModel)
-                        if(idx < postList.size-1){
+                        if (idx < postList.size - 1) {
                             Spacer(modifier = Modifier.width(15.dp))
                         }
                     }

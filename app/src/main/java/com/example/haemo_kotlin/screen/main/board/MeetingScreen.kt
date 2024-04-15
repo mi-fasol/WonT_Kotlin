@@ -44,6 +44,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.PostRegisterFloatingButton
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.PostViewModel
 
@@ -64,9 +65,6 @@ fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
     Scaffold(
         topBar = {
             MainPageAppBar("친구 구하는 곳", navController)
-        },
-        bottomBar = {
-            MainBottomNavigation(navController = navController)
         }
     ) { innerPadding ->
         Column(

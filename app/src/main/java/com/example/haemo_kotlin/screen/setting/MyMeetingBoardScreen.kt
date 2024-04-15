@@ -69,9 +69,9 @@ fun MyMeetingBoardScreen(
         topBar = {
             MyPageListAppBar(navController)
         },
-        bottomBar = {
-            MainBottomNavigation(navController = navController)
-        }
+//        bottomBar = {
+//            MainBottomNavigation(navController = navController)
+//        }
     ) { innerPadding ->
         Column(
             modifier = Modifier

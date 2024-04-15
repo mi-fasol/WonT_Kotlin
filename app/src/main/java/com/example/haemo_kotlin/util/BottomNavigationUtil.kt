@@ -21,7 +21,7 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 
 @Composable
-fun MainBottomNavigation(navController: NavController) {
+fun MainBottomNavigation(navController: NavController, onItemSelected: (String) -> Unit) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
 
@@ -43,11 +43,12 @@ fun MainBottomNavigation(navController: NavController) {
             },
             selected = navController.currentDestination?.route == "mainScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.MainScreen.route) {
-                    popUpTo(NavigationRoutes.MainScreen.route) {
-                        inclusive = true
-                    }
-                }
+//                navController.navigate(NavigationRoutes.MainScreen.route) {
+//                    popUpTo(NavigationRoutes.MainScreen.route) {
+//                        inclusive = true
+//                    }
+//                }
+                onItemSelected("mainScreen")
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
@@ -62,11 +63,12 @@ fun MainBottomNavigation(navController: NavController) {
             },
             selected = navController.currentDestination?.route == "clubScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.ClubScreen.route) {
-                    popUpTo(NavigationRoutes.MainScreen.route) {
-                        inclusive = true
-                    }
-                }
+                onItemSelected("clubScreen")
+//                navController.navigate(NavigationRoutes.ClubScreen.route) {
+//                    popUpTo(NavigationRoutes.MainScreen.route) {
+//                        inclusive = true
+//                    }
+//                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
@@ -81,11 +83,12 @@ fun MainBottomNavigation(navController: NavController) {
             },
             selected = navController.currentDestination?.route == "hotPlaceScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.HotPlaceScreen.route) {
-                    popUpTo(NavigationRoutes.MainScreen.route) {
-                        inclusive = true
-                    }
-                }
+                onItemSelected("hotPlaceScreen")
+//                navController.navigate(NavigationRoutes.HotPlaceScreen.route) {
+//                    popUpTo(NavigationRoutes.MainScreen.route) {
+//                        inclusive = true
+//                    }
+//                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
@@ -109,11 +112,12 @@ fun MainBottomNavigation(navController: NavController) {
             },
             selected = navController.currentDestination?.route == "myPageScreen",
             onClick = {
-                navController.navigate(NavigationRoutes.MyPageScreen.route) {
-                    popUpTo(NavigationRoutes.MyPageScreen.route) {
-                        inclusive = true
-                    }
-                }
+                onItemSelected("myPageScreen")
+//                navController.navigate(NavigationRoutes.MyPageScreen.route) {
+//                    popUpTo(NavigationRoutes.MyPageScreen.route) {
+//                        inclusive = true
+//                    }
+//                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
