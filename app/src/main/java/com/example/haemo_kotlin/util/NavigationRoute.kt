@@ -32,4 +32,6 @@ sealed class NavigationRoutes(val route: String) {
     data object MyWishHotPlaceScreen : NavigationRoutes("myWishHotPlaceScreen/{uId}") {
         fun createRoute(uId: Int) = "myWishHotPlaceScreen/$uId"
     }
+
+    data object PostRegisterScreen : NavigationRoutes("postRegisterScreen")
 }

@@ -21,6 +21,7 @@ import com.example.haemo_kotlin.screen.main.board.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.board.MainScreen
 import com.example.haemo_kotlin.screen.main.board.MeetingPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.MeetingScreen
+import com.example.haemo_kotlin.screen.main.board.PostRegisterScreen
 import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.screen.setting.MyWishClubScreen
@@ -152,6 +153,9 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 uId = entry.arguments?.getInt("uId")!!
                             )
+                        }
+                        composable(NavigationRoutes.PostRegisterScreen.route) {
+                            PostRegisterScreen(viewModel, navController)
                         }
                     }
                 }

@@ -1,6 +1,8 @@
 package com.example.haemo_kotlin.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
@@ -26,6 +28,7 @@ class PostViewModel @Inject constructor(
     private val repository: PostRepository
 ) : ViewModel() {
 
+    // Get 변수
     private val _postModelList = MutableStateFlow<List<PostResponseModel>>(emptyList())
     val postModelList: StateFlow<List<PostResponseModel>> = _postModelList
 
@@ -47,7 +50,17 @@ class PostViewModel @Inject constructor(
     private val _commentList = MutableStateFlow<List<CommentResponseModel>>(emptyList())
     val commentList: StateFlow<List<CommentResponseModel>> = _commentList
 
+    // post 변수
+    val title = MutableStateFlow("")
+    val person = MutableStateFlow(0)
+    val category = MutableStateFlow("")
+    val deadlineYear = MutableStateFlow("")
+    val deadlineMonth = MutableStateFlow("")
+    val deadlineDay = MutableStateFlow("")
+    val deadlineTime = MutableStateFlow("")
+    val content = MutableStateFlow("")
 
+    // 상태 관리
     private val _todayPostModelState =
         MutableStateFlow<Resource<List<PostResponseModel>>>(Resource.loading(null))
     val todayPostModelState: StateFlow<Resource<List<PostResponseModel>>> =

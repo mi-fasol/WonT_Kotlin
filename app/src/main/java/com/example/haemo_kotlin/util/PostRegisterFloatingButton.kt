@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.util
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -45,14 +46,16 @@ fun PostRegisterFloatingButton(navController: NavController) {
             ) {
                 FabItem(
                     title = "모임 등록",
-                    onClicked = { /* ... */ }
+                    onClicked = {
+                        navController.navigate(NavigationRoutes.PostRegisterScreen.route)
+                    }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 FabItem(
                     title = "소모임 등록",
                     onClicked = { /* ... */ }
                 )
-                Spacer (modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 FabItem(
                     title = "핫플 등록",
                     onClicked = { /* ... */ }
@@ -83,8 +86,15 @@ fun FabItem(title: String, onClicked: () -> Unit) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .width((screenWidth / 4.5).dp)
+            .clickable { onClicked() }
             .background(colorResource(id = R.color.mainColor), RoundedCornerShape(10.dp))
     ) {
-        Text(title, fontSize = 11.5.sp, color = Color.White, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(vertical = 5.dp))
+        Text(
+            title,
+            fontSize = 11.5.sp,
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(vertical = 5.dp)
+        )
     }
 }
