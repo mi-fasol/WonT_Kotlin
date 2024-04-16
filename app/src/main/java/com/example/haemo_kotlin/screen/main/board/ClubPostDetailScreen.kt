@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.comment.club.ClubCommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
@@ -140,6 +141,7 @@ fun ClubPostInfo(post: ClubPostResponseModel) {
             )
         )
         Spacer(Modifier.height(5.dp))
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -147,23 +149,35 @@ fun ClubPostInfo(post: ClubPostResponseModel) {
                 .clip(RoundedCornerShape(15.dp)),
             elevation = 0.dp,
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.dummy_image),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Unspecified, RoundedCornerShape(15.dp))
-            )
+            if (post.image == null) {
+                Image(
+                    painter = painterResource(id = R.drawable.dummy_image),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Unspecified, RoundedCornerShape(15.dp))
+                )
+            } else {
+                Image(
+                    painter = rememberAsyncImagePainter(model = post.image),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Unspecified, RoundedCornerShape(15.dp))
+                )
+            }
         }
         Box(
             modifier = Modifier
                 .padding(vertical = 10.dp)
                 .fillMaxWidth()
         ) {
-            Text(post.content, fontSize = 13.sp, color = colorResource(id = R.color.mainTextColor),
+            Text(
+                post.content, fontSize = 13.sp, color = colorResource(id = R.color.mainTextColor),
                 maxLines = Int.MAX_VALUE
-                )
+            )
         }
     }
 }

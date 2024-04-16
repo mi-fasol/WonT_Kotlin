@@ -1,5 +1,7 @@
 package com.example.haemo_kotlin.di
 
+import android.app.Application
+import android.content.Context
 import com.example.haemo_kotlin.network.RetrofitClient
 import dagger.Module
 import dagger.Provides
@@ -15,5 +17,11 @@ object AppModule {
     @Singleton
     fun provideRetrofitClient(): RetrofitClient {
         return RetrofitClient
+    }
+
+    @Provides
+    @Singleton
+    fun provideApplicationContext(application: Application): Context {
+        return application.applicationContext
     }
 }

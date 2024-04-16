@@ -9,8 +9,8 @@ data class ClubPostModel(
     @SerializedName("nickname") val nickname: String,
     @SerializedName("person") val person: Int,
     @SerializedName("description") val description: String,
-    @SerializedName("category") val category: String,
-    @SerializedName("image") val image: String?,
+    @SerializedName("date") val date: String,
+    @SerializedName("logo") val image: String?,
     @SerializedName("wishClubCnt") val wish: Int,
 )
 

@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.util
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -192,6 +193,8 @@ fun PostRegisterButton(
         3 -> viewModel!!.isValid.collectAsState().value
         else -> false
     }
+
+    Log.d("포스트", clubViewModel!!.isValid.collectAsState().value.toString())
 
     val context = LocalContext.current
 

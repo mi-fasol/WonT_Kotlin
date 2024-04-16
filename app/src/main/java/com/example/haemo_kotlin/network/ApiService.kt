@@ -12,13 +12,18 @@ import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable.Param
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ApiService {
+    // 게시물
     @POST("post")
     suspend fun registerPost(@Body post: PostModel): Response<PostResponseModel>
 
@@ -34,6 +39,8 @@ interface ApiService {
     @GET("post/24hours")
     suspend fun getTodayPost(): Response<List<PostResponseModel>>
 
+    // 유저
+
     @POST("login")
     suspend fun tryLogin(@Body loginModel: LoginModel): Response<Boolean>
 
@@ -46,12 +53,22 @@ interface ApiService {
     @GET("user/{nickname}")
     suspend fun getUserByNickname(@Path("nickname") nickname: String): Response<UserResponseModel>
 
+    // 소모임
+
+    @POST("club")
+    suspend fun registerClubPost(@Body post: ClubPostModel): Response<ClubPostResponseModel>
 
     @GET("club")
     suspend fun getClubPost(): Response<List<ClubPostResponseModel>>
 
     @GET("club/{id}")
     suspend fun getClubPostById(@Path("id") idx: Int): Response<ClubPostResponseModel>
+
+    // 핫플레이스
+
+    @POST("hot")
+    suspend fun registerHotPlacePost(@Body post: HotPlacePostModel): Response<HotPlaceResponsePostModel>
+
 
     @GET("hot")
     suspend fun getHotPlacePost(): Response<List<HotPlacePostModel>>
@@ -61,6 +78,8 @@ interface ApiService {
 
     @GET("hot/popular")
     suspend fun getPopularHotPlacePost(): Response<List<HotPlacePostModel>>
+
+    // 모임 참여
 
     @GET("accept/{id}")
     suspend fun getJoinUserByPId(@Path("id") pId: Int): Response<List<AcceptationResponseModel>>
@@ -87,4 +106,9 @@ interface ApiService {
 
     @GET("wish/myList/{id}")
     suspend fun getWishHotPlacePost(@Path("id") uId: Int): Response<List<HotPlaceResponsePostModel>>
+
+    // 이미지
+    @Multipart
+    @POST("image")
+    suspend fun uploadImage(@Part file: MultipartBody.Part): Response<String>
 }

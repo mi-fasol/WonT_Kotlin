@@ -34,4 +34,6 @@ sealed class NavigationRoutes(val route: String) {
     }
 
     data object PostRegisterScreen : NavigationRoutes("postRegisterScreen")
+
+    data object ClubPostRegisterScreen : NavigationRoutes("clubPostRegisterScreen")
 }

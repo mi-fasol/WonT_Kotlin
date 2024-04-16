@@ -59,11 +59,6 @@ class PostViewModel @Inject constructor(
     private val _commentList = MutableStateFlow<List<CommentResponseModel>>(emptyList())
     val commentList: StateFlow<List<CommentResponseModel>> = _commentList
 
-    private val _postRegisterState =
-        MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
-    val postRegisterState: StateFlow<Resource<PostResponseModel>> = _postRegisterState.asStateFlow()
-
-
     // post 변수
     val title = MutableStateFlow("")
     val person = MutableStateFlow(0)
@@ -99,6 +94,10 @@ class PostViewModel @Inject constructor(
         ) { title, person, category, content ->
             title.isNotBlank() && person != 0 && category.isNotBlank() && content.isNotBlank()
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    private val _postRegisterState =
+        MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
+    val postRegisterState: StateFlow<Resource<PostResponseModel>> = _postRegisterState.asStateFlow()
 
     suspend fun getPost() {
         viewModelScope.launch {

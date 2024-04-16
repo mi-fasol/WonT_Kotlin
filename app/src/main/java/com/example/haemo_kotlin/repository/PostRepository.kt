@@ -18,6 +18,10 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.registerPost(post)
     }
 
+    suspend fun registerClubPost(post: ClubPostModel): Response<ClubPostResponseModel> {
+        return retrofitClient.service.registerClubPost(post)
+    }
+
     suspend fun getPost(): Response<List<PostResponseModel>> {
         return retrofitClient.service.getPost()
     }
@@ -50,9 +54,11 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
     suspend fun getHotPlacePost(): Response<List<HotPlacePostModel>> {
         return retrofitClient.service.getHotPlacePost()
     }
+
     suspend fun getHotPlaceById(idx: Int): Response<HotPlacePostModel> {
         return retrofitClient.service.getHotPlacePostById(idx)
     }
+
     suspend fun getPopularHotPlace(): Response<List<HotPlacePostModel>> {
         return retrofitClient.service.getPopularHotPlacePost()
     }

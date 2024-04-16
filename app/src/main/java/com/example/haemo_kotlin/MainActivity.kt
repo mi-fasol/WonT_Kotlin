@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.haemo_kotlin.screen.main.board.ClubPostDetailScreen
+import com.example.haemo_kotlin.screen.main.board.ClubPostRegisterScreen
 import com.example.haemo_kotlin.screen.main.board.ClubScreen
 import com.example.haemo_kotlin.screen.main.board.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.board.MainScreen
@@ -156,6 +157,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.PostRegisterScreen.route) {
                             PostRegisterScreen(viewModel, navController)
+                        }
+                        composable(NavigationRoutes.ClubPostRegisterScreen.route) {
+                            ClubPostRegisterScreen(clubPostViewModel, navController)
                         }
                     }
                 }

@@ -13,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.lang.reflect.Type
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -50,6 +51,7 @@ object RetrofitClient {
     val service: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(ApiService::class.java)
