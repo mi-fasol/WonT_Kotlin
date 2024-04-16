@@ -14,6 +14,10 @@ import javax.inject.Inject
 
 class PostRepository @Inject constructor(private val retrofitClient: RetrofitClient) {
 
+    suspend fun registerPost(post: PostModel): Response<PostResponseModel> {
+        return retrofitClient.service.registerPost(post)
+    }
+
     suspend fun getPost(): Response<List<PostResponseModel>> {
         return retrofitClient.service.getPost()
     }

@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.viewModel
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
@@ -9,13 +10,20 @@ import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
+import com.example.haemo_kotlin.model.user.UserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.PostRepository
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.util.getCurrentDateTime
+import com.example.haemo_kotlin.util.getCurrentYear
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,7 +49,8 @@ class PostViewModel @Inject constructor(
     private val _todayPostList = MutableStateFlow<List<PostResponseModel>>(emptyList())
     val todayPostList: StateFlow<List<PostResponseModel>> = _todayPostList
 
-    private val _postModelState = MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
+    private val _postModelState =
+        MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
     val postModelState: StateFlow<Resource<PostResponseModel>> = _postModelState.asStateFlow()
 
     private val _acceptationList = MutableStateFlow<List<AcceptationResponseModel>>(emptyList())
@@ -50,15 +59,23 @@ class PostViewModel @Inject constructor(
     private val _commentList = MutableStateFlow<List<CommentResponseModel>>(emptyList())
     val commentList: StateFlow<List<CommentResponseModel>> = _commentList
 
+    private val _postRegisterState =
+        MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
+    val postRegisterState: StateFlow<Resource<PostResponseModel>> = _postRegisterState.asStateFlow()
+
+
     // post 변수
     val title = MutableStateFlow("")
     val person = MutableStateFlow(0)
     val category = MutableStateFlow("")
-    val deadlineYear = MutableStateFlow("")
-    val deadlineMonth = MutableStateFlow("")
-    val deadlineDay = MutableStateFlow("")
-    val deadlineTime = MutableStateFlow("")
+    val deadlineYear = MutableStateFlow(getCurrentYear())
+    val deadlineMonth = MutableStateFlow("01월")
+    val deadlineDay = MutableStateFlow("01일")
+    val deadlineTime = MutableStateFlow("01시")
     val content = MutableStateFlow("")
+
+    private val deadline =
+        MutableStateFlow("")
 
     // 상태 관리
     private val _todayPostModelState =
@@ -69,7 +86,19 @@ class PostViewModel @Inject constructor(
 
     private val _postModelListState =
         MutableStateFlow<Resource<List<PostResponseModel>>>(Resource.loading(null))
-    val postModelListState: StateFlow<Resource<List<PostResponseModel>>> = _postModelListState.asStateFlow()
+    val postModelListState: StateFlow<Resource<List<PostResponseModel>>> =
+        _postModelListState.asStateFlow()
+
+    // 필드 유효성 검사
+    var isValid: StateFlow<Boolean> =
+        combine(
+            title,
+            person,
+            category,
+            content
+        ) { title, person, category, content ->
+            title.isNotBlank() && person != 0 && category.isNotBlank() && content.isNotBlank()
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     suspend fun getPost() {
         viewModelScope.launch {
@@ -181,6 +210,38 @@ class PostViewModel @Inject constructor(
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    fun registerPost(context: Context) {
+        val today = getCurrentDateTime()
+        deadline.value = "${deadlineYear.value} ${deadlineMonth.value} ${deadlineDay.value} ${deadlineTime.value}"
+        val post = PostModel(
+            title.value,
+            content.value,
+            SharedPreferenceUtil(context).getString("nickname", "")!!.toString(),
+            person.value,
+            deadline.value,
+            category.value,
+            today,
+            0
+        )
+
+        viewModelScope.launch {
+            _postRegisterState.value = Resource.loading(null)
+            try {
+                val response = repository.registerPost(post)
+                if (response.isSuccessful && response.body() != null) {
+//                    _registerState.value = Resource.success(response.body())
+                    _postRegisterState.value = Resource.success(response.body())
+                    Log.d("게시물 전송", response.body().toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
                 }
             } catch (e: Exception) {
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")

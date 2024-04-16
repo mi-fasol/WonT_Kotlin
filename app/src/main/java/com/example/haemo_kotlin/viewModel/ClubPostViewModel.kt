@@ -11,8 +11,11 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,13 +34,34 @@ class ClubPostViewModel @Inject constructor(
     private val _user = MutableStateFlow<UserResponseModel?>(null)
     val user: StateFlow<UserResponseModel?> = _user.asStateFlow()
 
-    private val _clubPostState = MutableStateFlow<Resource<ClubPostResponseModel>>(Resource.loading(null))
+    private val _clubPostState =
+        MutableStateFlow<Resource<ClubPostResponseModel>>(Resource.loading(null))
     val clubPostState: StateFlow<Resource<ClubPostResponseModel>> = _clubPostState.asStateFlow()
 
     private val _clubPostListState =
         MutableStateFlow<Resource<List<ClubPostResponseModel>>>(Resource.loading(null))
     val clubPostListState: StateFlow<Resource<List<ClubPostResponseModel>>> =
         _clubPostListState.asStateFlow()
+
+    // 유효성 검사
+
+    val title = MutableStateFlow("")
+    val description = MutableStateFlow("")
+    val image = MutableStateFlow("")
+    val person = MutableStateFlow(0)
+    val content = MutableStateFlow("")
+
+    var isValid: StateFlow<Boolean> =
+        combine(
+            title,
+            person,
+            description,
+            image,
+            content
+        ) { title, person, description, image, content ->
+            title.isNotBlank() && person != 0 && description.isNotBlank() && image.isNotBlank() && content.isNotBlank()
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
 
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()

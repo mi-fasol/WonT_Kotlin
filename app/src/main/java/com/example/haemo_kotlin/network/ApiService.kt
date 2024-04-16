@@ -19,6 +19,9 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiService {
+    @POST("post")
+    suspend fun registerPost(@Body post: PostModel): Response<PostResponseModel>
+
     @GET("post")
     suspend fun getPost(): Response<List<PostResponseModel>>
 
@@ -31,17 +34,17 @@ interface ApiService {
     @GET("post/24hours")
     suspend fun getTodayPost(): Response<List<PostResponseModel>>
 
-    @POST("/login")
-    suspend fun tryLogin(@Body loginModel: LoginModel) : Response<Boolean>
+    @POST("login")
+    suspend fun tryLogin(@Body loginModel: LoginModel): Response<Boolean>
 
-    @POST("/user")
-    suspend fun registerUser(@Body user: UserModel) : Response<UserResponseModel>
+    @POST("user")
+    suspend fun registerUser(@Body user: UserModel): Response<UserResponseModel>
 
-    @GET("/user/find/{id}")
-    suspend fun getUserInfoById(@Path("id") uId: Int) : Response<UserResponseModel>
+    @GET("user/find/{id}")
+    suspend fun getUserInfoById(@Path("id") uId: Int): Response<UserResponseModel>
 
-    @GET("/user/{nickname}")
-    suspend fun getUserByNickname(@Path("nickname") nickname: String) : Response<UserResponseModel>
+    @GET("user/{nickname}")
+    suspend fun getUserByNickname(@Path("nickname") nickname: String): Response<UserResponseModel>
 
 
     @GET("club")
@@ -78,8 +81,10 @@ interface ApiService {
 
     @GET("wishMeeting/myList/{id}")
     suspend fun getWishMeetingPost(@Path("id") uId: Int): Response<List<PostResponseModel>>
+
     @GET("wishClub/myList/{id}")
     suspend fun getWishClubPost(@Path("id") uId: Int): Response<List<ClubPostResponseModel>>
+
     @GET("wish/myList/{id}")
     suspend fun getWishHotPlacePost(@Path("id") uId: Int): Response<List<HotPlaceResponsePostModel>>
 }
