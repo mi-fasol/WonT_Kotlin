@@ -10,6 +10,9 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -24,6 +27,15 @@ import com.example.haemo_kotlin.R
 fun MainBottomNavigation(navController: NavController, onItemSelected: (String) -> Unit) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
+
+    val currentRoute = navController.currentDestination?.route ?: ""
+
+    val selectedItem: MutableState<String> = remember { mutableStateOf(currentRoute) }
+
+    val onNavigationItemSelected: (String) -> Unit = { route ->
+        selectedItem.value = route
+        onItemSelected(route)
+    }
 
     BottomNavigation(
         backgroundColor = Color.White,
@@ -41,13 +53,14 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
-            selected = navController.currentDestination?.route == "mainScreen",
+            selected = selectedItem.value == "mainScreen",
             onClick = {
 //                navController.navigate(NavigationRoutes.MainScreen.route) {
 //                    popUpTo(NavigationRoutes.MainScreen.route) {
 //                        inclusive = true
 //                    }
 //                }
+                onNavigationItemSelected("mainScreen")
                 onItemSelected("mainScreen")
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
@@ -61,8 +74,9 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
-            selected = navController.currentDestination?.route == "clubScreen",
+            selected = selectedItem.value == "clubScreen",
             onClick = {
+                onNavigationItemSelected("clubScreen")
                 onItemSelected("clubScreen")
 //                navController.navigate(NavigationRoutes.ClubScreen.route) {
 //                    popUpTo(NavigationRoutes.MainScreen.route) {
@@ -81,8 +95,9 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
-            selected = navController.currentDestination?.route == "hotPlaceScreen",
+            selected = selectedItem.value == "hotPlaceScreen",
             onClick = {
+                onNavigationItemSelected("hotPlaceScreen")
                 onItemSelected("hotPlaceScreen")
 //                navController.navigate(NavigationRoutes.HotPlaceScreen.route) {
 //                    popUpTo(NavigationRoutes.MainScreen.route) {
@@ -95,7 +110,7 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
         )
         BottomNavigationItem(
             icon = {
-                val isSelected = navController.currentDestination?.route == "meetingScreen"
+                val isSelected = selectedItem.value == "myPageScreen"
                 val borderColor = if (isSelected) R.color.mainColor else R.color.mainGreyColor
                 Icon(
                     painter = painterResource(id = userMyPageImageList[0]),
@@ -110,14 +125,10 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                     tint = Color.Unspecified
                 )
             },
-            selected = navController.currentDestination?.route == "myPageScreen",
+            selected = selectedItem.value == "myPageScreen",
             onClick = {
+                onNavigationItemSelected ("myPageScreen")
                 onItemSelected("myPageScreen")
-//                navController.navigate(NavigationRoutes.MyPageScreen.route) {
-//                    popUpTo(NavigationRoutes.MyPageScreen.route) {
-//                        inclusive = true
-//                    }
-//                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)

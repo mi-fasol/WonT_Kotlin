@@ -22,7 +22,13 @@ import com.example.haemo_kotlin.viewModel.UserViewModel
 
 
 @Composable
-fun MainScreen(navController: NavController, postViewModel: PostViewModel, clubPostViewModel: ClubPostViewModel, hotPostViewModel: HotPlacePostViewModel, userViewModel: UserViewModel) {
+fun MainScreen(
+    navController: NavController,
+    postViewModel: PostViewModel,
+    clubPostViewModel: ClubPostViewModel,
+    hotPostViewModel: HotPlacePostViewModel,
+    userViewModel: UserViewModel
+) {
     var selectedItem by remember { mutableStateOf("mainScreen") }
 
     val onItemSelected: (String) -> Unit = { item ->
@@ -41,18 +47,22 @@ fun MainScreen(navController: NavController, postViewModel: PostViewModel, clubP
                 .padding(innerPadding)
         ) {
             when (selectedItem) {
-                "mainScreen" ->  {
+                "mainScreen" -> {
                     MeetingScreen(postViewModel = postViewModel, navController = navController)
                 }
+
                 "clubScreen" -> {
                     ClubScreen(postViewModel = clubPostViewModel, navController = navController)
                 }
+
                 "hotPlaceScreen" -> {
                     HotPlaceScreen(postViewModel = hotPostViewModel, navController = navController)
                 }
+
                 "myPageScreen" -> {
                     MyPageScreen(viewModel = userViewModel, navController = navController)
                 }
+
                 else -> {
                     MeetingScreen(postViewModel = postViewModel, navController = navController)
                 }
