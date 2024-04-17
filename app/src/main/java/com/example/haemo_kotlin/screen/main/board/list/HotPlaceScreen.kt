@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.screen.main.board
+package com.example.haemo_kotlin.screen.main.board.list
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -38,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
@@ -49,12 +48,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.post.HotPlacePostModel
+import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
-import com.example.haemo_kotlin.util.PostRegisterFloatingButton
 import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -87,11 +84,11 @@ fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavContr
             ) {
                 Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
                 when (postListState) {
-                    is Resource.Error<List<HotPlacePostModel>> -> {
+                    is Resource.Error<List<HotPlaceResponsePostModel>> -> {
                         ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
                     }
 
-                    is Resource.Loading<List<HotPlacePostModel>> -> {
+                    is Resource.Loading<List<HotPlaceResponsePostModel>> -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -113,7 +110,7 @@ fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavContr
 }
 
 @Composable
-fun PopularPlace(postList: List<HotPlacePostModel>, viewModel: HotPlacePostViewModel) {
+fun PopularPlace(postList: List<HotPlaceResponsePostModel>, viewModel: HotPlacePostViewModel) {
     when (postList.size) {
         0 -> {
             Box {}
@@ -144,7 +141,7 @@ fun PopularPlace(postList: List<HotPlacePostModel>, viewModel: HotPlacePostViewM
 }
 
 @Composable
-fun PopularPlaceItem(post: HotPlacePostModel, viewModel: HotPlacePostViewModel) {
+fun PopularPlaceItem(post: HotPlaceResponsePostModel, viewModel: HotPlacePostViewModel) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -215,7 +212,7 @@ fun PopularPlaceItem(post: HotPlacePostModel, viewModel: HotPlacePostViewModel) 
 }
 
 @Composable
-fun HotPlaceBoard(postList: List<HotPlacePostModel>, viewModel: HotPlacePostViewModel) {
+fun HotPlaceBoard(postList: List<HotPlaceResponsePostModel>, viewModel: HotPlacePostViewModel) {
     Column {
         Text(
             "이런 장소는 어때요?", fontSize = 15.sp,
@@ -238,7 +235,7 @@ fun HotPlaceBoard(postList: List<HotPlacePostModel>, viewModel: HotPlacePostView
 }
 
 @Composable
-fun HotPlaceBoardItem(post: HotPlacePostModel, viewModel: HotPlacePostViewModel) {
+fun HotPlaceBoardItem(post: HotPlaceResponsePostModel, viewModel: HotPlacePostViewModel) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
