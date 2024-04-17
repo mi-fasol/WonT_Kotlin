@@ -15,14 +15,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.haemo_kotlin.screen.main.board.ClubPostDetailScreen
-import com.example.haemo_kotlin.screen.main.board.ClubPostRegisterScreen
-import com.example.haemo_kotlin.screen.main.board.ClubScreen
-import com.example.haemo_kotlin.screen.main.board.HotPlaceScreen
+import com.example.haemo_kotlin.screen.main.board.detail.ClubPostDetailScreen
+import com.example.haemo_kotlin.screen.main.board.register.ClubPostRegisterScreen
+import com.example.haemo_kotlin.screen.main.board.list.ClubScreen
+import com.example.haemo_kotlin.screen.main.board.list.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.board.MainScreen
-import com.example.haemo_kotlin.screen.main.board.MeetingPostDetailScreen
-import com.example.haemo_kotlin.screen.main.board.MeetingScreen
-import com.example.haemo_kotlin.screen.main.board.PostRegisterScreen
+import com.example.haemo_kotlin.screen.main.board.detail.MeetingPostDetailScreen
+import com.example.haemo_kotlin.screen.main.board.list.MeetingScreen
+import com.example.haemo_kotlin.screen.main.board.register.PostRegisterScreen
+import com.example.haemo_kotlin.screen.main.board.register.HotPlacePostRegisterScreen
 import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.screen.setting.MyWishClubScreen
@@ -160,6 +161,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.ClubPostRegisterScreen.route) {
                             ClubPostRegisterScreen(clubPostViewModel, navController)
+                        }
+                        composable(NavigationRoutes.HotPlacePostRegisterScreen.route) {
+                            HotPlacePostRegisterScreen(hotPlacePostViewModel, navController)
                         }
                     }
                 }

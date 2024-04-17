@@ -60,7 +60,9 @@ fun PostRegisterFloatingButton(navController: NavController) {
                 Spacer(modifier = Modifier.height(10.dp))
                 FabItem(
                     title = "핫플 등록",
-                    onClicked = { /* ... */ }
+                    onClicked = {
+                        navController.navigate(NavigationRoutes.HotPlacePostRegisterScreen.route)
+                    }
                 )
             }
         }
