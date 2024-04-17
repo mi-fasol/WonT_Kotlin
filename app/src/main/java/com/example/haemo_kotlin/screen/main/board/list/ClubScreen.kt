@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.screen.main.board
+package com.example.haemo_kotlin.screen.main.board.list
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -48,14 +48,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.util.PostRegisterFloatingButton
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")

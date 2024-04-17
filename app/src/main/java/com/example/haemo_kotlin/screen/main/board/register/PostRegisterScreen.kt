@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.screen.main.board
+package com.example.haemo_kotlin.screen.main.board.register
 
 import android.annotation.SuppressLint
 import android.os.Build

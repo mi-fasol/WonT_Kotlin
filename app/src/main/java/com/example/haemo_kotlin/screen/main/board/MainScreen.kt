@@ -11,9 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.haemo_kotlin.screen.main.board.list.ClubScreen
+import com.example.haemo_kotlin.screen.main.board.list.HotPlaceScreen
+import com.example.haemo_kotlin.screen.main.board.list.MeetingScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
-import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.PostRegisterFloatingButton
 import com.example.haemo_kotlin.viewModel.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel

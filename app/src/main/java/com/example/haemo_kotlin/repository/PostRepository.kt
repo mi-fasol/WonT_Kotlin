@@ -5,6 +5,7 @@ import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
+import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
@@ -20,6 +21,10 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
 
     suspend fun registerClubPost(post: ClubPostModel): Response<ClubPostResponseModel> {
         return retrofitClient.service.registerClubPost(post)
+    }
+
+    suspend fun registerHotPlacePost(post: HotPlacePostModel): Response<HotPlaceResponsePostModel> {
+        return retrofitClient.service.registerHotPlacePost(post)
     }
 
     suspend fun getPost(): Response<List<PostResponseModel>> {
@@ -51,15 +56,15 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.getPostingUser(pId)
     }
 
-    suspend fun getHotPlacePost(): Response<List<HotPlacePostModel>> {
+    suspend fun getHotPlacePost(): Response<List<HotPlaceResponsePostModel>> {
         return retrofitClient.service.getHotPlacePost()
     }
 
-    suspend fun getHotPlaceById(idx: Int): Response<HotPlacePostModel> {
+    suspend fun getHotPlaceById(idx: Int): Response<HotPlaceResponsePostModel> {
         return retrofitClient.service.getHotPlacePostById(idx)
     }
 
-    suspend fun getPopularHotPlace(): Response<List<HotPlacePostModel>> {
+    suspend fun getPopularHotPlace(): Response<List<HotPlaceResponsePostModel>> {
         return retrofitClient.service.getPopularHotPlacePost()
     }
 

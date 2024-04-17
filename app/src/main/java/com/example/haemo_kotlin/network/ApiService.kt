@@ -71,13 +71,13 @@ interface ApiService {
 
 
     @GET("hot")
-    suspend fun getHotPlacePost(): Response<List<HotPlacePostModel>>
+    suspend fun getHotPlacePost(): Response<List<HotPlaceResponsePostModel>>
 
     @GET("hot/{id}")
-    suspend fun getHotPlacePostById(@Path("id") idx: Int): Response<HotPlacePostModel>
+    suspend fun getHotPlacePostById(@Path("id") idx: Int): Response<HotPlaceResponsePostModel>
 
     @GET("hot/popular")
-    suspend fun getPopularHotPlacePost(): Response<List<HotPlacePostModel>>
+    suspend fun getPopularHotPlacePost(): Response<List<HotPlaceResponsePostModel>>
 
     // 모임 참여
 
@@ -111,4 +111,8 @@ interface ApiService {
     @Multipart
     @POST("image")
     suspend fun uploadImage(@Part file: MultipartBody.Part): Response<String>
+
+    @Multipart
+    @POST("image/list")
+    suspend fun uploadImageList(@Part files: List<MultipartBody.Part>): Response<List<String>>
 }

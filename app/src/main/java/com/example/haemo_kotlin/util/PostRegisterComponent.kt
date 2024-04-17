@@ -54,7 +54,7 @@ fun TextEnterField(type: String, value: String, onValueChange: (String) -> Unit)
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 40.dp),
+            .padding(top = 40.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -190,11 +190,9 @@ fun PostRegisterButton(
     val isValid = when (type) {
         1 -> viewModel!!.isValid.collectAsState().value
         2 -> clubViewModel!!.isValid.collectAsState().value
-        3 -> viewModel!!.isValid.collectAsState().value
+        3 -> hotPlacePostViewModel!!.isValid.collectAsState().value
         else -> false
     }
-
-    Log.d("포스트", clubViewModel!!.isValid.collectAsState().value.toString())
 
     val context = LocalContext.current
 

@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.screen.main.board
+package com.example.haemo_kotlin.screen.main.board.list
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -41,10 +41,8 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.util.PostRegisterFloatingButton
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.PostViewModel
 

@@ -35,6 +35,27 @@ class ImageRepository @Inject constructor(
         }
     }
 
+    suspend fun uploadImageList(imageUris: List<Uri>): List<String> {
+        try {
+            val bodys = mutableSetOf<MultipartBody.Part>()
+            imageUris.map {
+                val file = getFileFromUri(it, context)
+                val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                bodys.add(MultipartBody.Part.createFormData("file", file.name, requestFile))
+            }
+
+            val response = RetrofitClient.service.uploadImageList(bodys.toList())
+            if (response.isSuccessful) {
+                val imageUrls = response.body()!!
+                return imageUrls
+            } else {
+                throw Exception("Image upload failed: ${response.errorBody()?.string()}")
+            }
+        } catch (e: Exception) {
+            throw Exception("Image upload failed: ${e.message}")
+        }
+    }
+
     private fun getFileFromUri(uri: Uri, context: Context): File {
         val inputStream =
             context.contentResolver.openInputStream(uri) ?: throw FileNotFoundException()
