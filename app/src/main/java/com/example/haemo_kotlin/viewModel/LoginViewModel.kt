@@ -24,7 +24,7 @@ class LoginViewModel @Inject constructor(
     private val repository: UserRepository
 ) : ViewModel() {
 
-    enum class LoginUserState{SUCCESS, LOGIN, NONE}
+    enum class LoginUserState { SUCCESS, LOGIN, NONE }
 
     private val _loginState = MutableStateFlow<Resource<LoginModel>>(Resource.loading(null))
     val loginState: StateFlow<Resource<LoginModel>> = _loginState.asStateFlow()
@@ -46,13 +46,14 @@ class LoginViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     fun checkUserExists(context: Context) {
+        _user.value = LoginUserState.NONE
         val studentId = SharedPreferenceUtil(context).getString("studentId", "").toString()
         val uId = SharedPreferenceUtil(context).getInt("uId", 0)
 
-        if(studentId.isNotBlank()){
-            if(uId == 0){
+        if (studentId.isNotBlank()) {
+            if (uId == 0) {
                 _user.value = LoginUserState.LOGIN
-            } else{
+            } else {
                 _user.value = LoginUserState.SUCCESS
             }
         }
@@ -69,7 +70,7 @@ class LoginViewModel @Inject constructor(
                     if (isSuccess != null) {
                         _isLoginSuccess.value = isSuccess
                     }
-                    if(isSuccess!!){
+                    if (isSuccess!!) {
                         SharedPreferenceUtil(context).setString("studentId", id)
                     }
                     Log.d("로그인 결과", _isLoginSuccess.value.toString())

@@ -52,6 +52,7 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.EnterInfo
+import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.LoginViewModel
 import kotlinx.coroutines.launch
 
@@ -117,10 +118,11 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun loginButton(loginViewModel: LoginViewModel, navController: NavController) {
+fun loginButton(loginViewModel: LoginViewModel, navController:NavController) {
     val id by loginViewModel.id.collectAsState()
     val pwd by loginViewModel.pwd.collectAsState()
     val isValid = loginViewModel.isValid.collectAsState().value
+    val haveId = loginViewModel.loginUser.collectAsState().value
     val loginResult by loginViewModel.isLoginSuccess.collectAsState()
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
@@ -130,8 +132,16 @@ fun loginButton(loginViewModel: LoginViewModel, navController: NavController) {
 
     LaunchedEffect(loginResult) {
         if (loginResult) {
-            launcher.launch(Intent(context, MainActivity::class.java))
-            (context as? ComponentActivity)?.finish()
+            loginViewModel.checkUserExists(context)
+            when(haveId){
+                LoginViewModel.LoginUserState.LOGIN -> {
+                    navController.navigate(NavigationRoutes.RegisterScreen.route)
+                }
+                else -> {
+                    launcher.launch(Intent(context, MainActivity::class.java))
+                    (context as? ComponentActivity)?.finish()
+                }
+            }
         }
     }
 

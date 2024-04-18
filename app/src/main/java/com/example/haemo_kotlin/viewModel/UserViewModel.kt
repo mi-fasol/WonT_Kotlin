@@ -53,7 +53,8 @@ class UserViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     fun registerUser(nickname: String, major: String, gender: String, context: Context) {
-        val user = UserModel(nickname, major, gender, image.value)
+        val studentId = SharedPreferenceUtil(context).getString("studentId", "").toString().toInt()
+        val user = UserModel(nickname, studentId, major, gender, image.value)
 
         viewModelScope.launch {
             _registerState.value = Resource.loading(null)

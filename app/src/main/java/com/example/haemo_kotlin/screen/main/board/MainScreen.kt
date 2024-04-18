@@ -17,9 +17,9 @@ import com.example.haemo_kotlin.screen.main.board.list.MeetingScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.PostRegisterFloatingButton
-import com.example.haemo_kotlin.viewModel.ClubPostViewModel
-import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
-import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
+import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
+import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
 
 

@@ -268,7 +268,7 @@ fun UserRegisterButton(viewModel: UserViewModel, navController: NavController) {
     ) {
         androidx.compose.material3.Button(
             onClick = {
-                viewModel.registerUser(nickname, gender, major, context)
+                viewModel.registerUser(nickname, major, gender, context)
             },
             enabled = isValid,
             colors = ButtonDefaults.buttonColors(
