@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "536803529638",
+    "project_id": "haemo-c394a",
+    "storage_bucket": "haemo-c394a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:536803529638:android:09ff4d58114e3afa6bf567",
+        "android_client_info": {
+          "package_name": "com.example.haemo_kotlin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5FkHJGSA_85p2Ni7tGGMxPH-sMz6pzzc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -141,7 +141,6 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SendReply(type: String, postType: Int, value: String, onValueChange: (String) -> Unit) {
     val config = LocalConfiguration.current
@@ -165,19 +164,6 @@ fun SendReply(type: String, postType: Int, value: String, onValueChange: (String
                     .background(Color(0xffededed), RoundedCornerShape(25.dp))
                     .padding(10.dp)
             )
-//            OutlinedTextField(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .weight(10f),
-//                value = value,
-//                onValueChange = onValueChange,
-//                colors = TextFieldDefaults.outlinedTextFieldColors(
-//                    focusedBorderColor = Color(0xff82C0EA),
-//                    unfocusedBorderColor = Color.LightGray,
-//                    containerColor = Color.White
-//                ),
-//                shape = RoundedCornerShape(15.dp)
-//            )
             FilledIconButton(
                 onClick = { /*TODO*/ },
                 shape = IconButtonDefaults.filledShape,

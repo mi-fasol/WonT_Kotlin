@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -66,11 +68,14 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
             )
         },
         actions = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                navController.navigate(NavigationRoutes.ChatScreen.createRoute(4))
+            }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    painterResource(id = R.drawable.chat_icon),
                     contentDescription = null,
-                    tint = colorResource(id = R.color.mainColor)
+                    tint = colorResource(id = R.color.mainColor),
+                    modifier = Modifier.size(30.dp)
                 )
             }
         },
@@ -175,5 +180,46 @@ fun PostRegisterAppBar(appBarText: String, navController: NavController) {
             titleContentColor = Color.White,
             actionIconContentColor = Color.Transparent
         )
+    )
+}
+
+@Composable
+fun ChatRoomAppBar(nickname: String, navController: NavController) {
+    TopAppBar(
+        title = {
+            Text(
+                text = nickname,
+                color = colorResource(id = R.color.mainTextColor),
+                modifier = Modifier.fillMaxWidth(),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 17.sp
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "뒤로 가기",
+                    modifier = Modifier.size(35.dp),
+                    tint = colorResource(
+                        id = R.color.mainColor
+                    )
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { navController.navigateUp() }) {
+                Icon(
+                    painterResource(id = R.drawable.chat_icon),
+                    contentDescription = "채팅 목록",
+                    modifier = Modifier.size(30.dp),
+                    tint = colorResource(
+                        id = R.color.mainColor
+                    )
+                )
+            }
+        },
+        backgroundColor = Color.Transparent,
+        elevation = 0.dp
     )
 }

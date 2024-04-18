@@ -39,4 +39,7 @@ sealed class NavigationRoutes(val route: String) {
 
     data object HotPlacePostRegisterScreen : NavigationRoutes("hotPlacePostRegisterScreen")
 
+    data object ChatScreen : NavigationRoutes("chatScreen/{receiverId}") {
+        fun createRoute(receiverId: Int) = "chatScreen/$receiverId"
+    }
 }

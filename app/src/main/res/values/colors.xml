@@ -12,4 +12,6 @@
     <color name="mainGreyColor">#FF595959</color>
     <color name="myBoardColor">#FF818181</color>
     <color name="postRegisterTextColor">#FFC8C8C8</color>
+    <color name="chatFromMeColor">#FFC6EFF9</color>
+    <color name="chatFromOtherColor">#FFDEDEDE</color>
 </resources>

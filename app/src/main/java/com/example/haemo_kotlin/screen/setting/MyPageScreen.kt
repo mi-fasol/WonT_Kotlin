@@ -42,6 +42,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.userProfileList
 import com.example.haemo_kotlin.viewModel.UserViewModel
 
@@ -51,11 +52,11 @@ fun MyPageScreen(viewModel: UserViewModel, navController: NavController) {
     val context = LocalContext.current
     val user = viewModel.user.collectAsState().value
     val userState = viewModel.fetchUserState.collectAsState().value
-
+    val uId = SharedPreferenceUtil(context).getInt("uId", 0)
     Log.d("미란 user", user.toString())
 
     LaunchedEffect(true) {
-        viewModel.fetchUserInfoById(context)
+        viewModel.fetchUserInfoById(uId)
     }
 
     Scaffold(

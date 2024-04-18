@@ -1,7 +1,5 @@
 package com.example.haemo_kotlin.util
 
-import android.media.Image
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -19,7 +17,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
@@ -57,11 +54,6 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
             },
             selected = selectedItem.value == "mainScreen",
             onClick = {
-//                navController.navigate(NavigationRoutes.MainScreen.route) {
-//                    popUpTo(NavigationRoutes.MainScreen.route) {
-//                        inclusive = true
-//                    }
-//                }
                 onNavigationItemSelected("mainScreen")
                 onItemSelected("mainScreen")
             },
@@ -80,11 +72,6 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
             onClick = {
                 onNavigationItemSelected("clubScreen")
                 onItemSelected("clubScreen")
-//                navController.navigate(NavigationRoutes.ClubScreen.route) {
-//                    popUpTo(NavigationRoutes.MainScreen.route) {
-//                        inclusive = true
-//                    }
-//                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
@@ -101,11 +88,6 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
             onClick = {
                 onNavigationItemSelected("hotPlaceScreen")
                 onItemSelected("hotPlaceScreen")
-//                navController.navigate(NavigationRoutes.HotPlaceScreen.route) {
-//                    popUpTo(NavigationRoutes.MainScreen.route) {
-//                        inclusive = true
-//                    }
-//                }
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)

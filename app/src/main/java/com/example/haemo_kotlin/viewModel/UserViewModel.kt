@@ -80,13 +80,11 @@ class UserViewModel @Inject constructor(
     }
 
 
-    fun fetchUserInfoById(context: Context) {
-        val id = SharedPreferenceUtil(context).getInt("uId", 0)
-        Log.d("미란", id.toString())
+    fun fetchUserInfoById(uId : Int) {
         viewModelScope.launch {
             _registerState.value = Resource.loading(null)
             try {
-                val response = repository.getUserInfoById(id)
+                val response = repository.getUserInfoById(uId)
                 if (response.isSuccessful && response.body() != null) {
                     val responseUser = response.body()
                     _user.value = responseUser

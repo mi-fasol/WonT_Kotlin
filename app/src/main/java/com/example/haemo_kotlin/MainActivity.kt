@@ -24,6 +24,7 @@ import com.example.haemo_kotlin.screen.main.board.detail.MeetingPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.list.MeetingScreen
 import com.example.haemo_kotlin.screen.main.board.register.PostRegisterScreen
 import com.example.haemo_kotlin.screen.main.board.register.HotPlacePostRegisterScreen
+import com.example.haemo_kotlin.screen.main.chat.ChatScreen
 import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.screen.setting.MyWishClubScreen
@@ -31,12 +32,13 @@ import com.example.haemo_kotlin.screen.setting.MyWishHotPlaceScreen
 import com.example.haemo_kotlin.screen.setting.MyWishMeetingScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.viewModel.ClubPostViewModel
+import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.CommentViewModel
-import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
-import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
+import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
 import com.example.haemo_kotlin.viewModel.WishViewModel
+import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
@@ -56,6 +58,7 @@ class MainActivity : ComponentActivity() {
     private val userViewModel by viewModels<UserViewModel>()
     private val commentViewModel by viewModels<CommentViewModel>()
     private val wishViewModel by viewModels<WishViewModel>()
+    private val chatViewModel by viewModels<ChatViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -164,6 +167,16 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.HotPlacePostRegisterScreen.route) {
                             HotPlacePostRegisterScreen(hotPlacePostViewModel, navController)
+                        }
+                        composable(NavigationRoutes.ChatScreen.route, arguments = listOf(
+                            navArgument("receiverId") { type = NavType.IntType }
+                        )
+                        ) { entry ->
+                            ChatScreen(
+                                chatViewModel = chatViewModel,
+                                receiverId = entry.arguments?.getInt("receiverId")!!,
+                                navController = navController
+                            )
                         }
                     }
                 }
