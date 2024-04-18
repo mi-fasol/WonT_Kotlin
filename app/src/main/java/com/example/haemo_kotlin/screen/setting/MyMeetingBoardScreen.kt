@@ -38,7 +38,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.convertDate
-import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @Composable
 fun MyMeetingBoardScreen(

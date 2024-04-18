@@ -51,7 +51,7 @@ import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.userMyPageImageList
-import com.example.haemo_kotlin.viewModel.ClubPostViewModel
+import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.CommentViewModel
 
 @Composable

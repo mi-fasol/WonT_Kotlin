@@ -1,17 +1,12 @@
-package com.example.haemo_kotlin.viewModel
+package com.example.haemo_kotlin.viewModel.board
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
-import com.example.haemo_kotlin.model.post.PostModel
-import com.example.haemo_kotlin.model.post.PostResponseModel
-import com.example.haemo_kotlin.model.post.containsHangulSearch
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.ImageRepository

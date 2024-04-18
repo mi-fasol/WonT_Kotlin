@@ -13,3 +13,5 @@ data class HotPlaceResponsePostModel(
     @SerializedName("imageList") val imageList: List<String>?,
     @SerializedName("wishing") val wish: Int,
 )
+
+// ["https://haemo.s3.ap-northeast-2.amazonaws.com/upload_image_1713351198655","https://haemo.s3.ap-northeast-2.amazonaws.com/upload_image_1713351198680"]

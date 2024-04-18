@@ -44,7 +44,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.convertDate
-import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable

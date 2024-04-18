@@ -1,16 +1,13 @@
-package com.example.haemo_kotlin.viewModel
+package com.example.haemo_kotlin.viewModel.board
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
-import com.example.haemo_kotlin.model.user.UserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.PostRepository
@@ -25,9 +22,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 

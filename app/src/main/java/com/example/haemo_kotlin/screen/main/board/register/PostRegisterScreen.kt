@@ -23,7 +23,7 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.*
-import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
 @Composable

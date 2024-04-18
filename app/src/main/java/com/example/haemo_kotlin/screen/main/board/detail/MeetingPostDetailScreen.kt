@@ -50,7 +50,7 @@ import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.userMyPageImageList
 import com.example.haemo_kotlin.viewModel.CommentViewModel
-import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @Composable
 fun MeetingPostDetailScreen(

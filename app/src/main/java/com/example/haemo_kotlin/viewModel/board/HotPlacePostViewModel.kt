@@ -1,11 +1,10 @@
-package com.example.haemo_kotlin.viewModel
+package com.example.haemo_kotlin.viewModel.board
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource

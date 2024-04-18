@@ -52,7 +52,7 @@ import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
-import com.example.haemo_kotlin.viewModel.HotPlacePostViewModel
+import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable

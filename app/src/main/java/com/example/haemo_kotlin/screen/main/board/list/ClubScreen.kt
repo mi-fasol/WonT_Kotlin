@@ -53,7 +53,7 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.viewModel.ClubPostViewModel
+import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable

@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
@@ -26,6 +27,7 @@ import com.example.haemo_kotlin.R
 @Composable
 fun MainBottomNavigation(navController: NavController, onItemSelected: (String) -> Unit) {
     val configuration = LocalConfiguration.current
+    val context = LocalContext.current
     val screenWidth = configuration.screenWidthDp
 
     val currentRoute = navController.currentDestination?.route ?: ""
@@ -113,7 +115,7 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                 val isSelected = selectedItem.value == "myPageScreen"
                 val borderColor = if (isSelected) R.color.mainColor else R.color.mainGreyColor
                 Icon(
-                    painter = painterResource(id = userMyPageImageList[0]),
+                    painter = painterResource(id = userMyPageImageList[SharedPreferenceUtil(context).getInt("image", 0)]),
                     contentDescription = null,
                     modifier = Modifier
                         .size((screenWidth / 15).dp)

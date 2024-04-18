@@ -18,7 +18,7 @@ import com.example.haemo_kotlin.screen.intro.LoginScreen
 import com.example.haemo_kotlin.screen.intro.UserRegisterScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.viewModel.LoginViewModel
-import com.example.haemo_kotlin.viewModel.PostViewModel
+import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
