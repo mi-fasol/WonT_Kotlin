@@ -64,8 +64,7 @@ class UserViewModel @Inject constructor(
                     val responseUser = response.body()
                     _registerState.value = Resource.success(response.body())
                     _isRegisterSuccess.value = true
-                    SharedPreferenceUtil(context).setInt("uId", responseUser!!.uId)
-                    SharedPreferenceUtil(context).setInt("image", responseUser.userImage)
+                    SharedPreferenceUtil(context).setUser(responseUser!!)
                     Log.d("유저", responseUser.toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
@@ -80,7 +79,7 @@ class UserViewModel @Inject constructor(
     }
 
 
-    fun fetchUserInfoById(uId : Int) {
+    fun fetchUserInfoById(uId : Int, context: Context) {
         viewModelScope.launch {
             _registerState.value = Resource.loading(null)
             try {
@@ -89,6 +88,7 @@ class UserViewModel @Inject constructor(
                     val responseUser = response.body()
                     _user.value = responseUser
                     _fetchUserState.value = Resource.success(response.body())
+                    SharedPreferenceUtil(context).setUser(responseUser!!)
                     Log.d("유저", responseUser.toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"

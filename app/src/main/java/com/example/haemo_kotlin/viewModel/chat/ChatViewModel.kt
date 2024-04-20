@@ -1,9 +1,11 @@
 package com.example.haemo_kotlin.viewModel.chat
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haemo_kotlin.MainApplication
 import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.model.chat.ChatUserModel
@@ -24,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: UserRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val firebaseDB = FirebaseDatabase.getInstance()
@@ -32,22 +35,36 @@ class ChatViewModel @Inject constructor(
     private val userRef = firebaseDB.getReference("user")
 
     val _receiverInfo = MutableStateFlow<UserResponseModel?>(null)
-    val receiverInfo : StateFlow<UserResponseModel?> = _receiverInfo
+    val receiverInfo: StateFlow<UserResponseModel?> = _receiverInfo
 
     var chatMessages = MutableStateFlow<List<ChatMessageModel>>(emptyList())
     var fireBaseChatModel = MutableStateFlow<FireBaseChatModel?>(null)
+    var userChatList = MutableStateFlow<List<String>>(emptyList())
 
+    init {
+        val userId = SharedPreferenceUtil(context).getUser().uId
+        firebaseDB.reference.child("user").child(userId.toString()).get()
+            .addOnSuccessListener {
+                it.value?.let { it ->
+                    userChatList.value = it as List<String>
+                }
+                Log.d("유저 채팅 정보 가져옴", userChatList.value.toString())
+            }
+            .addOnFailureListener {
+            }
+    }
+
+    // 채팅룸 입장 시 정보 가져오기
     fun getChatRoomInfo(chatId: String, receiverId: Int) {
         viewModelScope.launch {
             try {
-                // receiverId를 사용하여 사용자 정보를 가져옴
                 val response = repository.getUserInfoById(receiverId)
                 if (response.isSuccessful) {
                     val receiverInfo = response.body()
                     receiverInfo?.let { userInfo ->
-                        // 가져온 사용자 정보를 MutableStateFlow에 업데이트
                         _receiverInfo.value = userInfo
                     }
+                    Log.d("미란 receiver", _receiverInfo.value.toString())
                 } else {
                     Log.e("ChatViewModel", "Failed to get receiver info: ${response.errorBody()}")
                 }
@@ -113,17 +130,15 @@ class ChatViewModel @Inject constructor(
     fun sendMessage(
         chatId: String,
         receiverId: Int,
-        chatMessageModel: ChatMessageModel,
-        context: Context
+        chatMessageModel: ChatMessageModel
     ) {
-
         if (chatMessages.value.isEmpty()) {
             chatMessages.value = listOf(chatMessageModel)
-            createNewChatRoom(chatId, receiverId, chatMessages.value, context)
+            Log.d("미란 sendMessage", "새로운 채팅방 만들 거야")
+            createNewChatRoom(chatId, receiverId, chatMessages.value)
         } else {
             chatMessages.value += chatMessageModel
-            chatRef.child(chatId).child("messages")
-                .setValue(chatMessages.value)
+            chatRef.child(chatId).child("messages").setValue(chatMessages.value)
                 .addOnSuccessListener {
                     Log.d("미란 message", "메시지 전송 됨")
                 }
@@ -133,65 +148,51 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    // 새로운 채팅방 생성
     private fun createNewChatRoom(
         chatId: String,
         receiverId: Int,
-        message: List<ChatMessageModel>,
-        context: Context
+        message: List<ChatMessageModel>
     ) {
 
-        val uId = SharedPreferenceUtil(context).getInt("uId", 0)
-        var usersChatList: List<String> = emptyList()
+        val myUserData = SharedPreferenceUtil(context).getUser()
+        val uId = myUserData.uId
+        val nickname = myUserData.nickname
+
+        val sender = ChatUserModel(uId, nickname)
+        Log.d("미란 newChatRoom sender:", sender.toString())
 
         viewModelScope.launch {
-            viewModelScope.async {
-                userRef.child(uId.toString()).get()
+            if (!userChatList.value.contains(chatId)) {
+                val receiverInfo = repository.getUserInfoById(receiverId)
+                val receiver = ChatUserModel(receiverId, receiverInfo.body()!!.nickname)
+
+                val fireBaseChatModel = FireBaseChatModel(chatId, sender, receiver, message)
+
+                chatRef.child(chatId).setValue(fireBaseChatModel)
                     .addOnSuccessListener {
-                        it.value?.let { data ->
-                            usersChatList = data as List<String>
-                        }
-                        Log.d("미란 ChatList", usersChatList.toString())
+                        Log.d("미란 chatRoom", "채팅룸 생성 완료")
+                        getChatRoomInfo(chatId, receiverId)
                     }
                     .addOnFailureListener {
-                        Log.d(
-                            "미란 ChatList", it.toString()
-                        )
+                        Log.d("미란 chatRoom", it.toString())
                     }
-            }.await()
 
-            val nickname = SharedPreferenceUtil(context).getString("nickname", "")
-            val sender = ChatUserModel(uId, nickname.toString())
+                Log.d("미란 UserChatInfo 이전 리스트: ", userChatList.value.toString())
 
-            val receiverInfo = repository.getUserInfoById(receiverId)
-            val receiver = ChatUserModel(receiverId, receiverInfo.body()!!.nickname)
+                userChatList.value += chatId
 
-            val fireBaseChatModel = FireBaseChatModel(chatId, sender, receiver, message)
+                Log.d("미란 UserChatInfo 추가 후 리스트: ", userChatList.value.toString())
 
-            chatRef.child(chatId).setValue(fireBaseChatModel)
-                .addOnSuccessListener {
-                    Log.d("미란 chatRoom", "채팅룸 생성 완료")
-                    getChatRoomInfo(chatId, receiverId)
-                }
-                .addOnFailureListener {
-                    Log.d("미란 chatRoom", it.toString())
-                }
-
-            if (usersChatList.isEmpty()) {
-                usersChatList = listOf(chatId)
-            } else {
-                usersChatList.plus(chatId)
+                userRef.child(uId.toString()).setValue(userChatList.value)
+                    .addOnSuccessListener {
+                        Log.d("미란 UserChatInfo", userChatList.value.toString())
+                        getChatRoomInfo(chatId, receiverId)
+                    }
+                    .addOnFailureListener {
+                        Log.d("미란 UserChatInfo", it.toString())
+                    }
             }
-
-            Log.d("미란 UserChatInfo 이전 리스트: ", usersChatList.toString())
-
-            firebaseDB.reference.child("user").child(uId.toString()).setValue(usersChatList)
-                .addOnSuccessListener {
-                    Log.d("미란 UserChatInfo", usersChatList.toString())
-                    getChatRoomInfo(chatId, receiverId)
-                }
-                .addOnFailureListener {
-                    Log.d("미란 UserChatInfo", it.toString())
-                }
         }
     }
 }

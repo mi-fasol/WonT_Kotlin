@@ -67,10 +67,12 @@ fun ChatScreen(chatViewModel: ChatViewModel,  receiverId: Int, navController: Na
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            ChatRoomAppBar(
-                "미늉늉",
-                navController
-            )
+            receiver?.let {
+                ChatRoomAppBar(
+                    it.nickname,
+                    navController
+                )
+            }
         }
     ) {
         Column(

@@ -55,7 +55,6 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPageAppBar(appBarText: String, navController: NavController) {
     TopAppBar(
@@ -69,7 +68,7 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
         },
         actions = {
             IconButton(onClick = {
-                navController.navigate(NavigationRoutes.ChatScreen.createRoute(4))
+                navController.navigate(NavigationRoutes.ChatScreen.createRoute(3))
             }) {
                 Icon(
                     painterResource(id = R.drawable.chat_icon),

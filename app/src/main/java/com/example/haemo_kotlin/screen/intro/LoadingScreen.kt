@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.LoginViewModel
 import kotlinx.coroutines.delay
@@ -76,10 +77,10 @@ fun LoadingScreen(loginViewModel: LoginViewModel, navController: NavController) 
         delay(1500)
         when (loginUser) {
             LoginViewModel.LoginUserState.NONE -> {
-                navController.navigate("loginScreen")
+                navController.navigate(NavigationRoutes.LoginScreen.route)
             }
             LoginViewModel.LoginUserState.LOGIN -> {
-                navController.navigate("userRegisterScreen")
+                navController.navigate(NavigationRoutes.RegisterScreen.route)
             }
             else -> {
                 launcher.launch(Intent(context, MainActivity::class.java))
