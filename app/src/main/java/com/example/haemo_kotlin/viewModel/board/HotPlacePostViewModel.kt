@@ -27,7 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HotPlacePostViewModel @Inject constructor(
     private val repository: PostRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _hotPlacePostList = MutableStateFlow<List<HotPlaceResponsePostModel>>(emptyList())
@@ -159,7 +160,7 @@ class HotPlacePostViewModel @Inject constructor(
         }
     }
 
-    fun registerPost(context: Context) {
+    fun registerPost() {
         val today = getCurrentDateTime()
 
         val _image = image.value.ifEmpty {

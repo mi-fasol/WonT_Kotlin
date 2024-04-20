@@ -56,7 +56,7 @@ fun MyPageScreen(viewModel: UserViewModel, navController: NavController) {
     Log.d("미란 user", user.toString())
 
     LaunchedEffect(true) {
-        viewModel.fetchUserInfoById(uId, context)
+        viewModel.fetchUserInfoById(uId)
     }
 
     Scaffold(

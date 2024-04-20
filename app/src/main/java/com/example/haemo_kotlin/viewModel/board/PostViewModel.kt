@@ -27,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val repository: PostRepository
+    private val repository: PostRepository,
+    private val context: Context
 ) : ViewModel() {
 
     // Get 변수
@@ -210,7 +211,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun registerPost(context: Context) {
+    fun registerPost() {
         val today = getCurrentDateTime()
         deadline.value = "${deadlineYear.value} ${deadlineMonth.value} ${deadlineDay.value} ${deadlineTime.value}"
         val post = PostModel(

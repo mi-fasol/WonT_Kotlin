@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.viewModel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WishViewModel @Inject constructor(
-    private val repository: WishRepository
+    private val repository: WishRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _wishMeetingList = MutableStateFlow<List<PostResponseModel>>(emptyList())

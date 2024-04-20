@@ -238,7 +238,7 @@ fun SendMessage(viewModel: ChatViewModel, receiverId: Int, chatId: String, userI
                         timestamp.longValue = System.currentTimeMillis()
                         val message =
                             ChatMessageModel(sendMessage.value, false, timestamp.longValue, userId)
-                        viewModel.sendMessage(chatId, receiverId, message, context)
+                        viewModel.sendMessage(chatId, receiverId, message)
                         sendMessage.value = ""
                     }
                 },

@@ -73,7 +73,7 @@ fun LoadingScreen(loginViewModel: LoginViewModel, navController: NavController) 
     }
 
     LaunchedEffect(true) {
-        loginViewModel.checkUserExists(context)
+        loginViewModel.checkUserExists()
         delay(1500)
         when (loginUser) {
             LoginViewModel.LoginUserState.NONE -> {

@@ -45,7 +45,6 @@ fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, navController: 
     val description = viewModel.description.collectAsState().value
     val content = viewModel.content.collectAsState().value
     val postRegisterState = viewModel.hotPlacePostRegisterState.collectAsState().value
-    val context = LocalContext.current
 
     LaunchedEffect(postRegisterState) {
         when (postRegisterState) {
@@ -80,7 +79,7 @@ fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, navController: 
                     }
                 }
                 PostRegisterButton(null, null, viewModel, 3, navController) {
-                    viewModel.registerPost(context)
+                    viewModel.registerPost()
                 }
             }
         }

@@ -21,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: UserRepository,
+    private val context: Context
 ) : ViewModel() {
 
     enum class LoginUserState { SUCCESS, LOGIN, NONE }
@@ -45,7 +46,7 @@ class LoginViewModel @Inject constructor(
         id.isNotBlank() && pwd.isNotBlank()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    fun checkUserExists(context: Context) {
+    fun checkUserExists() {
         _user.value = LoginUserState.NONE
         val studentId = SharedPreferenceUtil(context).getString("studentId", "").toString()
         val uId = SharedPreferenceUtil(context).getInt("uId", 0)
@@ -59,7 +60,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun login(id: String, pwd: String, context: Context) {
+    fun login(id: String, pwd: String) {
         viewModelScope.launch {
             _loginState.value = Resource.loading(null)
             try {

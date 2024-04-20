@@ -132,7 +132,7 @@ fun loginButton(loginViewModel: LoginViewModel, navController:NavController) {
 
     LaunchedEffect(loginResult) {
         if (loginResult) {
-            loginViewModel.checkUserExists(context)
+            loginViewModel.checkUserExists()
             when(haveId){
                 LoginViewModel.LoginUserState.LOGIN -> {
                     navController.navigate(NavigationRoutes.RegisterScreen.route)
@@ -159,7 +159,7 @@ fun loginButton(loginViewModel: LoginViewModel, navController:NavController) {
     ) {
         Button(
             onClick = {
-                loginViewModel.login(id, pwd, context)
+                loginViewModel.login(id, pwd)
             },
             enabled = isValid,
             colors = ButtonDefaults.buttonColors(

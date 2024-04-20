@@ -32,7 +32,6 @@ fun PostRegisterScreen(viewModel: PostViewModel, navController: NavController) {
     val title = viewModel.title.collectAsState().value
     val content = viewModel.content.collectAsState().value
     val postRegisterState = viewModel.postRegisterState.collectAsState().value
-    val context = LocalContext.current
 
     LaunchedEffect(postRegisterState) {
         when (postRegisterState) {
@@ -62,7 +61,7 @@ fun PostRegisterScreen(viewModel: PostViewModel, navController: NavController) {
                     }
                 }
                 PostRegisterButton(viewModel, null, null, 1, navController) {
-                    viewModel.registerPost(context)
+                    viewModel.registerPost()
                 }
             }
         }

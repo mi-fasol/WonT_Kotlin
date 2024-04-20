@@ -46,7 +46,7 @@ fun MainScreen(
     val uId = SharedPreferenceUtil(context).getInt("uId", 0)
 
     LaunchedEffect(true) {
-        userViewModel.fetchUserInfoById(uId, context)
+        userViewModel.fetchUserInfoById(uId)
     }
 
     Scaffold(

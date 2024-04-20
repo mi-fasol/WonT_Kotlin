@@ -55,7 +55,6 @@ fun ClubPostRegisterScreen(viewModel: ClubPostViewModel, navController: NavContr
     val description = viewModel.description.collectAsState().value
     val content = viewModel.content.collectAsState().value
     val postRegisterState = viewModel.clubPostRegisterState.collectAsState().value
-    val context = LocalContext.current
 
     LaunchedEffect(postRegisterState) {
         when (postRegisterState) {
@@ -90,7 +89,7 @@ fun ClubPostRegisterScreen(viewModel: ClubPostViewModel, navController: NavContr
                     }
                 }
                 PostRegisterButton(null, viewModel, null, 2, navController) {
-                    viewModel.registerPost(context)
+                    viewModel.registerPost()
                 }
             }
         }

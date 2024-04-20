@@ -28,7 +28,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ClubPostViewModel @Inject constructor(
     private val repository: PostRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _clubPostList = MutableStateFlow<List<ClubPostResponseModel>>(emptyList())
@@ -258,19 +259,8 @@ class ClubPostViewModel @Inject constructor(
         }
     }
 
-    fun registerPost(context: Context) {
+    fun registerPost() {
         val today = getCurrentDateTime()
-
-//        public constructor ClubPostModel(
-//            val title: String,
-//        val content: String,
-//        val nickname: String,
-//        val person: Int,
-//        val description: String,
-//        val date: String,
-//        val image: String?,
-//        val wish: Int
-//        )
 
         val _image = if(image.value == "") null else image.value
 

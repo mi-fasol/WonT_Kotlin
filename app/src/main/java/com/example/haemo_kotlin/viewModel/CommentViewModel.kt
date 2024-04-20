@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.viewModel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommentViewModel @Inject constructor(
-    private val repository: CommentRepository
+    private val repository: CommentRepository,
+    private val context: Context
 ) : ViewModel() {
 
     val content = MutableStateFlow("")

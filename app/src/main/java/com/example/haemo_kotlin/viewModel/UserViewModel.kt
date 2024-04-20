@@ -24,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: UserRepository,
+    private val context: Context
 ) : ViewModel() {
 
     enum class LoginUserState { SUCCESS, LOGIN, NONE }
@@ -52,7 +53,7 @@ class UserViewModel @Inject constructor(
         nickname.isNotBlank() && gender.isNotBlank() && major.isNotBlank()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    fun registerUser(nickname: String, major: String, gender: String, context: Context) {
+    fun registerUser(nickname: String, major: String, gender: String) {
         val studentId = SharedPreferenceUtil(context).getString("studentId", "").toString().toInt()
         val user = UserModel(nickname, studentId, major, gender, image.value)
 
@@ -79,7 +80,7 @@ class UserViewModel @Inject constructor(
     }
 
 
-    fun fetchUserInfoById(uId : Int, context: Context) {
+    fun fetchUserInfoById(uId : Int) {
         viewModelScope.launch {
             _registerState.value = Resource.loading(null)
             try {
