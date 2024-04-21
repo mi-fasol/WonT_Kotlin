@@ -37,7 +37,9 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
     CenterAlignedTopAppBar(
         title = { Text(text = appBarText, fontSize = 16.sp, fontWeight = FontWeight.SemiBold) },
         navigationIcon = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = null,
@@ -68,7 +70,7 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
         },
         actions = {
             IconButton(onClick = {
-                navController.navigate(NavigationRoutes.ChatScreen.createRoute(3))
+                navController.navigate(NavigationRoutes.ChatListScreen.route)
             }) {
                 Icon(
                     painterResource(id = R.drawable.chat_icon),

@@ -68,6 +68,7 @@ fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
         Column(
             modifier = Modifier
                 .padding(
+                    top = innerPadding.calculateTopPadding(),
                     bottom = innerPadding.calculateBottomPadding() + 10.dp
                 )
         ) {

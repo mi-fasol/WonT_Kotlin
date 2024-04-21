@@ -42,4 +42,6 @@ sealed class NavigationRoutes(val route: String) {
     data object ChatScreen : NavigationRoutes("chatScreen/{receiverId}") {
         fun createRoute(receiverId: Int) = "chatScreen/$receiverId"
     }
+
+    data object ChatListScreen : NavigationRoutes("chatListScreen")
 }

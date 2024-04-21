@@ -41,6 +41,9 @@ class UserViewModel @Inject constructor(
     private val _user = MutableStateFlow<UserResponseModel?>(null)
     val user : StateFlow<UserResponseModel?> = _user
 
+    private val _otherPerson = MutableStateFlow<UserResponseModel?>(null)
+    val otherPerson : StateFlow<UserResponseModel?> = _otherPerson
+
     private val _isRegisterSuccess = MutableStateFlow<Boolean>(false)
     val isRegisterSuccess: StateFlow<Boolean> = _isRegisterSuccess.asStateFlow()
 
@@ -101,5 +104,30 @@ class UserViewModel @Inject constructor(
                 _fetchUserState.value = Resource.error(e.message ?: "An error occurred", null)
             }
         }
+    }
+
+    fun getUserByNickname(nickname: String) : UserResponseModel? {
+        var user : UserResponseModel? = null
+        viewModelScope.launch {
+            _registerState.value = Resource.loading(null)
+            try {
+                val response = repository.getUserByNickname(nickname)
+                if (response.isSuccessful && response.body() != null) {
+                    val responseUser = response.body()
+                    user = responseUser
+                    _fetchUserState.value = Resource.success(response.body())
+                    SharedPreferenceUtil(context).setUser(responseUser!!)
+                    Log.d("유저", responseUser.toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                    _fetchUserState.value = Resource.error(response.errorBody().toString(), null)
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+                _fetchUserState.value = Resource.error(e.message ?: "An error occurred", null)
+            }
+        }
+        return user
     }
 }

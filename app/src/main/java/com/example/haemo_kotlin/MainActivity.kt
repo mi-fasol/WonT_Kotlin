@@ -24,6 +24,7 @@ import com.example.haemo_kotlin.screen.main.board.detail.MeetingPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.list.MeetingScreen
 import com.example.haemo_kotlin.screen.main.board.register.PostRegisterScreen
 import com.example.haemo_kotlin.screen.main.board.register.HotPlacePostRegisterScreen
+import com.example.haemo_kotlin.screen.main.chat.ChatListScreen
 import com.example.haemo_kotlin.screen.main.chat.ChatScreen
 import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
@@ -38,6 +39,7 @@ import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
 import com.example.haemo_kotlin.viewModel.WishViewModel
+import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -59,6 +61,7 @@ class MainActivity : ComponentActivity() {
     private val commentViewModel by viewModels<CommentViewModel>()
     private val wishViewModel by viewModels<WishViewModel>()
     private val chatViewModel by viewModels<ChatViewModel>()
+    private val chatListViewModel by viewModels<ChatListViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -177,6 +180,9 @@ class MainActivity : ComponentActivity() {
                                 receiverId = entry.arguments?.getInt("receiverId")!!,
                                 navController = navController
                             )
+                        }
+                        composable(NavigationRoutes.ChatListScreen.route) {
+                            ChatListScreen(chatListViewModel, userViewModel, navController)
                         }
                     }
                 }
