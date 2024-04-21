@@ -106,7 +106,7 @@ fun MeetingPostDetailScreen(
                 else -> {
                     if (user != null && post != null) {
                         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                            PostUserInfo(user, post.date)
+                            PostUserInfo(user, post.date, navController)
                             PostInfo(post, accept)
                             Spacer(modifier = Modifier.height(15.dp))
                             Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))

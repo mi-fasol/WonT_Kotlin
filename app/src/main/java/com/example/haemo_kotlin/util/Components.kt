@@ -2,6 +2,7 @@ package com.example.haemo_kotlin.util
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,11 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,8 +43,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.user.UserResponseModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun ErrorScreen(text: String) {
@@ -92,9 +101,12 @@ fun EnterInfo(type: String, value: String, onValueChange: (String) -> Unit) {
 }
 
 @Composable
-fun PostUserInfo(user: UserResponseModel, date: String) {
+fun PostUserInfo(user: UserResponseModel, date: String, navController: NavController) {
     val config = LocalConfiguration.current
     val screenHeight = config.screenHeightDp
+
+    var bottomSheetOpen by remember { mutableStateOf(false) }
+
     Box(
         Modifier
             .fillMaxWidth()
@@ -104,8 +116,9 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
+                interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-
+                    bottomSheetOpen = true
                 }
             ) {
                 Icon(
@@ -136,6 +149,11 @@ fun PostUserInfo(user: UserResponseModel, date: String) {
                     )
                     Text(text = " / $date", fontSize = 8.5.sp, color = Color(0xff3f3f3f))
                 }
+            }
+        }
+        if(bottomSheetOpen) {
+            UserBottomSheet(user = user, navController = navController){
+                bottomSheetOpen = false
             }
         }
     }
