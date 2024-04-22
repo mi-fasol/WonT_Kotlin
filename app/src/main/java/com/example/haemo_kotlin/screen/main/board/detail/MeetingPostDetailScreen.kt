@@ -25,8 +25,11 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +51,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
+import com.example.haemo_kotlin.util.UserBottomSheet
 import com.example.haemo_kotlin.util.userMyPageImageList
 import com.example.haemo_kotlin.viewModel.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
@@ -63,9 +67,10 @@ fun MeetingPostDetailScreen(
     val user = postViewModel.user.collectAsState().value
     val postState = postViewModel.postModelState.collectAsState().value
     val accept = postViewModel.acceptationList.collectAsState().value
+    val commentList = commentViewModel.commentList.collectAsState().value
+    val content = commentViewModel.content.collectAsState().value
 
-
-    LaunchedEffect(post) {
+    LaunchedEffect(commentList) {
         postViewModel.getOnePost(pId)
         postViewModel.getPostingUser(pId)
         postViewModel.getAcceptationUserByPId(pId)
@@ -77,9 +82,18 @@ fun MeetingPostDetailScreen(
             PostDetailAppBar(navController)
         },
         bottomBar = {
-            SendReply(type = "댓글", postType = 1, value = commentViewModel.content.collectAsState().value, onValueChange = { newValue ->
-                commentViewModel.content.value = newValue
-            })
+            SendReply(
+                type = "댓글",
+                postType = 1,
+                pId = pId,
+                value = content,
+                commentViewModel = commentViewModel,
+                onValueChange = { newValue ->
+                    commentViewModel.content.value = newValue
+                }){
+                commentViewModel.registerComment(content, pId, 1)
+                commentViewModel.content.value = ""
+            }
         }
     ) { innerPadding ->
         Column(
@@ -110,7 +124,12 @@ fun MeetingPostDetailScreen(
                             PostInfo(post, accept)
                             Spacer(modifier = Modifier.height(15.dp))
                             Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                            CommentWidget(type = 1, pId = pId, commentViewModel = commentViewModel)
+                            CommentWidget(
+                                type = 1,
+                                pId = pId,
+                                commentViewModel = commentViewModel,
+                                navController = navController
+                            )
                         }
                     }
                 }
@@ -173,12 +192,17 @@ fun PostInfo(post: PostResponseModel, accept: List<AcceptationResponseModel>) {
 }
 
 @Composable
-fun CommentWidget(type: Int, pId: Int, commentViewModel: CommentViewModel) {
+fun CommentWidget(
+    type: Int,
+    pId: Int,
+    commentViewModel: CommentViewModel,
+    navController: NavController
+) {
     val commentList = commentViewModel.commentList.collectAsState().value
     val userList = commentViewModel.userList.collectAsState().value
     LaunchedEffect(commentList) {
-        commentViewModel.getCommentListByPId(pId)
-        commentViewModel.getCommentUser(pId)
+        commentViewModel.getCommentListByPId(pId, type)
+        commentViewModel.getCommentUser(pId, type)
     }
     Column() {
         Row() {
@@ -195,7 +219,7 @@ fun CommentWidget(type: Int, pId: Int, commentViewModel: CommentViewModel) {
         }
         if (commentList.isNotEmpty()) {
             commentList.forEachIndexed { index, comment ->
-                userList.getOrNull(index)?.let { CommentWidgetItem(comment, it) }
+                userList.getOrNull(index)?.let { CommentWidgetItem(comment, it, navController) }
                 Divider()
             }
         }
@@ -203,10 +227,17 @@ fun CommentWidget(type: Int, pId: Int, commentViewModel: CommentViewModel) {
 }
 
 @Composable
-fun CommentWidgetItem(comment: CommentResponseModel, user: UserResponseModel) {
+fun CommentWidgetItem(
+    comment: CommentResponseModel,
+    user: UserResponseModel,
+    navController: NavController
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+
+    var bottomSheetOpen by remember { mutableStateOf(false) }
+
     Box(
         Modifier.padding(horizontal = 20.dp)
     ) {
@@ -219,14 +250,14 @@ fun CommentWidgetItem(comment: CommentResponseModel, user: UserResponseModel) {
         ) {
             IconButton(
                 onClick = {
-
+                    bottomSheetOpen = true
                 }
             ) {
                 Icon(
                     painter = painterResource(id = userMyPageImageList[user.userImage]),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = Modifier.size((screenHeight/18).dp)
+                    modifier = Modifier.size((screenHeight / 18).dp)
                 )
             }
             Column() {
@@ -248,10 +279,10 @@ fun CommentWidgetItem(comment: CommentResponseModel, user: UserResponseModel) {
             }
         }
     }
-}
 
-
-@Composable
-fun SendComment(type: Int, isReply : MutableState<Boolean>, cId: Int?){
-
+    if (bottomSheetOpen) {
+        UserBottomSheet(user = user, navController = navController) {
+            bottomSheetOpen = false
+        }
+    }
 }

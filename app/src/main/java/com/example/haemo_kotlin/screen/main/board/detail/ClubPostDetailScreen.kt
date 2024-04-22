@@ -1,28 +1,20 @@
 package com.example.haemo_kotlin.screen.main.board.detail
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,17 +34,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.comment.club.ClubCommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
-import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
-import com.example.haemo_kotlin.util.userMyPageImageList
-import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.CommentViewModel
+import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 
 @Composable
 fun ClubPostDetailScreen(
@@ -64,12 +53,13 @@ fun ClubPostDetailScreen(
     val post = postViewModel.clubPost.collectAsState().value
     val user = postViewModel.user.collectAsState().value
     val postState = postViewModel.clubPostState.collectAsState().value
+    val content = commentViewModel.content.collectAsState().value
 
     LaunchedEffect(post) {
         postViewModel.getOneClubPost(pId)
         postViewModel.getClubPostingUser(pId)
-        commentViewModel.getClubCommentListByPId(pId)
-        commentViewModel.getCommentUser(pId)
+        commentViewModel.getCommentListByPId(pId, 2)
+        commentViewModel.getCommentUser(pId, 2)
     }
 
     Scaffold(
@@ -79,12 +69,23 @@ fun ClubPostDetailScreen(
         bottomBar = {
             SendReply(
                 type = "댓글",
-                postType = 1,
-                value = commentViewModel.content.collectAsState().value,
+                postType = 2,
+                pId = pId,
+                value = content,
+                commentViewModel = commentViewModel,
                 onValueChange = { newValue ->
                     commentViewModel.content.value = newValue
-                })
-        },
+                }) {
+                commentViewModel.registerComment(content, pId, 2)
+                commentViewModel.content.value = ""
+            }
+            LaunchedEffect(Unit) {
+                postViewModel.getOneClubPost(pId)
+                postViewModel.getClubPostingUser(pId)
+                commentViewModel.getCommentListByPId(pId, 2)
+                commentViewModel.getCommentUser(pId, 2)
+            }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -114,10 +115,11 @@ fun ClubPostDetailScreen(
                             ClubPostInfo(post)
                             Spacer(modifier = Modifier.height(15.dp))
                             Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                            ClubCommentWidget(
+                            CommentWidget(
                                 type = 2,
                                 pId = pId,
-                                commentViewModel = commentViewModel
+                                commentViewModel = commentViewModel,
+                                navController = navController
                             )
                         }
                     }
@@ -135,7 +137,10 @@ fun ClubPostInfo(post: ClubPostResponseModel) {
 
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Text(
-            post.title, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = colorResource(
+            post.title,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colorResource(
                 id = R.color.mainTextColor
             )
         )
@@ -174,176 +179,11 @@ fun ClubPostInfo(post: ClubPostResponseModel) {
                 .fillMaxWidth()
         ) {
             Text(
-                post.content, fontSize = 13.sp, color = colorResource(id = R.color.mainTextColor),
+                post.content,
+                fontSize = 13.sp,
+                color = colorResource(id = R.color.mainTextColor),
                 maxLines = Int.MAX_VALUE
             )
         }
     }
 }
-
-@Composable
-fun ClubCommentWidget(type: Int, pId: Int, commentViewModel: CommentViewModel) {
-    val commentList = commentViewModel.clubCommentList.collectAsState().value
-    val userList = commentViewModel.clubUserList.collectAsState().value
-    LaunchedEffect(commentList) {
-        commentViewModel.getClubCommentListByPId(pId)
-    }
-    LaunchedEffect(true) {
-        commentViewModel.getClubCommentUser(pId)
-    }
-    Column {
-        Row {
-            Text("댓글", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xff040404))
-            Spacer(Modifier.width(5.dp))
-            Text(
-                commentList.size.toString(),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.mainColor)
-            )
-        }
-        if (commentList.isNotEmpty()) {
-            commentList.forEachIndexed { index, comment ->
-                if (userList.isEmpty()) {
-                    Box {
-                        Log.d("미란", "바박스스")
-                    }
-                } else {
-                    ClubCommentWidgetItem(comment, userList[index])
-                }
-                Divider()
-            }
-        }
-    }
-}
-
-@Composable
-fun ClubCommentWidgetItem(comment: ClubCommentResponseModel, user: UserResponseModel) {
-    val config = LocalConfiguration.current
-    val screenWidth = config.screenWidthDp
-    val screenHeight = config.screenHeightDp
-    Box(Modifier.padding(horizontal = 20.dp)) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .fillMaxHeight()
-        ) {
-            IconButton(onClick = { /* Handle icon button click */ }) {
-                Icon(
-                    painter = painterResource(id = userMyPageImageList[user.userImage]),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size((screenHeight / 18).dp)
-                )
-            }
-            Column() {
-                Text(
-                    text = comment.nickname,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.mainTextColor),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Text(
-                    comment.content,
-                    fontSize = 12.5.sp,
-                    color = colorResource(id = R.color.mainTextColor),
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = Int.MAX_VALUE
-                )
-            }
-        }
-    }
-}
-
-//@Composable
-//fun ClubCommentWidget(type: Int, pId: Int, commentViewModel: CommentViewModel) {
-//    val commentList = commentViewModel.clubCommentList.collectAsState().value
-//    val userList = commentViewModel.clubUserList.collectAsState().value
-//    LaunchedEffect(commentList) {
-//        commentViewModel.getClubCommentListByPId(pId)
-//    }
-//    LaunchedEffect(true) {
-//        commentViewModel.getClubCommentUser(pId)
-//    }
-//    Column() {
-//        Row() {
-//            Text("댓글", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xff040404))
-//            Spacer(Modifier.width(5.dp))
-//            Text(
-//                commentList.size.toString(),
-//                fontSize = 14.sp,
-//                fontWeight = FontWeight.Bold,
-//                color = colorResource(
-//                    id = R.color.mainColor
-//                )
-//            )
-//        }
-//        if (commentList.isNotEmpty()) {
-//            LazyColumn {
-//                items(commentList.size) { idx ->
-//                    if (userList.isEmpty()) {
-//                        Box() {}
-//                        Log.d("미란", "바박스스")
-//                    } else {
-//                        ClubCommentWidgetItem(
-//                            commentList[idx],
-//                            userList[idx]
-//                        )
-//                    }
-//                    Divider()
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun ClubCommentWidgetItem(comment: ClubCommentResponseModel, user: UserResponseModel) {
-//    val config = LocalConfiguration.current
-//    val screenWidth = config.screenWidthDp
-//    val screenHeight = config.screenHeightDp
-//    Box(
-//        Modifier.padding(horizontal = 20.dp)
-//    ) {
-//        Row(
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(10.dp)
-//                .fillMaxHeight(),
-//        ) {
-//            IconButton(
-//                onClick = {
-//
-//                }
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = userMyPageImageList[user.userImage]),
-//                    contentDescription = null,
-//                    tint = Color.Unspecified,
-//                    modifier = Modifier.size((screenHeight / 18).dp)
-//                )
-//            }
-//            Column() {
-//                Text(
-//                    text = comment.nickname,
-//                    fontSize = 13.5.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    color = colorResource(id = R.color.mainTextColor),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                )
-//                Text(
-//                    comment.content, fontSize = 12.5.sp,
-//                    color = colorResource(id = R.color.mainTextColor),
-//                    modifier = Modifier
-//                        .fillMaxWidth(),
-//                    maxLines = Int.MAX_VALUE
-//                )
-//            }
-//        }
-//    }
-//}
