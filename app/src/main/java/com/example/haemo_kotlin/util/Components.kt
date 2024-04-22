@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.viewModel.CommentViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -151,8 +152,8 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
                 }
             }
         }
-        if(bottomSheetOpen) {
-            UserBottomSheet(user = user, navController = navController){
+        if (bottomSheetOpen) {
+            UserBottomSheet(user = user, navController = navController) {
                 bottomSheetOpen = false
             }
         }
@@ -160,7 +161,15 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
 }
 
 @Composable
-fun SendReply(type: String, postType: Int, value: String, onValueChange: (String) -> Unit) {
+fun SendReply(
+    type: String,
+    postType: Int,
+    pId: Int,
+    commentViewModel: CommentViewModel,
+    value: String,
+    onValueChange: (String) -> Unit,
+    onClickedEvent: () -> Unit
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     Box(
@@ -174,7 +183,6 @@ fun SendReply(type: String, postType: Int, value: String, onValueChange: (String
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
-//                decorationBox = { ... },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(10f)
@@ -183,7 +191,9 @@ fun SendReply(type: String, postType: Int, value: String, onValueChange: (String
                     .padding(10.dp)
             )
             FilledIconButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    onClickedEvent()
+                },
                 shape = IconButtonDefaults.filledShape,
                 colors = IconButtonColors(
                     containerColor = colorResource(id = R.color.mainColor),

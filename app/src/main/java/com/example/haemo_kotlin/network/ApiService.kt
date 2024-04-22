@@ -1,7 +1,9 @@
 package com.example.haemo_kotlin.network
 
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
+import com.example.haemo_kotlin.model.comment.CommentModel
 import com.example.haemo_kotlin.model.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.comment.club.ClubCommentModel
 import com.example.haemo_kotlin.model.comment.club.ClubCommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
@@ -84,17 +86,36 @@ interface ApiService {
     @GET("accept/{id}")
     suspend fun getJoinUserByPId(@Path("id") pId: Int): Response<List<AcceptationResponseModel>>
 
+    // 댓글 가져오기
     @GET("postComment/commentPost/{id}")
     suspend fun getCommentListByPId(@Path("id") pId: Int): Response<List<CommentResponseModel>>
 
     @GET("clubComment/commentPost/{id}")
-    suspend fun getClubCommentListByPId(@Path("id") pId: Int): Response<List<ClubCommentResponseModel>>
+    suspend fun getClubCommentListByPId(@Path("id") pId: Int): Response<List<CommentResponseModel>>
 
+    @GET("hotComment/commentPost/{id}")
+    suspend fun getHotPlaceCommentListByPId(@Path("id") pId: Int): Response<List<CommentResponseModel>>
+
+    // 댓글 작성 유저 가져오기
     @GET("postComment/commentUser/{id}")
     suspend fun getCommentUserList(@Path("id") pId: Int): Response<List<UserResponseModel>>
 
     @GET("clubComment/commentUser/{id}")
     suspend fun getClubCommentUserList(@Path("id") pId: Int): Response<List<UserResponseModel>>
+
+    @GET("hotComment/commentUser/{id}")
+    suspend fun getHotPlaceCommentUserList(@Path("id") pId: Int): Response<List<UserResponseModel>>
+
+    // 댓글 작성
+    @POST("postComment")
+    suspend fun registerPostComment(@Body comment: CommentModel): Response<CommentResponseModel>
+
+    @POST("clubComment")
+    suspend fun registerClubComment(@Body comment: CommentModel): Response<CommentResponseModel>
+
+    @POST("hotComment")
+    suspend fun registerHotPlaceComment(@Body comment: CommentModel): Response<CommentResponseModel>
+
 
     // wish
 
