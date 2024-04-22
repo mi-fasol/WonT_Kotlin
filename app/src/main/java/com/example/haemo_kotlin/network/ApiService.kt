@@ -3,18 +3,15 @@ package com.example.haemo_kotlin.network
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.comment.CommentModel
 import com.example.haemo_kotlin.model.comment.CommentResponseModel
-import com.example.haemo_kotlin.model.comment.club.ClubCommentModel
-import com.example.haemo_kotlin.model.comment.club.ClubCommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
-import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
+import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.model.user.UserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable.Param
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -66,6 +63,9 @@ interface ApiService {
     @GET("club/{id}")
     suspend fun getClubPostById(@Path("id") idx: Int): Response<ClubPostResponseModel>
 
+    @GET("club/clubPostUser/{id}")
+    suspend fun getClubPostingUser(@Path("id") idx: Int): Response<UserResponseModel>
+
     // 핫플레이스
 
     @POST("hot")
@@ -80,6 +80,9 @@ interface ApiService {
 
     @GET("hot/popular")
     suspend fun getPopularHotPlacePost(): Response<List<HotPlaceResponsePostModel>>
+
+    @GET("hot/hotPlaceUser/{id}")
+    suspend fun getHotPlacePostingUser(@Path("id") idx: Int): Response<UserResponseModel>
 
     // 모임 참여
 

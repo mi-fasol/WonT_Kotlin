@@ -52,6 +52,7 @@ import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
+import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -100,7 +101,11 @@ fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavContr
                     else -> {
                         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                             PopularPlace(popularPostList, postViewModel)
-                            HotPlaceBoard(postList = postList, viewModel = postViewModel)
+                            HotPlaceBoard(
+                                postList = postList,
+                                viewModel = postViewModel,
+                                navController
+                            )
                         }
                     }
                 }
@@ -212,7 +217,11 @@ fun PopularPlaceItem(post: HotPlaceResponsePostModel, viewModel: HotPlacePostVie
 }
 
 @Composable
-fun HotPlaceBoard(postList: List<HotPlaceResponsePostModel>, viewModel: HotPlacePostViewModel) {
+fun HotPlaceBoard(
+    postList: List<HotPlaceResponsePostModel>,
+    viewModel: HotPlacePostViewModel,
+    navController: NavController
+) {
     Column {
         Text(
             "이런 장소는 어때요?", fontSize = 15.sp,
@@ -227,7 +236,7 @@ fun HotPlaceBoard(postList: List<HotPlaceResponsePostModel>, viewModel: HotPlace
             modifier = Modifier.fillMaxWidth(),
             content = {
                 items(postList.size) { idx ->
-                    HotPlaceBoardItem(postList[idx], viewModel)
+                    HotPlaceBoardItem(postList[idx], viewModel, navController)
                 }
             }
         )
@@ -235,7 +244,11 @@ fun HotPlaceBoard(postList: List<HotPlaceResponsePostModel>, viewModel: HotPlace
 }
 
 @Composable
-fun HotPlaceBoardItem(post: HotPlaceResponsePostModel, viewModel: HotPlacePostViewModel) {
+fun HotPlaceBoardItem(
+    post: HotPlaceResponsePostModel,
+    viewModel: HotPlacePostViewModel,
+    navController: NavController
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -249,7 +262,7 @@ fun HotPlaceBoardItem(post: HotPlaceResponsePostModel, viewModel: HotPlacePostVi
             .padding(top = 15.dp)
             .width((screenWidth / 3.5).dp)
             .clickable {
-                //    navController.navigate(NavigationRoutes.HotPlaceDetailScreen)
+                navController.navigate(NavigationRoutes.HotPlacePostDetailScreen.createRoute(post.hpId))
             },
     ) {
         Card(

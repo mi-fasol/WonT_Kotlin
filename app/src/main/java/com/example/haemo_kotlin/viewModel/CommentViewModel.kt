@@ -4,19 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.comment.CommentModel
 import com.example.haemo_kotlin.model.comment.CommentResponseModel
-import com.example.haemo_kotlin.model.comment.club.ClubCommentModel
-import com.example.haemo_kotlin.model.comment.club.ClubCommentResponseModel
-import com.example.haemo_kotlin.model.post.PostModel
-import com.example.haemo_kotlin.model.post.PostResponseModel
-import com.example.haemo_kotlin.model.user.LoginModel
-import com.example.haemo_kotlin.model.user.UserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.CommentRepository
-import com.example.haemo_kotlin.repository.PostRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.getCurrentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,9 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 
@@ -48,8 +37,6 @@ class CommentViewModel @Inject constructor(
         MutableStateFlow<Resource<CommentResponseModel>>(Resource.loading(null))
     val commentRegisterState: StateFlow<Resource<CommentResponseModel>> =
         _commentRegisterState.asStateFlow()
-
-    val triggerRecomposition = MutableStateFlow(Unit)
 
     suspend fun getCommentListByPId(pId: Int, type: Int) {
         viewModelScope.launch {
@@ -104,7 +91,7 @@ class CommentViewModel @Inject constructor(
                 null,
                 null,
                 text,
-                "ㅁㄴㅇㄹ",
+                nickname,
                 getCurrentDateTime()
             )
 

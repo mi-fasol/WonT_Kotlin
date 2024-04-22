@@ -17,6 +17,10 @@ sealed class NavigationRoutes(val route: String) {
         fun createRoute(pId: Int) = "clubDetailScreen/$pId"
     }
 
+    data object HotPlacePostDetailScreen : NavigationRoutes("hotPlaceDetailScreen/{pId}") {
+        fun createRoute(pId: Int) = "hotPlaceDetailScreen/$pId"
+    }
+
     data object MyMeetingBoardScreen : NavigationRoutes("myMeetingBoardScreen/{nickname}") {
         fun createRoute(nickname: String) = "myMeetingBoardScreen/$nickname"
     }

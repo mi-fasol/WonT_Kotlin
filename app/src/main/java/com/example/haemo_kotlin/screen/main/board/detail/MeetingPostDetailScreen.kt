@@ -47,6 +47,7 @@ import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
@@ -187,102 +188,6 @@ fun PostInfo(post: PostResponseModel, accept: List<AcceptationResponseModel>) {
                     textAlign = TextAlign.Center
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun CommentWidget(
-    type: Int,
-    pId: Int,
-    commentViewModel: CommentViewModel,
-    navController: NavController
-) {
-    val commentList = commentViewModel.commentList.collectAsState().value
-    val userList = commentViewModel.userList.collectAsState().value
-    LaunchedEffect(commentList) {
-        commentViewModel.getCommentListByPId(pId, type)
-        commentViewModel.getCommentUser(pId, type)
-    }
-    Column() {
-        Row() {
-            Text("댓글", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xff040404))
-            Spacer(Modifier.width(5.dp))
-            Text(
-                commentList.size.toString(),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(
-                    id = R.color.mainColor
-                )
-            )
-        }
-        if (commentList.isNotEmpty()) {
-            commentList.forEachIndexed { index, comment ->
-                userList.getOrNull(index)?.let { CommentWidgetItem(comment, it, navController) }
-                Divider()
-            }
-        }
-    }
-}
-
-@Composable
-fun CommentWidgetItem(
-    comment: CommentResponseModel,
-    user: UserResponseModel,
-    navController: NavController
-) {
-    val config = LocalConfiguration.current
-    val screenWidth = config.screenWidthDp
-    val screenHeight = config.screenHeightDp
-
-    var bottomSheetOpen by remember { mutableStateOf(false) }
-
-    Box(
-        Modifier.padding(horizontal = 20.dp)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .fillMaxHeight(),
-        ) {
-            IconButton(
-                onClick = {
-                    bottomSheetOpen = true
-                }
-            ) {
-                Icon(
-                    painter = painterResource(id = userMyPageImageList[user.userImage]),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size((screenHeight / 18).dp)
-                )
-            }
-            Column() {
-                Text(
-                    text = comment.nickname,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.mainTextColor),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                Text(
-                    comment.content, fontSize = 12.5.sp,
-                    color = colorResource(id = R.color.mainTextColor),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    maxLines = Int.MAX_VALUE
-                )
-            }
-        }
-    }
-
-    if (bottomSheetOpen) {
-        UserBottomSheet(user = user, navController = navController) {
-            bottomSheetOpen = false
         }
     }
 }

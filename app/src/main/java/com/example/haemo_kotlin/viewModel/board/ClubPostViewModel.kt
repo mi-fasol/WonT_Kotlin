@@ -245,7 +245,7 @@ class ClubPostViewModel @Inject constructor(
     suspend fun getClubPostingUser(pId: Int) {
         viewModelScope.launch {
             try {
-                val response = repository.getPostingUser(pId)
+                val response = repository.getClubPostingUser(pId)
                 if (response.isSuccessful && response.body() != null) {
                     val user = response.body()
                     _user.value = user!!

@@ -20,6 +20,7 @@ import com.example.haemo_kotlin.screen.main.board.register.ClubPostRegisterScree
 import com.example.haemo_kotlin.screen.main.board.list.ClubScreen
 import com.example.haemo_kotlin.screen.main.board.list.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.board.MainScreen
+import com.example.haemo_kotlin.screen.main.board.detail.HotPlacePostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.detail.MeetingPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.list.MeetingScreen
 import com.example.haemo_kotlin.screen.main.board.register.PostRegisterScreen
@@ -117,6 +118,17 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             ClubPostDetailScreen(
                                 postViewModel = clubPostViewModel,
+                                commentViewModel = commentViewModel,
+                                navController = navController,
+                                pId = entry.arguments?.getInt("pId")!!
+                            )
+                        }
+                        composable(NavigationRoutes.HotPlacePostDetailScreen.route, arguments = listOf(
+                            navArgument("pId") { type = NavType.IntType }
+                        )
+                        ) { entry ->
+                            HotPlacePostDetailScreen(
+                                postViewModel = hotPlacePostViewModel,
                                 commentViewModel = commentViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!

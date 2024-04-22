@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -28,6 +31,8 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.viewModel.CommentViewModel
 import kotlinx.coroutines.coroutineScope
@@ -209,6 +215,102 @@ fun SendReply(
                     modifier = Modifier.size((screenWidth / 20).dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun CommentWidget(
+    type: Int,
+    pId: Int,
+    commentViewModel: CommentViewModel,
+    navController: NavController
+) {
+    val commentList = commentViewModel.commentList.collectAsState().value
+    val userList = commentViewModel.userList.collectAsState().value
+    LaunchedEffect(commentList) {
+        commentViewModel.getCommentListByPId(pId, type)
+        commentViewModel.getCommentUser(pId, type)
+    }
+    Column(Modifier.padding(horizontal = 20.dp)) {
+        Row(modifier = Modifier.padding(vertical = 15.dp)) {
+            androidx.compose.material3.Text(
+                "댓글",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xff040404),
+            )
+            Spacer(Modifier.width(5.dp))
+            androidx.compose.material3.Text(
+                commentList.size.toString(),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(
+                    id = R.color.mainColor
+                )
+            )
+        }
+        if (commentList.isNotEmpty()) {
+            commentList.forEachIndexed { index, comment ->
+                userList.getOrNull(index)?.let { CommentWidgetItem(comment, it, navController) }
+            }
+        }
+    }
+}
+
+@Composable
+fun CommentWidgetItem(
+    comment: CommentResponseModel,
+    user: UserResponseModel,
+    navController: NavController
+) {
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp
+    val screenHeight = config.screenHeightDp
+
+    var bottomSheetOpen by remember { mutableStateOf(false) }
+
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 20.dp)
+            .fillMaxHeight(),
+    ) {
+        IconButton(
+            onClick = {
+                bottomSheetOpen = true
+            }
+        ) {
+            Icon(
+                painter = painterResource(id = userMyPageImageList[user.userImage]),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.size((screenHeight / 18).dp)
+            )
+        }
+        Column() {
+            androidx.compose.material3.Text(
+                text = comment.nickname,
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.mainTextColor),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            androidx.compose.material3.Text(
+                comment.content, fontSize = 12.5.sp,
+                color = colorResource(id = R.color.mainTextColor),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                maxLines = Int.MAX_VALUE
+            )
+        }
+    }
+
+    if (bottomSheetOpen) {
+        UserBottomSheet(user = user, navController = navController) {
+            bottomSheetOpen = false
         }
     }
 }

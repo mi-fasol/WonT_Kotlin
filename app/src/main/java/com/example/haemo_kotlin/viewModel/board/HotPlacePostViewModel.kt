@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.ImageRepository
 import com.example.haemo_kotlin.repository.PostRepository
@@ -41,6 +42,13 @@ class HotPlacePostViewModel @Inject constructor(
 
     private val _hotPlaceModel = MutableStateFlow<HotPlaceResponsePostModel?>(null)
     val hotPlaceModel: StateFlow<HotPlaceResponsePostModel?> = _hotPlaceModel.asStateFlow()
+
+
+    private val _user = MutableStateFlow<UserResponseModel?>(null)
+    val user: StateFlow<UserResponseModel?> = _user.asStateFlow()
+
+
+    // State
 
     private val _hotPlacePostState =
         MutableStateFlow<Resource<HotPlaceResponsePostModel>>(Resource.loading(null))
@@ -156,6 +164,23 @@ class HotPlacePostViewModel @Inject constructor(
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
                 _hotPlacePostListState.value =
                     Resource.error(e.message ?: "An error occurred", null)
+            }
+        }
+    }
+
+    suspend fun getHotPlacePostUser(pId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getHotPlacePostingUser(pId)
+                if (response.isSuccessful && response.body() != null) {
+                    val user = response.body()
+                    _user.value = user!!
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
             }
         }
     }

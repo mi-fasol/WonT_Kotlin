@@ -53,7 +53,7 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
     }
 
     suspend fun getClubPostingUser(pId: Int): Response<UserResponseModel> {
-        return retrofitClient.service.getPostingUser(pId)
+        return retrofitClient.service.getClubPostingUser(pId)
     }
 
     suspend fun getHotPlacePost(): Response<List<HotPlaceResponsePostModel>> {
@@ -66,6 +66,10 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
 
     suspend fun getPopularHotPlace(): Response<List<HotPlaceResponsePostModel>> {
         return retrofitClient.service.getPopularHotPlacePost()
+    }
+
+    suspend fun getHotPlacePostingUser(pId: Int): Response<UserResponseModel> {
+        return retrofitClient.service.getHotPlacePostingUser(pId)
     }
 
     suspend fun getJoinUserByPId(pId: Int): Response<List<AcceptationResponseModel>> {

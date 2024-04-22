@@ -2,11 +2,8 @@ package com.example.haemo_kotlin.repository
 
 import com.example.haemo_kotlin.model.comment.CommentModel
 import com.example.haemo_kotlin.model.comment.CommentResponseModel
-import com.example.haemo_kotlin.model.comment.club.ClubCommentModel
-import com.example.haemo_kotlin.model.comment.club.ClubCommentResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.RetrofitClient
-import org.w3c.dom.Comment
 import retrofit2.Response
 import javax.inject.Inject
 
