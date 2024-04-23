@@ -44,11 +44,16 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.convertDate
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
+fun MeetingScreen(
+    postViewModel: PostViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     val postList = postViewModel.postModelList.collectAsState().value
     val todayPostList = postViewModel.todayPostList.collectAsState().value
     val postListState = postViewModel.postModelListState.collectAsState().value
@@ -89,10 +94,15 @@ fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
 
                 else -> {
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                        Today24HoursBoard(todayPostList, postViewModel, navController)
+                        Today24HoursBoard(
+                            todayPostList,
+                            postViewModel,
+                            mainViewModel,
+                            navController
+                        )
                         MeetingBoard(
                             postList = postList,
-                            viewModel = postViewModel,
+                            viewModel = mainViewModel,
                             navController = navController
                         )
                     }
@@ -106,6 +116,7 @@ fun MeetingScreen(postViewModel: PostViewModel, navController: NavController) {
 fun Today24HoursBoard(
     postList: List<PostResponseModel>,
     viewModel: PostViewModel,
+    mainViewModel: MainViewModel,
     navController: NavController
 ) {
     when (postList.size) {
@@ -120,7 +131,7 @@ fun Today24HoursBoard(
                 Text("공지 24시간", fontSize = 13.sp, color = Color(0xff393939))
                 LazyRow {
                     items(postList.size) { idx ->
-                        TodayNotice(postList[idx], viewModel, navController)
+                        TodayNotice(postList[idx], mainViewModel, navController)
                     }
                 }
             }
@@ -129,7 +140,7 @@ fun Today24HoursBoard(
 }
 
 @Composable
-fun TodayNotice(post: PostResponseModel, viewModel: PostViewModel, navController: NavController) {
+fun TodayNotice(post: PostResponseModel, viewModel: MainViewModel, navController: NavController) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -142,6 +153,7 @@ fun TodayNotice(post: PostResponseModel, viewModel: PostViewModel, navController
                 .padding(top = 5.dp, bottom = 15.dp, end = 10.dp)
                 .height((screenHeight / 5.5).dp)
                 .clickable {
+                    viewModel.beforeStack.value = "mainScreen"
                     navController.navigate(NavigationRoutes.MeetingPostDetailScreen.createRoute(post.pId))
                 }
                 .width((screenWidth / 3).dp),
@@ -181,7 +193,7 @@ fun TodayNotice(post: PostResponseModel, viewModel: PostViewModel, navController
 @Composable
 fun MeetingBoard(
     postList: List<PostResponseModel>,
-    viewModel: PostViewModel,
+    viewModel: MainViewModel,
     navController: NavController
 ) {
     when (postList.size) {
@@ -203,7 +215,7 @@ fun MeetingBoard(
 @Composable
 fun MeetingBoardItem(
     post: PostResponseModel,
-    viewModel: PostViewModel,
+    viewModel: MainViewModel,
     navController: NavController
 ) {
     val config = LocalConfiguration.current

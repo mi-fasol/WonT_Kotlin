@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.user.UserResponseModel
@@ -44,11 +45,16 @@ import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.userProfileList
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MyPageScreen(viewModel: UserViewModel, navController: NavController) {
+fun MyPageScreen(
+    viewModel: UserViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     val context = LocalContext.current
     val user = viewModel.user.collectAsState().value
     val userState = viewModel.fetchUserState.collectAsState().value
@@ -63,7 +69,6 @@ fun MyPageScreen(viewModel: UserViewModel, navController: NavController) {
         topBar = {
             MainPageAppBar("마이페이지", navController)
         },
-//        bottomBar = { MainBottomNavigation(navController = navController) },
         modifier = Modifier.background(Color(0xfff4f4f4))
     ) {
         Column {
@@ -91,7 +96,7 @@ fun MyPageScreen(viewModel: UserViewModel, navController: NavController) {
                         ) {
                             UserProfile(user = user)
                             Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
-                            MyPageList(user.uId, user.nickname, navController)
+                            MyPageList(user.uId, user.nickname, mainViewModel, navController)
                         }
                     }
                 }
@@ -144,7 +149,12 @@ fun UserProfile(user: UserResponseModel) {
 }
 
 @Composable
-fun MyPageList(uId: Int, nickname: String, navController: NavController) {
+fun MyPageList(
+    uId: Int,
+    nickname: String,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     Box(
         Modifier
             .background(Color(0xfff4f4f4))
@@ -154,7 +164,7 @@ fun MyPageList(uId: Int, nickname: String, navController: NavController) {
             Modifier.padding(bottom = 10.dp)
         ) {
             items(4) { idx ->
-                MyPageListItem(idx, uId, nickname, navController)
+                MyPageListItem(idx, uId, nickname, mainViewModel, navController)
                 Spacer(Modifier.height(5.dp))
             }
         }
@@ -163,7 +173,13 @@ fun MyPageList(uId: Int, nickname: String, navController: NavController) {
 
 
 @Composable
-fun MyPageListItem(idx: Int, uId : Int, nickname: String, navController: NavController) {
+fun MyPageListItem(
+    idx: Int,
+    uId: Int,
+    nickname: String,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
@@ -181,6 +197,7 @@ fun MyPageListItem(idx: Int, uId : Int, nickname: String, navController: NavCont
             .fillMaxWidth()
             .height((screenHeight / 16).dp)
             .clickable {
+                mainViewModel.beforeStack.value = "myPageScreen"
                 navController.navigate(navigationRoutes[idx])
             }) {
         Row(

@@ -53,11 +53,16 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
+fun ClubScreen(
+    postViewModel: ClubPostViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     val postList: List<ClubPostResponseModel> = postViewModel.clubPostList.collectAsState().value
     var searchText by remember { mutableStateOf("") }
     var filteredPosts by remember { mutableStateOf(postList) }
@@ -71,11 +76,7 @@ fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
     Scaffold(
         topBar = {
             MainPageAppBar("소모임/동아리 게시판", navController)
-        },
-//        bottomBar = {
-//            MainBottomNavigation(navController = navController)
-//        },
-//        floatingActionButton = { PostRegisterFloatingButton(navController) }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -105,13 +106,12 @@ fun ClubScreen(postViewModel: ClubPostViewModel, navController: NavController) {
                             onValueChange = {
                                 searchText = it
                                 filteredPosts = postList.filter { post ->
-//                        post.containsHangulSearch(searchText)
                                     post.title.contains(it)
                                 }
                             }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        ClubBoard(postList = list, viewModel = postViewModel, navController)
+                        ClubBoard(postList = list, viewModel = mainViewModel, navController)
                     }
                 }
             }
@@ -165,13 +165,11 @@ fun SearchBarWidget(
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ClubBoard(
     postList: List<ClubPostResponseModel>,
-    viewModel: ClubPostViewModel,
+    viewModel: MainViewModel,
     navController: NavController
 ) {
     LazyColumn(
@@ -186,7 +184,7 @@ fun ClubBoard(
 @Composable
 fun ClubBoardItem(
     post: ClubPostResponseModel,
-    viewModel: ClubPostViewModel,
+    viewModel: MainViewModel,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
@@ -197,6 +195,7 @@ fun ClubBoardItem(
             .height((screenHeight / 7).dp)
             .padding(vertical = 18.dp, horizontal = 3.dp)
             .clickable {
+                viewModel.beforeStack.value = "clubScreen"
                 navController.navigate(NavigationRoutes.ClubPostDetailScreen.createRoute(post.pId))
             }
     ) {

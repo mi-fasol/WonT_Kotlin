@@ -53,11 +53,16 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavController) {
+fun HotPlaceScreen(
+    postViewModel: HotPlacePostViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     val postList = postViewModel.hotPlacePostList.collectAsState().value
     val popularPostList = postViewModel.popularHotPlace.collectAsState().value
     val postListState = postViewModel.hotPlacePostListState.collectAsState().value
@@ -100,10 +105,10 @@ fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavContr
 
                     else -> {
                         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                            PopularPlace(popularPostList, postViewModel)
+                            PopularPlace(popularPostList, mainViewModel, navController)
                             HotPlaceBoard(
                                 postList = postList,
-                                viewModel = postViewModel,
+                                viewModel = mainViewModel,
                                 navController
                             )
                         }
@@ -115,7 +120,11 @@ fun HotPlaceScreen(postViewModel: HotPlacePostViewModel, navController: NavContr
 }
 
 @Composable
-fun PopularPlace(postList: List<HotPlaceResponsePostModel>, viewModel: HotPlacePostViewModel) {
+fun PopularPlace(
+    postList: List<HotPlaceResponsePostModel>,
+    viewModel: MainViewModel,
+    navController: NavController
+) {
     when (postList.size) {
         0 -> {
             Box {}
@@ -134,7 +143,7 @@ fun PopularPlace(postList: List<HotPlaceResponsePostModel>, viewModel: HotPlaceP
                 LazyRow(
                 ) {
                     items(postList.size) { idx ->
-                        PopularPlaceItem(postList[idx], viewModel)
+                        PopularPlaceItem(postList[idx], viewModel, navController)
                         if (idx < postList.size - 1) {
                             Spacer(modifier = Modifier.width(15.dp))
                         }
@@ -146,7 +155,11 @@ fun PopularPlace(postList: List<HotPlaceResponsePostModel>, viewModel: HotPlaceP
 }
 
 @Composable
-fun PopularPlaceItem(post: HotPlaceResponsePostModel, viewModel: HotPlacePostViewModel) {
+fun PopularPlaceItem(
+    post: HotPlaceResponsePostModel,
+    viewModel: MainViewModel,
+    navController: NavController
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -156,6 +169,14 @@ fun PopularPlaceItem(post: HotPlaceResponsePostModel, viewModel: HotPlacePostVie
                 .height((screenHeight / 3.32).dp)
                 .padding(top = 5.dp, bottom = 15.dp)
                 .width((screenWidth / 2.15).dp)
+                .clickable {
+                    viewModel.beforeStack.value = "hotPlaceScreen"
+                    navController.navigate(
+                        NavigationRoutes.HotPlacePostDetailScreen.createRoute(
+                            post.hpId
+                        )
+                    )
+                }
                 .background(Color.Unspecified, RoundedCornerShape(15.dp))
         ) {
             Box(
@@ -219,7 +240,7 @@ fun PopularPlaceItem(post: HotPlaceResponsePostModel, viewModel: HotPlacePostVie
 @Composable
 fun HotPlaceBoard(
     postList: List<HotPlaceResponsePostModel>,
-    viewModel: HotPlacePostViewModel,
+    viewModel: MainViewModel,
     navController: NavController
 ) {
     Column {
@@ -246,7 +267,7 @@ fun HotPlaceBoard(
 @Composable
 fun HotPlaceBoardItem(
     post: HotPlaceResponsePostModel,
-    viewModel: HotPlacePostViewModel,
+    viewModel: MainViewModel,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
@@ -262,6 +283,7 @@ fun HotPlaceBoardItem(
             .padding(top = 15.dp)
             .width((screenWidth / 3.5).dp)
             .clickable {
+                viewModel.beforeStack.value = "hotPlaceScreen"
                 navController.navigate(NavigationRoutes.HotPlacePostDetailScreen.createRoute(post.hpId))
             },
     ) {

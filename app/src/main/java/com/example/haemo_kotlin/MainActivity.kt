@@ -36,6 +36,7 @@ import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.CommentViewModel
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
@@ -56,6 +57,7 @@ class MainApplication : Application() {
 class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<PostViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
     private val clubPostViewModel by viewModels<ClubPostViewModel>()
     private val hotPlacePostViewModel by viewModels<HotPlacePostViewModel>()
     private val userViewModel by viewModels<UserViewModel>()
@@ -86,19 +88,19 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController = navController, startDestination = "mainScreen") {
                         composable(NavigationRoutes.MainScreen.route) {
-                            MainScreen(navController, viewModel, clubPostViewModel, hotPlacePostViewModel, userViewModel)
+                            MainScreen(navController, mainViewModel, viewModel, clubPostViewModel, hotPlacePostViewModel, userViewModel)
                         }
                         composable(NavigationRoutes.MeetingScreen.route) {
-                            MeetingScreen(viewModel, navController)
+                            MeetingScreen(viewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.ClubScreen.route) {
-                            ClubScreen(clubPostViewModel, navController)
+                            ClubScreen(clubPostViewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.HotPlaceScreen.route) {
-                            HotPlaceScreen(hotPlacePostViewModel, navController)
+                            HotPlaceScreen(hotPlacePostViewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.MyPageScreen.route) {
-                            MyPageScreen(userViewModel, navController)
+                            MyPageScreen(userViewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.MeetingPostDetailScreen.route,
                             arguments = listOf(

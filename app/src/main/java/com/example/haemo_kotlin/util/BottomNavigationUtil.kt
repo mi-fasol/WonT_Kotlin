@@ -9,6 +9,7 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,19 +21,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.viewModel.MainViewModel
 
 @Composable
-fun MainBottomNavigation(navController: NavController, onItemSelected: (String) -> Unit) {
+fun MainBottomNavigation(
+    navController: NavController,
+    onItemSelected: (String) -> Unit,
+    viewModel: MainViewModel
+) {
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
     val screenWidth = configuration.screenWidthDp
 
     val currentRoute = navController.currentDestination?.route ?: ""
 
-    val selectedItem: MutableState<String> = remember { mutableStateOf(currentRoute) }
+    val selectedItem = viewModel.beforeStack.collectAsState().value
 
     val onNavigationItemSelected: (String) -> Unit = { route ->
-        selectedItem.value = route
+        viewModel.beforeStack.value = route
         onItemSelected(route)
     }
 
@@ -52,7 +58,7 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
-            selected = selectedItem.value == "mainScreen",
+            selected = selectedItem == "mainScreen",
             onClick = {
                 onNavigationItemSelected("mainScreen")
                 onItemSelected("mainScreen")
@@ -68,7 +74,7 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
-            selected = selectedItem.value == "clubScreen",
+            selected = selectedItem == "clubScreen",
             onClick = {
                 onNavigationItemSelected("clubScreen")
                 onItemSelected("clubScreen")
@@ -84,7 +90,7 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
-            selected = selectedItem.value == "hotPlaceScreen",
+            selected = selectedItem == "hotPlaceScreen",
             onClick = {
                 onNavigationItemSelected("hotPlaceScreen")
                 onItemSelected("hotPlaceScreen")
@@ -94,10 +100,15 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
         )
         BottomNavigationItem(
             icon = {
-                val isSelected = selectedItem.value == "myPageScreen"
+                val isSelected = selectedItem == "myPageScreen"
                 val borderColor = if (isSelected) R.color.mainColor else R.color.mainGreyColor
                 Icon(
-                    painter = painterResource(id = userMyPageImageList[SharedPreferenceUtil(context).getInt("image", 0)]),
+                    painter = painterResource(
+                        id = userMyPageImageList[SharedPreferenceUtil(context).getInt(
+                            "image",
+                            0
+                        )]
+                    ),
                     contentDescription = null,
                     modifier = Modifier
                         .size((screenWidth / 15).dp)
@@ -109,9 +120,9 @@ fun MainBottomNavigation(navController: NavController, onItemSelected: (String) 
                     tint = Color.Unspecified
                 )
             },
-            selected = selectedItem.value == "myPageScreen",
+            selected = selectedItem == "myPageScreen",
             onClick = {
-                onNavigationItemSelected ("myPageScreen")
+                onNavigationItemSelected("myPageScreen")
                 onItemSelected("myPageScreen")
             },
             selectedContentColor = colorResource(id = R.color.mainColor),
