@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
@@ -190,6 +191,12 @@ fun ClubBoardItem(
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+
+    val painter =
+        if (post.image != null) rememberAsyncImagePainter(model = post.image) else painterResource(
+            id = R.drawable.dummy_image
+        )
+
     Box(
         modifier = Modifier
             .height((screenHeight / 7).dp)
@@ -207,7 +214,7 @@ fun ClubBoardItem(
                 Modifier.weight(1f)
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_launcher_background),
+                    painter = painter,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
