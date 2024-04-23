@@ -39,43 +39,22 @@ class ChatListViewModel @Inject constructor(
 
     var fireBaseChatModel = MutableStateFlow<List<FireBaseChatModel>>(emptyList())
     var userChatList = MutableStateFlow<List<String?>>(emptyList())
-    var lastMessages = MutableStateFlow<List<String?>>(emptyList())
     var receiverList = MutableStateFlow<List<UserResponseModel?>>(emptyList())
 
     val uId = SharedPreferenceUtil(context).getUser().uId
 
     init {
-
-        val chatListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.value?.let {
-                    val _usersChatList = it as ArrayList<String>
-                    userChatList.value = _usersChatList
-
-                    userChatList.value.forEach { chatId ->
-                        getLastChatInfo(chatId!!)
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d(ContentValues.TAG, "loadMessage:onCancelled", error.toException())
-            }
-        }
-        firebaseDB.reference.child("user").child(uId.toString()).addValueEventListener(chatListener)
+        getChatList()
     }
 
-    // 채팅룸 입장 시 정보 가져오기
-    private fun getLastChatInfo(chatId: String) {
+    fun getLastChatInfo(chatId: String) {
         val chatListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.value?.let { value ->
                     val result = value as HashMap<String, Any>?
                     val sender = result?.get("sender") as HashMap<String, Any>?
                     val receiver = result?.get("receiver") as HashMap<String, Any>?
-                    Log.d("파이어베이스 message", sender.toString())
                     val _messageData = result?.get("messages") as ArrayList<HashMap<String, Any>>?
-                    Log.d("파이어베이스 message", _messageData.toString())
 
                     var messageData: ArrayList<ChatMessageModel>? = null
 
@@ -126,8 +105,14 @@ class ChatListViewModel @Inject constructor(
                             if (response.isSuccessful) {
                                 val receiverInfo = response.body()
                                 receiverInfo?.let { userInfo ->
-                                    receiverList.value += receiverInfo
+                                    if (receiverList.value.contains(userInfo)) {
+                                        receiverList.value -= userInfo
+                                        receiverList.value += userInfo
+                                    } else {
+                                        receiverList.value += userInfo
+                                    }
                                 }
+                                // receiverList.value = receiverList.value.asReversed()
                                 Log.d("미란 receiver", receiverList.value.toString())
                             } else {
                                 Log.e(
@@ -147,15 +132,22 @@ class ChatListViewModel @Inject constructor(
                         fireBaseChatModel.value = listOf(_chatData)
                         Log.d("chatList 생성", fireBaseChatModel.value.toString())
                     } else {
-                        fireBaseChatModel.value += _chatData
+                        fireBaseChatModel.value.forEach { firebaseChat ->
+                            if (firebaseChat.id == _chatData.id) {
+                                fireBaseChatModel.value -= firebaseChat
+                                fireBaseChatModel.value += _chatData
+                            }
+                        }
+                        if (!fireBaseChatModel.value.contains(_chatData)) {
+                            fireBaseChatModel.value += _chatData
+                        }
                         Log.d("chatList 추가", fireBaseChatModel.value.toString())
                     }
-                    Log.d("파이어베이스", fireBaseChatModel.value.toString())
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.d("파이어베이스 에러", "loadMessage:onCancelled", error.toException())
+                Log.d("미란 ChatListViewModel", "loadMessage:onCancelled", error.toException())
             }
         }
         chatRef.child(chatId).addValueEventListener(chatListener)
@@ -171,11 +163,31 @@ class ChatListViewModel @Inject constructor(
     }
 
     fun getNickname(chatData: FireBaseChatModel, myNickname: String): String {
-        val nickname = if (chatData.sender.nickname == "뜽미니에요") {
+        val nickname = if (chatData.sender.nickname == myNickname) {
             chatData.receiver.nickname
         } else {
             chatData.sender.nickname
         }
         return nickname
+    }
+
+    private fun getChatList() {
+        val chatListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.value?.let {
+                    val _usersChatList = it as ArrayList<String>
+                    userChatList.value = _usersChatList
+
+                    userChatList.value.forEach { chatId ->
+                        getLastChatInfo(chatId!!)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d(ContentValues.TAG, "loadMessage:onCancelled", error.toException())
+            }
+        }
+        userRef.child(uId.toString()).addValueEventListener(chatListener)
     }
 }

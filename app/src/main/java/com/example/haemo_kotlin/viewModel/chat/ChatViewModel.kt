@@ -1,11 +1,9 @@
 package com.example.haemo_kotlin.viewModel.chat
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.MainApplication
 import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.model.chat.ChatUserModel
@@ -17,7 +15,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -40,10 +37,11 @@ class ChatViewModel @Inject constructor(
     var chatMessages = MutableStateFlow<List<ChatMessageModel>>(emptyList())
     var fireBaseChatModel = MutableStateFlow<FireBaseChatModel?>(null)
     var userChatList = MutableStateFlow<List<String>>(emptyList())
+    var receiverChatList = MutableStateFlow<List<String>>(emptyList())
 
     init {
-        val userId = SharedPreferenceUtil(context).getUser().uId
-        firebaseDB.reference.child("user").child(userId.toString()).get()
+        val uId = SharedPreferenceUtil(context).getUser().uId
+        firebaseDB.reference.child("user").child(uId.toString()).get()
             .addOnSuccessListener {
                 it.value?.let { it ->
                     userChatList.value = it as List<String>
@@ -169,6 +167,7 @@ class ChatViewModel @Inject constructor(
 
                 val fireBaseChatModel = FireBaseChatModel(chatId, sender, receiver, message)
 
+                // chat 생성
                 chatRef.child(chatId).setValue(fireBaseChatModel)
                     .addOnSuccessListener {
                         Log.d("미란 chatRoom", "채팅룸 생성 완료")
@@ -184,6 +183,7 @@ class ChatViewModel @Inject constructor(
 
                 Log.d("미란 UserChatInfo 추가 후 리스트: ", userChatList.value.toString())
 
+                // 유저 채팅 리스트에 추가
                 userRef.child(uId.toString()).setValue(userChatList.value)
                     .addOnSuccessListener {
                         Log.d("미란 UserChatInfo", userChatList.value.toString())
@@ -192,7 +192,36 @@ class ChatViewModel @Inject constructor(
                     .addOnFailureListener {
                         Log.d("미란 UserChatInfo", it.toString())
                     }
+
+                getUserChatRoomList(receiverId)
+                Log.d("미란 상대방", receiverChatList.value.toString())
+                setUserChatList(receiverId.toString(), chatId)
+                Log.d("미란 상대방 이후", receiverChatList.value.toString())
             }
         }
+    }
+
+    fun getUserChatRoomList(uId: Int) {
+        receiverChatList.value = emptyList()
+        userRef.child(uId.toString()).get()
+            .addOnSuccessListener {
+                it.value?.let {
+                    receiverChatList.value = it as List<String>
+                }
+                Log.d("유저 채팅 정보 가져옴", receiverChatList.value.toString())
+            }
+            .addOnFailureListener {
+            }
+    }
+
+    fun setUserChatList(uId: String, chatId: String) {
+        receiverChatList.value += chatId
+        userRef.child(uId).setValue(receiverChatList.value)
+            .addOnSuccessListener {
+                Log.d("미란 UserChatInfo", receiverChatList.value.toString())
+            }
+            .addOnFailureListener {
+                Log.d("미란 UserChatInfo", it.toString())
+            }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.screen.main.chat
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -65,6 +66,10 @@ fun ChatListScreen(
             ChatList(chatList, chatListViewModel, userViewModel, navController)
         }
     }
+
+//    LaunchedEffect(chatList){
+//        chatListViewModel.getChatList()
+//    }
 }
 
 @Composable
@@ -79,6 +84,8 @@ fun ChatList(
     val receiverList = viewModel.receiverList.collectAsState().value
     val conf = LocalConfiguration.current
     val screenWidth = conf.screenWidthDp
+
+    Log.d("미란 ChatListScreen", receiverList.toString())
 
     LazyColumn {
         items(chatList.size) { idx ->
