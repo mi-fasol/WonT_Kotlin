@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -64,7 +65,7 @@ fun TextEnterField(type: String, value: String, onValueChange: (String) -> Unit)
             modifier = Modifier.weight(1f)
         )
         Column(
-            Modifier.weight(6f)
+            Modifier.weight(5.5f)
         ) {
             BasicTextField(
                 value = value,
@@ -129,7 +130,7 @@ fun PostSelectDropDownMenu(
                 .width(IntrinsicSize.Min)
                 .height(IntrinsicSize.Min)
                 .then(
-                    if (list.size > 5) {
+                    if (list.size >= 5) {
                         Modifier.height(200.dp)
                     } else {
                         Modifier
@@ -160,7 +161,7 @@ fun ContentEnterField(value: String, onValueChange: (String) -> Unit) {
         Modifier
             .background(Color(0xfff5f5f5), RoundedCornerShape(15.dp))
             .fillMaxWidth()
-            .height((screenHeight / 2.2).dp)
+            .height((screenHeight / 2.5).dp)
     ) {
         BasicTextField(
             value = value,
@@ -218,3 +219,4 @@ fun PostRegisterButton(
         )
     }
 }
+

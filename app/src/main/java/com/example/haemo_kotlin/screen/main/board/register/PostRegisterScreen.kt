@@ -14,12 +14,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.*
@@ -33,15 +38,41 @@ fun PostRegisterScreen(viewModel: PostViewModel, navController: NavController) {
     val content = viewModel.content.collectAsState().value
     val postRegisterState = viewModel.postRegisterState.collectAsState().value
 
+    var dialogOpen by remember { mutableStateOf(false) }
+    var confirmDialogOpen by remember { mutableStateOf(false) }
+    var errorDialogOpen by remember { mutableStateOf(false) }
+
     LaunchedEffect(postRegisterState) {
         when (postRegisterState) {
             is Resource.Success<PostResponseModel> -> {
-                navController.popBackStack()
+                confirmDialogOpen = true
+            }
+
+            is Resource.Error<PostResponseModel> -> {
+                errorDialogOpen = true
             }
 
             else -> {
-
             }
+        }
+    }
+
+    if (dialogOpen) {
+        YesOrNoDialog(content = "등록하시겠습니까?", onClickCancel = { navController.popBackStack() }) {
+            viewModel.registerPost()
+            dialogOpen = false
+            confirmDialogOpen = true
+        }
+    }
+    if (confirmDialogOpen) {
+        ConfirmDialog(content = "등록이 완료되었습니다.") {
+            confirmDialogOpen = false
+            navController.popBackStack()
+        }
+    }
+    if (errorDialogOpen) {
+        ConfirmDialog(content = "오류가 발생했습니다.\n다시 시도해 주세요.") {
+            errorDialogOpen = false
         }
     }
 
@@ -61,7 +92,7 @@ fun PostRegisterScreen(viewModel: PostViewModel, navController: NavController) {
                     }
                 }
                 PostRegisterButton(viewModel, null, null, 1, navController) {
-                    viewModel.registerPost()
+                    dialogOpen = true
                 }
             }
         }
