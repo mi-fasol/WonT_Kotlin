@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
-import com.example.haemo_kotlin.model.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.comment.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.PostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel

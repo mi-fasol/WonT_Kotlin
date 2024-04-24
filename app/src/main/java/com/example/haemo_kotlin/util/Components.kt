@@ -1,7 +1,9 @@
 package com.example.haemo_kotlin.util
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,11 +19,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +36,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,11 +49,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.comment.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.comment.reply.ReplyResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.viewModel.CommentViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun ErrorScreen(text: String) {
@@ -168,7 +166,7 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
 
 @Composable
 fun SendReply(
-    type: String,
+    isReply: Boolean,
     postType: Int,
     pId: Int,
     commentViewModel: CommentViewModel,
@@ -178,6 +176,8 @@ fun SendReply(
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
+    val cId = commentViewModel.cId.collectAsState().value
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -198,6 +198,11 @@ fun SendReply(
             )
             FilledIconButton(
                 onClick = {
+                    if (!isReply) {
+                        commentViewModel.registerComment(value, pId, postType)
+                    } else {
+                        commentViewModel.registerReply(value, cId, postType)
+                    }
                     onClickedEvent()
                 },
                 shape = IconButtonDefaults.filledShape,
@@ -252,7 +257,8 @@ fun CommentWidget(
         }
         if (commentList.isNotEmpty()) {
             commentList.forEachIndexed { index, comment ->
-                userList.getOrNull(index)?.let { CommentWidgetItem(comment, it, navController) }
+                userList.getOrNull(index)
+                    ?.let { CommentWidgetItem(comment, it, type, commentViewModel, navController) }
             }
         }
     }
@@ -262,49 +268,170 @@ fun CommentWidget(
 fun CommentWidgetItem(
     comment: CommentResponseModel,
     user: UserResponseModel,
+    type: Int,
+    viewModel: CommentViewModel,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
 
+    val replyList = viewModel.replyList.collectAsState().value
+    val replys = replyList[comment.cId]
+
+    val userList = viewModel.replyUserList.collectAsState().value
+    val replyUsers = userList[comment.cId]
+
+    var bottomSheetOpen by remember { mutableStateOf(false) }
+    var dialogOpen by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(true) {
+        viewModel.getReplyListByCId(comment.cId, type)
+        viewModel.getReplyUser(comment.cId, type)
+    }
+
+    Column {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp)
+                .fillMaxHeight(),
+        ) {
+            IconButton(
+                onClick = {
+                    bottomSheetOpen = true
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = userMyPageImageList[user.userImage]),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size((screenHeight / 18).dp)
+                )
+            }
+            Column(
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    androidx.compose.material3.Text(
+                        text = comment.nickname,
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.mainTextColor),
+                        modifier = Modifier
+                    )
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                colorResource(id = R.color.meetingDetailButtonColor),
+                                RoundedCornerShape(15.dp)
+                            )
+                            .clickable {
+                                dialogOpen = true
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "답글",
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(vertical = 7.dp, horizontal = 20.dp),
+                            color = colorResource(id = R.color.meetingDetailButtonTextColor)
+                        )
+                    }
+                }
+                androidx.compose.material3.Text(
+                    comment.content, fontSize = 12.5.sp,
+                    color = colorResource(id = R.color.mainTextColor),
+                    maxLines = Int.MAX_VALUE
+                )
+            }
+        }
+        if (replys != null) {
+            if (replys.isNotEmpty()) {
+                Log.d("미란 reply", replys.toString())
+                replys.forEachIndexed { index, reply ->
+                    if (replyUsers != null) {
+                        replyUsers.getOrNull(index)
+                            ?.let { ReplyWidgetItem(reply, it, navController) }
+                    }
+                }
+            }
+        }
+    }
+
+    if (bottomSheetOpen) {
+        UserBottomSheet(user = user, navController = navController) {
+            bottomSheetOpen = false
+        }
+    }
+
+    if (dialogOpen) {
+        YesOrNoDialog(content = "답글을 작성하시겠습니까?", onClickCancel = { navController.popBackStack() }) {
+            viewModel.isReply.value = true
+            viewModel.cId.value = comment.cId
+            viewModel.postType.value = type
+            dialogOpen = false
+        }
+    }
+}
+
+@Composable
+fun ReplyWidgetItem(
+    reply: ReplyResponseModel,
+    user: UserResponseModel,
+    navController: NavController
+) {
+    val config = LocalConfiguration.current
+    val screenHeight = config.screenHeightDp
+
     var bottomSheetOpen by remember { mutableStateOf(false) }
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 20.dp)
-            .fillMaxHeight(),
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd,
     ) {
-        IconButton(
-            onClick = {
-                bottomSheetOpen = true
-            }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(bottom = 20.dp)
+                .fillMaxHeight(),
         ) {
             Icon(
-                painter = painterResource(id = userMyPageImageList[user.userImage]),
+                painter = painterResource(R.drawable.reply_icon),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.size((screenHeight / 18).dp)
-            )
-        }
-        Column() {
-            androidx.compose.material3.Text(
-                text = comment.nickname,
-                fontSize = 13.5.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.mainTextColor),
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .size((screenHeight / 22).dp)
+                    .padding(end = 10.dp)
             )
-            androidx.compose.material3.Text(
-                comment.content, fontSize = 12.5.sp,
-                color = colorResource(id = R.color.mainTextColor),
-                modifier = Modifier
-                    .fillMaxWidth(),
-                maxLines = Int.MAX_VALUE
-            )
+            Column(
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    androidx.compose.material3.Text(
+                        text = reply.nickname,
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.mainTextColor),
+                        modifier = Modifier
+                    )
+                }
+                androidx.compose.material3.Text(
+                    reply.content, fontSize = 12.5.sp,
+                    color = colorResource(id = R.color.mainTextColor),
+                    maxLines = Int.MAX_VALUE
+                )
+            }
         }
     }
 

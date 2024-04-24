@@ -1,7 +1,7 @@
 package com.example.haemo_kotlin.repository
 
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
-import com.example.haemo_kotlin.model.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.comment.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel

@@ -1,5 +1,3 @@
-@file:Suppress("IMPLICIT_CAST_TO_ANY")
-
 package com.example.haemo_kotlin.screen.main.board.register
 
 import android.annotation.SuppressLint
@@ -38,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -47,7 +44,14 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
-import com.example.haemo_kotlin.util.*
+import com.example.haemo_kotlin.util.ConfirmDialog
+import com.example.haemo_kotlin.util.ContentEnterField
+import com.example.haemo_kotlin.util.PostRegisterAppBar
+import com.example.haemo_kotlin.util.PostRegisterButton
+import com.example.haemo_kotlin.util.PostSelectDropDownMenu
+import com.example.haemo_kotlin.util.TextEnterField
+import com.example.haemo_kotlin.util.YesOrNoDialog
+import com.example.haemo_kotlin.util.personList
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 

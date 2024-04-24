@@ -2,25 +2,20 @@ package com.example.haemo_kotlin.screen.main.board.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,9 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,17 +38,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
-import com.example.haemo_kotlin.model.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
-import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
-import com.example.haemo_kotlin.util.UserBottomSheet
-import com.example.haemo_kotlin.util.userMyPageImageList
+import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
@@ -70,12 +62,23 @@ fun MeetingPostDetailScreen(
     val accept = postViewModel.acceptationList.collectAsState().value
     val commentList = commentViewModel.commentList.collectAsState().value
     val content = commentViewModel.content.collectAsState().value
+    val isReply = commentViewModel.isReply.collectAsState().value
+    val replyList = commentViewModel.replyList.collectAsState().value
+    val repliedCId = commentViewModel.cId.collectAsState().value
+
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(commentList) {
         postViewModel.getOnePost(pId)
         postViewModel.getPostingUser(pId)
         postViewModel.getAcceptationUserByPId(pId)
         postViewModel.getCommentListByPId(pId)
+    }
+    LaunchedEffect(replyList) {
+        commentViewModel.getReplyListByCId(repliedCId, 1)
+        commentViewModel.getReplyUser(repliedCId, 1)
     }
 
     Scaffold(
@@ -84,18 +87,24 @@ fun MeetingPostDetailScreen(
         },
         bottomBar = {
             SendReply(
-                type = "댓글",
+                isReply,
                 postType = 1,
                 pId = pId,
                 value = content,
                 commentViewModel = commentViewModel,
                 onValueChange = { newValue ->
                     commentViewModel.content.value = newValue
-                }){
-                commentViewModel.registerComment(content, pId, 1)
+                }) {
                 commentViewModel.content.value = ""
             }
-        }
+        },
+//        modifier = Modifier.pointerInput(Unit) {
+//            awaitEachGesture {
+//                if (isReply) {
+//                    openDialog = true
+//                }
+//            }
+//        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -135,6 +144,13 @@ fun MeetingPostDetailScreen(
                     }
                 }
             }
+        }
+    }
+    if (openDialog) {
+        YesOrNoDialog(content = "답글 작성을 취소하시겠습니까?", onClickCancel = {
+            openDialog = false
+        }) {
+            commentViewModel.isReply.value = false
         }
     }
 }

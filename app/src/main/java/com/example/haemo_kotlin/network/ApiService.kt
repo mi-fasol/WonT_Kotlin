@@ -1,8 +1,10 @@
 package com.example.haemo_kotlin.network
 
 import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
-import com.example.haemo_kotlin.model.comment.CommentModel
-import com.example.haemo_kotlin.model.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.comment.comment.CommentModel
+import com.example.haemo_kotlin.model.comment.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.comment.reply.ReplyModel
+import com.example.haemo_kotlin.model.comment.reply.ReplyResponseModel
 import com.example.haemo_kotlin.model.post.ClubPostModel
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlacePostModel
@@ -118,6 +120,36 @@ interface ApiService {
 
     @POST("hotComment")
     suspend fun registerHotPlaceComment(@Body comment: CommentModel): Response<CommentResponseModel>
+
+    // 대댓글 작성
+    @POST("postReply")
+    suspend fun registerPostReply(@Body reply: ReplyModel): Response<ReplyResponseModel>
+
+    @POST("clubReply")
+    suspend fun registerClubPostReply(@Body reply: ReplyModel): Response<ReplyResponseModel>
+
+    @POST("hotRely")
+    suspend fun registerHotPlacePostReply(@Body reply: ReplyModel): Response<ReplyResponseModel>
+
+    // 대댓글 가져오기
+    @GET("postReply/find/{id}")
+    suspend fun getReplyByCId(@Path("id") pId: Int): Response<List<ReplyResponseModel>>
+
+    @GET("clubReply/find/{id}")
+    suspend fun getClubReplyByCId(@Path("id") pId: Int): Response<List<ReplyResponseModel>>
+
+    @GET("hotReply/find/{id}")
+    suspend fun getHotPlaceReplyByCId(@Path("id") pId: Int): Response<List<ReplyResponseModel>>
+
+    // 대댓글 작성 유저
+    @GET("postReply/replyUser/{id}")
+    suspend fun getReplyUserListByCId(@Path("id") pId: Int): Response<List<UserResponseModel>>
+
+    @GET("clubReply/replyUser/{id}")
+    suspend fun getClubReplyUserListByCId(@Path("id") pId: Int): Response<List<UserResponseModel>>
+
+    @GET("hotReply/replyUser/{id}")
+    suspend fun getHotPlaceReplyUserListByCId(@Path("id") pId: Int): Response<List<UserResponseModel>>
 
 
     // wish

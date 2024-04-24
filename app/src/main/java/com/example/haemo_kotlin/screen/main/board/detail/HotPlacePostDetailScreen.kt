@@ -1,8 +1,6 @@
 package com.example.haemo_kotlin.screen.main.board.detail
 
-import android.graphics.drawable.shapes.Shape
 import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,7 +52,6 @@ import com.example.haemo_kotlin.viewModel.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 
@@ -69,6 +66,7 @@ fun HotPlacePostDetailScreen(
     val user = postViewModel.user.collectAsState().value
     val postState = postViewModel.hotPlacePostState.collectAsState().value
     val content = commentViewModel.content.collectAsState().value
+    val isReply = commentViewModel.isReply.collectAsState().value
 
     LaunchedEffect(post) {
         postViewModel.getOneHotPlacePost(pId)
@@ -83,7 +81,7 @@ fun HotPlacePostDetailScreen(
         },
         bottomBar = {
             SendReply(
-                type = "댓글",
+                isReply,
                 postType = 2,
                 pId = pId,
                 value = content,

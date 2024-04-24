@@ -55,6 +55,7 @@ fun ClubPostDetailScreen(
     val user = postViewModel.user.collectAsState().value
     val postState = postViewModel.clubPostState.collectAsState().value
     val content = commentViewModel.content.collectAsState().value
+    val isReply = commentViewModel.isReply.collectAsState().value
 
     LaunchedEffect(post) {
         postViewModel.getOneClubPost(pId)
@@ -69,7 +70,7 @@ fun ClubPostDetailScreen(
         },
         bottomBar = {
             SendReply(
-                type = "댓글",
+                isReply,
                 postType = 2,
                 pId = pId,
                 value = content,
