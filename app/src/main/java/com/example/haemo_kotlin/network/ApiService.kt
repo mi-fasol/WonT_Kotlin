@@ -128,7 +128,7 @@ interface ApiService {
     @POST("clubReply")
     suspend fun registerClubPostReply(@Body reply: ReplyModel): Response<ReplyResponseModel>
 
-    @POST("hotRely")
+    @POST("hotReply")
     suspend fun registerHotPlacePostReply(@Body reply: ReplyModel): Response<ReplyResponseModel>
 
     // 대댓글 가져오기

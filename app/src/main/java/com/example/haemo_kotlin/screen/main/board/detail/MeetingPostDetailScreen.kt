@@ -72,7 +72,7 @@ fun MeetingPostDetailScreen(
         postViewModel.getOnePost(pId)
         postViewModel.getPostingUser(pId)
         postViewModel.getAcceptationUserByPId(pId)
-        postViewModel.getCommentListByPId(pId)
+        commentViewModel.getCommentListByPId(pId, 2)
     }
     LaunchedEffect(replyList) {
         commentViewModel.getReplyListByCId(repliedCId, 1)

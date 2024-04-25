@@ -247,7 +247,7 @@ class CommentViewModel @Inject constructor(
             else -> throw (error("에러러링"))
         }
 
-        Log.d("미란 comment", reply.toString())
+        Log.d("미란 reply", reply.toString())
 
         viewModelScope.launch {
             _commentRegisterState.value = Resource.loading(null)

@@ -20,6 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +45,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
+import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 
@@ -54,14 +59,32 @@ fun ClubPostDetailScreen(
     val post = postViewModel.clubPost.collectAsState().value
     val user = postViewModel.user.collectAsState().value
     val postState = postViewModel.clubPostState.collectAsState().value
+    val commentList = commentViewModel.commentList.collectAsState().value
     val content = commentViewModel.content.collectAsState().value
     val isReply = commentViewModel.isReply.collectAsState().value
+    val replyList = commentViewModel.replyList.collectAsState().value
+    val repliedCId = commentViewModel.commentId.collectAsState().value
 
-    LaunchedEffect(post) {
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
+
+    if (openDialog) {
+        YesOrNoDialog(content = "답글 작성을 취소하시겠습니까?", onClickCancel = {
+            openDialog = false
+        }) {
+            commentViewModel.isReply.value = false
+        }
+    }
+
+    LaunchedEffect(commentList) {
         postViewModel.getOneClubPost(pId)
         postViewModel.getClubPostingUser(pId)
         commentViewModel.getCommentListByPId(pId, 2)
-        commentViewModel.getCommentUser(pId, 2)
+    }
+    LaunchedEffect(replyList) {
+        commentViewModel.getReplyListByCId(repliedCId, 2)
+        commentViewModel.getReplyUser(repliedCId, 2)
     }
 
     Scaffold(
@@ -78,14 +101,7 @@ fun ClubPostDetailScreen(
                 onValueChange = { newValue ->
                     commentViewModel.content.value = newValue
                 }) {
-                commentViewModel.registerComment(content, pId, 2)
                 commentViewModel.content.value = ""
-            }
-            LaunchedEffect(Unit) {
-                postViewModel.getOneClubPost(pId)
-                postViewModel.getClubPostingUser(pId)
-                commentViewModel.getCommentListByPId(pId, 2)
-                commentViewModel.getCommentUser(pId, 2)
             }
         }
     ) { innerPadding ->
