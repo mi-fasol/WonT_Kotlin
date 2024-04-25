@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,7 +49,7 @@ import com.example.haemo_kotlin.util.userProfileList
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.UserViewModel
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun MyPageScreen(
     viewModel: UserViewModel,
@@ -70,33 +71,43 @@ fun MyPageScreen(
             MainPageAppBar("마이페이지", navController)
         },
         modifier = Modifier.background(Color(0xfff4f4f4))
-    ) {
-        Column {
-            Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
-            when (userState) {
-                is Resource.Error<UserResponseModel> -> {
-                    ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
-                }
-
-                is Resource.Loading<UserResponseModel> -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                else -> {
-                    if (user == null) {
+    ) { innerPadding ->
+        BoxWithConstraints {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        bottom = innerPadding.calculateBottomPadding() + 10.dp
+                    )
+            ) {
+                Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
+                when (userState) {
+                    is Resource.Error<UserResponseModel> -> {
                         ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
-                    } else {
-                        Column(
-                            //    modifier = Modifier.padding(horizontal = 20.dp)
+                    }
+
+                    is Resource.Loading<UserResponseModel> -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
                         ) {
-                            UserProfile(user = user)
-                            Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
-                            MyPageList(user.uId, user.nickname, mainViewModel, navController)
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    else -> {
+                        if (user == null) {
+                            ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
+                        } else {
+                            Column(
+                                //    modifier = Modifier.padding(horizontal = 20.dp)
+                            ) {
+                                UserProfile(user = user)
+                                Divider(
+                                    thickness = 1.dp,
+                                    color = colorResource(id = R.color.mainColor)
+                                )
+                                MyPageList(user.uId, user.nickname, mainViewModel, navController)
+                            }
                         }
                     }
                 }

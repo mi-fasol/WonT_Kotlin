@@ -176,7 +176,7 @@ fun SendReply(
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
-    val cId = commentViewModel.cId.collectAsState().value
+    val cId = commentViewModel.commentId.collectAsState().value
 
     Box(
         modifier = Modifier
@@ -372,9 +372,11 @@ fun CommentWidgetItem(
     }
 
     if (dialogOpen) {
-        YesOrNoDialog(content = "답글을 작성하시겠습니까?", onClickCancel = { navController.popBackStack() }) {
+        YesOrNoDialog(content = "답글을 작성하시겠습니까?", onClickCancel = {
+            dialogOpen = false
+        }) {
             viewModel.isReply.value = true
-            viewModel.cId.value = comment.cId
+            viewModel.commentId.value = comment.cId
             viewModel.postType.value = type
             dialogOpen = false
         }

@@ -56,7 +56,7 @@ class CommentViewModel @Inject constructor(
         _replyRegisterState.asStateFlow()
 
     var isReply = MutableStateFlow(false)
-    var cId = MutableStateFlow(0)
+    var commentId = MutableStateFlow(0)
     var postType = MutableStateFlow(0)
 
     suspend fun getCommentListByPId(pId: Int, type: Int) {
@@ -262,17 +262,14 @@ class CommentViewModel @Inject constructor(
                     val savedReply = response.body()
                     _replyRegisterState.value = Resource.success(savedReply)
                     val beforeList = _replyList.value[cId]
-                    Log.d("미란 beforeList", beforeList.toString())
                     if (beforeList.isNullOrEmpty()){
                         Log.d("미란 nullOrEmpty", "들어와졋내요..")
                         _replyList.value[cId] = emptyList()
-                        _replyList.value[cId] = _replyList.value[cId]!! + savedReply!!
-                    } else {
-                        Log.d("미란 이전 reply", _replyList.value[cId]!!.toString())
-                        _replyList.value[cId] = _replyList.value[cId]!! + savedReply!!
-                        Log.d("미란 이후 reply", _replyList.value[cId]!!.toString())
                     }
-                    Log.d("미란 SaveComment", savedReply.toString())
+                    _replyList.value[cId] = _replyList.value[cId]!! + savedReply!!
+                    Log.d("미란 SavedReply", savedReply.toString())
+                    commentId.value = 0
+                    isReply.value = false
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "에러 응답: $errorBody")
