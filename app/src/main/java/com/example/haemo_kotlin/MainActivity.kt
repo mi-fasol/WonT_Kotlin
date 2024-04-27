@@ -196,7 +196,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(NavigationRoutes.ChatListScreen.route) {
-                            ChatListScreen(chatListViewModel, userViewModel, navController)
+                            ChatListScreen(chatListViewModel, navController)
                         }
                     }
                 }

@@ -157,16 +157,6 @@ class ChatListViewModel @Inject constructor(
         return lastChat
     }
 
-    fun getNickname(chatData: FireBaseChatModel, myNickname: String): String {
-        val nickname = if (chatData.sender.nickname == myNickname) {
-            chatData.receiver.nickname
-        } else {
-            chatData.sender.nickname
-        }
-
-        return nickname
-    }
-
     fun getChatList() {
         val chatListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
