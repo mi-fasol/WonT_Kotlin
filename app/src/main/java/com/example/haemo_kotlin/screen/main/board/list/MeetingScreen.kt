@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.screen.main.board.list
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -74,7 +75,7 @@ fun MeetingScreen(
             modifier = Modifier
                 .padding(
                     top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding() + 10.dp
+                    bottom = innerPadding.calculateBottomPadding()
                 )
         ) {
             Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
@@ -102,7 +103,8 @@ fun MeetingScreen(
                         )
                         MeetingBoard(
                             postList = postList,
-                            viewModel = mainViewModel,
+                            viewModel = postViewModel,
+                            mainViewModel,
                             navController = navController
                         )
                     }
@@ -193,7 +195,8 @@ fun TodayNotice(post: PostResponseModel, viewModel: MainViewModel, navController
 @Composable
 fun MeetingBoard(
     postList: List<PostResponseModel>,
-    viewModel: MainViewModel,
+    viewModel: PostViewModel,
+    mainViewModel: MainViewModel,
     navController: NavController
 ) {
     when (postList.size) {
@@ -204,7 +207,7 @@ fun MeetingBoard(
         else -> {
             LazyColumn {
                 items(postList.size) { idx ->
-                    MeetingBoardItem(postList[idx], viewModel, navController)
+                    MeetingBoardItem(postList[idx], viewModel, mainViewModel, navController)
                     Divider()
                 }
             }
@@ -215,6 +218,7 @@ fun MeetingBoard(
 @Composable
 fun MeetingBoardItem(
     post: PostResponseModel,
+    postViewModel: PostViewModel,
     viewModel: MainViewModel,
     navController: NavController
 ) {
@@ -222,10 +226,17 @@ fun MeetingBoardItem(
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
     val date = convertDate(post.date)
+    val accept = postViewModel.acceptationList.collectAsState().value
+
+    LaunchedEffect(true) {
+        postViewModel.getAcceptationUserByPId(post.pId)
+    }
+
     Box(
         modifier = Modifier
             .height((screenHeight / 10).dp)
             .clickable {
+                viewModel.beforeStack.value = "meetingScreen"
                 navController.navigate(NavigationRoutes.MeetingPostDetailScreen.createRoute(post.pId))
             }
     ) {
@@ -250,7 +261,7 @@ fun MeetingBoardItem(
                         .fillMaxWidth()
                 )
                 Text(
-                    "3/${post.person}", fontSize = 12.5.sp,
+                    "${accept.size}/${post.person}", fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff82C0EA),
                     modifier = Modifier

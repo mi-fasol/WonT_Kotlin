@@ -76,7 +76,7 @@ fun MyPageScreen(
             Column(
                 modifier = Modifier
                     .padding(
-                        bottom = innerPadding.calculateBottomPadding() + 10.dp
+                        bottom = innerPadding.calculateBottomPadding()
                     )
             ) {
                 Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
