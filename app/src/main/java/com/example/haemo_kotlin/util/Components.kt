@@ -1,6 +1,5 @@
 package com.example.haemo_kotlin.util
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -354,7 +353,6 @@ fun CommentWidgetItem(
         }
         if (replys != null) {
             if (replys.isNotEmpty()) {
-                Log.d("미란 reply", replys.toString())
                 replys.forEachIndexed { index, reply ->
                     if (replyUsers != null) {
                         replyUsers.getOrNull(index)

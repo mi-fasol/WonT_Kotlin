@@ -1,15 +1,13 @@
 package com.example.haemo_kotlin.viewModel.chat
 
-import android.app.Application
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.MainApplication
-import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.model.chat.ChatUserModel
+import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -18,11 +16,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.forEach
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,6 +35,8 @@ class ChatListViewModel @Inject constructor(
     var fireBaseChatModel = MutableStateFlow<List<FireBaseChatModel>>(emptyList())
     var userChatList = MutableStateFlow<List<String?>>(emptyList())
     var receiverList = MutableStateFlow<List<UserResponseModel?>>(emptyList())
+    var _chatList = MutableStateFlow<MutableMap<String, UserResponseModel>>(HashMap())
+    var chatList: StateFlow<MutableMap<String, UserResponseModel>> = _chatList
 
     val uId = SharedPreferenceUtil(context).getUser().uId
 
@@ -93,7 +90,8 @@ class ChatListViewModel @Inject constructor(
                         ),
                         messageData!!.toList()
                     )
-                    var id = if ((sender["id"] as Long).toInt() != uId) {
+
+                    val id = if ((sender["id"] as Long).toInt() != uId) {
                         (sender["id"] as Long).toInt()
                     } else {
                         (receiver["id"] as Long).toInt()
@@ -105,15 +103,9 @@ class ChatListViewModel @Inject constructor(
                             if (response.isSuccessful) {
                                 val receiverInfo = response.body()
                                 receiverInfo?.let { userInfo ->
-                                    if (receiverList.value.contains(userInfo)) {
-                                        receiverList.value -= userInfo
-                                        receiverList.value += userInfo
-                                    } else {
-                                        receiverList.value += userInfo
-                                    }
+                                    _chatList.value.put(_chatData.id!!, userInfo)
                                 }
-                                // receiverList.value = receiverList.value.asReversed()
-                                Log.d("미란 receiver", receiverList.value.toString())
+                                Log.d("미란 chatList 해시맵", _chatList.value.toString())
                             } else {
                                 Log.e(
                                     "ChatListViewModel",
@@ -134,8 +126,11 @@ class ChatListViewModel @Inject constructor(
                     } else {
                         fireBaseChatModel.value.forEach { firebaseChat ->
                             if (firebaseChat.id == _chatData.id) {
-                                fireBaseChatModel.value -= firebaseChat
-                                fireBaseChatModel.value += _chatData
+                                val newChatModel = fireBaseChatModel.value.filter {
+                                    it.id != _chatData.id
+                                }
+                                fireBaseChatModel.value = newChatModel
+                                fireBaseChatModel.value.plus(_chatData)
                             }
                         }
                         if (!fireBaseChatModel.value.contains(_chatData)) {
@@ -168,10 +163,11 @@ class ChatListViewModel @Inject constructor(
         } else {
             chatData.sender.nickname
         }
+
         return nickname
     }
 
-    private fun getChatList() {
+    fun getChatList() {
         val chatListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.value?.let {

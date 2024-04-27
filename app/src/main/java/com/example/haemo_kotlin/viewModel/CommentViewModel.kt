@@ -42,7 +42,8 @@ class CommentViewModel @Inject constructor(
     private val _userList = MutableStateFlow<List<UserResponseModel>>(emptyList())
     val userList: StateFlow<List<UserResponseModel>> = _userList
 
-    private val _replyUserList = MutableStateFlow<MutableMap<Int, List<UserResponseModel>>>(HashMap())
+    private val _replyUserList =
+        MutableStateFlow<MutableMap<Int, List<UserResponseModel>>>(HashMap())
     val replyUserList: StateFlow<MutableMap<Int, List<UserResponseModel>>> = _replyUserList
 
     private val _commentRegisterState =
@@ -247,8 +248,6 @@ class CommentViewModel @Inject constructor(
             else -> throw (error("에러러링"))
         }
 
-        Log.d("미란 reply", reply.toString())
-
         viewModelScope.launch {
             _commentRegisterState.value = Resource.loading(null)
             try {
@@ -262,7 +261,7 @@ class CommentViewModel @Inject constructor(
                     val savedReply = response.body()
                     _replyRegisterState.value = Resource.success(savedReply)
                     val beforeList = _replyList.value[cId]
-                    if (beforeList.isNullOrEmpty()){
+                    if (beforeList.isNullOrEmpty()) {
                         Log.d("미란 nullOrEmpty", "들어와졋내요..")
                         _replyList.value[cId] = emptyList()
                     }

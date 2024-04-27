@@ -68,11 +68,14 @@ fun MeetingPostDetailScreen(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(commentList) {
+    LaunchedEffect(true) {
         postViewModel.getOnePost(pId)
         postViewModel.getPostingUser(pId)
         postViewModel.getAcceptationUserByPId(pId)
-        commentViewModel.getCommentListByPId(pId, 2)
+    }
+
+    LaunchedEffect(commentList) {
+        commentViewModel.getCommentListByPId(pId, 1)
     }
     LaunchedEffect(replyList) {
         commentViewModel.getReplyListByCId(repliedCId, 1)

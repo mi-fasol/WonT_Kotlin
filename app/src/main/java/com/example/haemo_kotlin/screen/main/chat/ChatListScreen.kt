@@ -1,29 +1,18 @@
 package com.example.haemo_kotlin.screen.main.chat
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,8 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -67,9 +54,9 @@ fun ChatListScreen(
         }
     }
 
-//    LaunchedEffect(chatList){
-//        chatListViewModel.getChatList()
-//    }
+    LaunchedEffect(true) {
+        chatListViewModel.getChatList()
+    }
 }
 
 @Composable
@@ -81,28 +68,30 @@ fun ChatList(
 ) {
     val context = LocalContext.current
     val nickname = SharedPreferenceUtil(context).getString("nickname", "")
-    val receiverList = viewModel.receiverList.collectAsState().value
+    val chatMap = viewModel.chatList.collectAsState().value
     val conf = LocalConfiguration.current
     val screenWidth = conf.screenWidthDp
-
-    Log.d("미란 ChatListScreen", receiverList.toString())
 
     LazyColumn {
         items(chatList.size) { idx ->
             val lastMessage = viewModel.checkLastMessage(chatList[idx])
             val otherPersonNickname = viewModel.getNickname(chatList[idx], nickname!!)
-            val receiverId = receiverList[idx]!!.uId
+            val receiver = chatMap[chatList[idx].id]!!
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 15.dp, horizontal = 20.dp)
                     .clickable {
-                        navController.navigate(NavigationRoutes.ChatScreen.createRoute(receiverId))
+                        navController.navigate(
+                            NavigationRoutes.ChatScreen.createRoute(
+                                receiver.uId
+                            )
+                        )
                     }
             ) {
                 Image(
-                    painterResource(id = userMyPageImageList[receiverList[idx]!!.userImage]),
+                    painterResource(id = userMyPageImageList[receiver.userImage]),
                     contentDescription = null,
                     modifier = Modifier.size((screenWidth / 7).dp)
                 )
