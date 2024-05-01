@@ -180,6 +180,8 @@ class WishViewModel @Inject constructor(
                 )
             }
         }
+
+        Log.d("미란 wishClub", wish.toString())
         viewModelScope.launch {
             _postModelState.value = Resource.loading(null)
             try {

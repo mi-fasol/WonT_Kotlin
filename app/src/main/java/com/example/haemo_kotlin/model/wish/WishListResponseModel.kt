@@ -1,13 +1,10 @@
 package com.example.haemo_kotlin.model.wish
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serial
 
 data class WishListResponseModel(
-    @SerializedName("wmId") val wId: Int? = null,
-    @SerializedName("wcId") val wcId: Int? = null,
-    @SerializedName("wid") val wpId: Int? = null,
-    @SerializedName("pid") val pId: Int? = null,
-    @SerializedName("cpId") val cpId: Int? = null,
-    @SerializedName("hpId") val hpId: Int? = null,
+    @SerializedName("wmId", alternate = ["wcId", "wid"]) val wId : Int,
+    @SerializedName("pid", alternate = ["cpId", "hpId"]) val pId : Int,
     @SerializedName("uid") val uId: Int,
 )

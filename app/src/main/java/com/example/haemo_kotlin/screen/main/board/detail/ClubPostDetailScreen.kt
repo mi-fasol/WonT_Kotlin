@@ -96,7 +96,7 @@ fun ClubPostDetailScreen(
 
     Scaffold(
         topBar = {
-            PostDetailAppBar(commentViewModel,  wishViewModel,false, pId, 2, navController)
+            PostDetailAppBar(commentViewModel,  wishViewModel,isWished, pId, 2, navController)
         },
         bottomBar = {
             SendReply(

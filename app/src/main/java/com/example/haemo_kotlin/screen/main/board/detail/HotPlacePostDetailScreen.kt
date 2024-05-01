@@ -107,7 +107,7 @@ fun HotPlacePostDetailScreen(
 
     Scaffold(
         topBar = {
-            PostDetailAppBar(commentViewModel, wishViewModel,false, pId, 3, navController)
+            PostDetailAppBar(commentViewModel, wishViewModel,isWished, pId, 3, navController)
         },
         bottomBar = {
             SendReply(
