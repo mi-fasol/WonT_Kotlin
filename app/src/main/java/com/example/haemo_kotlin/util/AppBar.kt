@@ -24,7 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.viewModel.CommentViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +82,9 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
 }
 
 @Composable
-fun PostDetailAppBar(viewModel: CommentViewModel, navController: NavController) {
+fun PostDetailAppBar(viewModel: CommentViewModel, wishViewModel: WishViewModel, isWished: Boolean, pId: Int, type: Int, navController: NavController) {
+    val iconColor =
+        if (isWished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
     TopAppBar(
         title = {
         },
@@ -101,11 +104,16 @@ fun PostDetailAppBar(viewModel: CommentViewModel, navController: NavController) 
         },
         actions = {
             IconButton(onClick = {
+                if(isWished){
+                    wishViewModel.deleteWishList(pId, type)
+                } else{
+                    wishViewModel.addWishList(pId, type)
+                }
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.wish_meeting_icon),
                     contentDescription = null,
-                    tint = colorResource(id = R.color.mainColor),
+                    tint = iconColor,
                     modifier = Modifier.size(20.dp)
                 )
             }

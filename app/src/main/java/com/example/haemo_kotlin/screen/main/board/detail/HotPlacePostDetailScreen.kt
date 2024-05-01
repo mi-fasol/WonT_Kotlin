@@ -53,8 +53,9 @@ import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.YesOrNoDialog
-import com.example.haemo_kotlin.viewModel.CommentViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -64,6 +65,7 @@ import com.google.accompanist.pager.rememberPagerState
 fun HotPlacePostDetailScreen(
     pId: Int,
     postViewModel: HotPlacePostViewModel,
+    wishViewModel: WishViewModel,
     commentViewModel: CommentViewModel,
     navController: NavController
 ) {
@@ -75,6 +77,7 @@ fun HotPlacePostDetailScreen(
     val commentList = commentViewModel.commentList.collectAsState().value
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
+    val isWished = wishViewModel.isWished.collectAsState().value
 
     var openDialog by remember {
         mutableStateOf(false)
@@ -88,7 +91,9 @@ fun HotPlacePostDetailScreen(
         }
     }
 
-
+    LaunchedEffect(isWished) {
+        wishViewModel.checkIsWishedPost(pId, 3)
+    }
     LaunchedEffect(commentList) {
         postViewModel.getOneHotPlacePost(pId)
         postViewModel.getHotPlacePostUser(pId)
@@ -102,7 +107,7 @@ fun HotPlacePostDetailScreen(
 
     Scaffold(
         topBar = {
-            PostDetailAppBar(commentViewModel, navController)
+            PostDetailAppBar(commentViewModel, wishViewModel,false, pId, 3, navController)
         },
         bottomBar = {
             SendReply(

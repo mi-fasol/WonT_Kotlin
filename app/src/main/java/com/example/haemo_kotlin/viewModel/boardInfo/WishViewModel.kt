@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.viewModel
+package com.example.haemo_kotlin.viewModel.boardInfo
 
 import android.content.Context
 import android.util.Log
@@ -7,8 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
+import com.example.haemo_kotlin.model.wish.WishListModel
+import com.example.haemo_kotlin.model.wish.WishListResponseModel
 import com.example.haemo_kotlin.network.Resource
-import com.example.haemo_kotlin.repository.WishRepository
+import com.example.haemo_kotlin.repository.WishListRepository
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,9 +22,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WishViewModel @Inject constructor(
-    private val repository: WishRepository,
+    private val repository: WishListRepository,
     private val context: Context
 ) : ViewModel() {
+
+    private val uId = SharedPreferenceUtil(context).getInt("uId", 0)
+
+    private val _savedWishList = MutableStateFlow<WishListResponseModel?>(null)
+    val savedWishList: StateFlow<WishListResponseModel?> = _savedWishList
+
+    private val _isDeleted = MutableStateFlow<Boolean>(false)
+    val isDeleted: StateFlow<Boolean> = _isDeleted
 
     private val _wishMeetingList = MutableStateFlow<List<PostResponseModel>>(emptyList())
     val wishMeetingList: StateFlow<List<PostResponseModel>> = _wishMeetingList
@@ -32,20 +43,27 @@ class WishViewModel @Inject constructor(
     private val _wishHotPlaceList = MutableStateFlow<List<HotPlaceResponsePostModel>>(emptyList())
     val wishHotPlaceList: StateFlow<List<HotPlaceResponsePostModel>> = _wishHotPlaceList
 
-    private val _postModelState = MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
+    private val _postModelState =
+        MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
     val postModelState: StateFlow<Resource<PostResponseModel>> = _postModelState.asStateFlow()
 
     private val _postModelListState =
         MutableStateFlow<Resource<List<PostResponseModel>>>(Resource.loading(null))
-    val postModelListState: StateFlow<Resource<List<PostResponseModel>>> = _postModelListState.asStateFlow()
+    val postModelListState: StateFlow<Resource<List<PostResponseModel>>> =
+        _postModelListState.asStateFlow()
 
     private val _clubModelListState =
         MutableStateFlow<Resource<List<ClubPostResponseModel>>>(Resource.loading(null))
-    val clubModelListState: StateFlow<Resource<List<ClubPostResponseModel>>> = _clubModelListState.asStateFlow()
+    val clubModelListState: StateFlow<Resource<List<ClubPostResponseModel>>> =
+        _clubModelListState.asStateFlow()
 
     private val _hotPlaceModelListState =
         MutableStateFlow<Resource<List<HotPlaceResponsePostModel>>>(Resource.loading(null))
-    val hotPlaceModelListState: StateFlow<Resource<List<HotPlaceResponsePostModel>>> = _hotPlaceModelListState.asStateFlow()
+    val hotPlaceModelListState: StateFlow<Resource<List<HotPlaceResponsePostModel>>> =
+        _hotPlaceModelListState.asStateFlow()
+
+    private val _isWished = MutableStateFlow(false)
+    val isWished: StateFlow<Boolean> = _isWished.asStateFlow()
 
     suspend fun getWishMeeting(uId: Int) {
         viewModelScope.launch {
@@ -108,7 +126,95 @@ class WishViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
-                _hotPlaceModelListState.value = Resource.error(e.message ?: "An error occurred", null)
+                _hotPlaceModelListState.value =
+                    Resource.error(e.message ?: "An error occurred", null)
+            }
+        }
+    }
+
+    suspend fun checkIsWishedPost(pId: Int, type: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.checkIsWishedMeetingPost(uId, pId, type)
+                if (response.isSuccessful && response.body() != null) {
+                    val isExist = response.body()
+                    if (isExist != null) {
+                        _isWished.value = isExist
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    fun addWishList(pId: Int, type: Int) {
+        val wish = when (type) {
+            1 -> {
+                WishListModel(
+                    pId,
+                    null,
+                    null,
+                    uId
+                )
+            }
+
+            2 -> {
+                WishListModel(
+                    null,
+                    pId,
+                    null,
+                    uId
+                )
+            }
+
+            else -> {
+                WishListModel(
+                    null,
+                    null,
+                    pId,
+                    uId
+                )
+            }
+        }
+        viewModelScope.launch {
+            _postModelState.value = Resource.loading(null)
+            try {
+                val response = repository.addWishList(wish, type)
+                if (response.isSuccessful && response.body() != null) {
+                    val wishList = response.body()
+                    _savedWishList.value = wishList
+                    _isWished.value = true
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteWishList(pId: Int, type: Int) {
+        viewModelScope.launch {
+            _postModelState.value = Resource.loading(null)
+            try {
+                val response = repository.deleteWishList(uId, pId, type)
+                if (response.isSuccessful && response.body() != null) {
+                    val deleted = response.body()
+                    if (deleted != null) {
+                        _isDeleted.value = deleted
+                        _isWished.value = !deleted
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
             }
         }
     }

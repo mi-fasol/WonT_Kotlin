@@ -44,14 +44,16 @@ import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.YesOrNoDialog
-import com.example.haemo_kotlin.viewModel.CommentViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 
 @Composable
 fun MeetingPostDetailScreen(
     pId: Int,
     postViewModel: PostViewModel,
     commentViewModel: CommentViewModel,
+    wishViewModel: WishViewModel,
     navController: NavController
 ) {
     val post = postViewModel.postModel.collectAsState().value
@@ -63,15 +65,21 @@ fun MeetingPostDetailScreen(
     val isReply = commentViewModel.isReply.collectAsState().value
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
+    val isWished = wishViewModel.isWished.collectAsState().value
 
     var openDialog by remember {
         mutableStateOf(false)
     }
 
     LaunchedEffect(true) {
+        wishViewModel.checkIsWishedPost(pId, 1)
         postViewModel.getOnePost(pId)
         postViewModel.getPostingUser(pId)
         postViewModel.getAcceptationUserByPId(pId)
+    }
+
+    LaunchedEffect(isWished) {
+        wishViewModel.checkIsWishedPost(pId, 1)
     }
 
     LaunchedEffect(commentList) {
@@ -84,7 +92,7 @@ fun MeetingPostDetailScreen(
 
     Scaffold(
         topBar = {
-            PostDetailAppBar(commentViewModel, navController)
+            PostDetailAppBar(commentViewModel,wishViewModel, isWished, pId, 1, navController)
         },
         bottomBar = {
             SendReply(

@@ -36,15 +36,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
-import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.convertDate
-import com.example.haemo_kotlin.viewModel.WishViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 
 @Composable
 fun MyWishClubScreen(
