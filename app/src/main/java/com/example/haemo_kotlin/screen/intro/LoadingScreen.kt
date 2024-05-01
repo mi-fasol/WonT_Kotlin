@@ -9,11 +9,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,8 +26,7 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
-import com.example.haemo_kotlin.viewModel.LoginViewModel
+import com.example.haemo_kotlin.viewModel.user.LoginViewModel
 import kotlinx.coroutines.delay
 
 @Composable

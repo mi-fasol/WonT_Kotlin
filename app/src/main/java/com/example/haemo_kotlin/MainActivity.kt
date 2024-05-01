@@ -35,12 +35,12 @@ import com.example.haemo_kotlin.screen.setting.MyWishMeetingScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
-import com.example.haemo_kotlin.viewModel.CommentViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
-import com.example.haemo_kotlin.viewModel.UserViewModel
-import com.example.haemo_kotlin.viewModel.WishViewModel
+import com.example.haemo_kotlin.viewModel.user.UserViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -110,6 +110,7 @@ class MainActivity : ComponentActivity() {
                             MeetingPostDetailScreen(
                                 postViewModel = viewModel,
                                 commentViewModel = commentViewModel,
+                                wishViewModel = wishViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!
                             )
@@ -121,6 +122,7 @@ class MainActivity : ComponentActivity() {
                             ClubPostDetailScreen(
                                 postViewModel = clubPostViewModel,
                                 commentViewModel = commentViewModel,
+                                wishViewModel = wishViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!
                             )
@@ -132,6 +134,7 @@ class MainActivity : ComponentActivity() {
                             HotPlacePostDetailScreen(
                                 postViewModel = hotPlacePostViewModel,
                                 commentViewModel = commentViewModel,
+                                wishViewModel = wishViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!
                             )

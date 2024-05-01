@@ -7,10 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
@@ -22,7 +18,7 @@ import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.PostRegisterFloatingButton
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
-import com.example.haemo_kotlin.viewModel.UserViewModel
+import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel

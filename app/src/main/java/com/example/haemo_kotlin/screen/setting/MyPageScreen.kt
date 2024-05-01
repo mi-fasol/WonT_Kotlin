@@ -35,19 +35,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.userProfileList
 import com.example.haemo_kotlin.viewModel.MainViewModel
-import com.example.haemo_kotlin.viewModel.UserViewModel
+import com.example.haemo_kotlin.viewModel.user.UserViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable

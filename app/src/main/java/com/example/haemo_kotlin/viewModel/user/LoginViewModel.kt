@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.viewModel
+package com.example.haemo_kotlin.viewModel.user
 
 import android.content.Context
 import android.util.Log

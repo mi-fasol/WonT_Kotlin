@@ -2,7 +2,6 @@ package com.example.haemo_kotlin.screen.intro
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,21 +22,11 @@ import androidx.compose.material.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,16 +34,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.EnterInfo
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.viewModel.LoginViewModel
-import kotlinx.coroutines.launch
+import com.example.haemo_kotlin.viewModel.user.LoginViewModel
 
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {

@@ -57,7 +57,7 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.*
-import com.example.haemo_kotlin.viewModel.UserViewModel
+import com.example.haemo_kotlin.viewModel.user.UserViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable

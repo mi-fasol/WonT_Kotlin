@@ -51,7 +51,7 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.comment.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.comment.reply.ReplyResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
-import com.example.haemo_kotlin.viewModel.CommentViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 
 @Composable
 fun ErrorScreen(text: String) {

@@ -15,21 +15,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,7 +33,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -52,7 +41,6 @@ import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.util.ChatRoomAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
-import com.example.haemo_kotlin.viewModel.UserViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
 
 @Composable
