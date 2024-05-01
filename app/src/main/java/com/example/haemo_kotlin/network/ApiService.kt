@@ -14,9 +14,12 @@ import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.model.user.UserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.model.wish.WishListModel
+import com.example.haemo_kotlin.model.wish.WishListResponseModel
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -162,6 +165,51 @@ interface ApiService {
 
     @GET("wish/myList/{id}")
     suspend fun getWishHotPlacePost(@Path("id") uId: Int): Response<List<HotPlaceResponsePostModel>>
+
+    @POST("wishMeeting")
+    suspend fun addWishMeetingPost(@Body wish: WishListModel): Response<WishListResponseModel>
+
+    @POST("wishClub")
+    suspend fun addWishClubPost(@Body wish: WishListModel): Response<WishListResponseModel>
+
+    @POST("wish")
+    suspend fun addWishHotPlacePost(@Body wish: WishListModel): Response<WishListResponseModel>
+
+    @GET("wishMeeting/isExist/{uId}/{pId}")
+    suspend fun checkIsWishedMeetingPost(
+        @Path("uId") uId: Int,
+        @Path("pId") pId: Int
+    ): Response<Boolean>
+
+    @GET("wishClub/isExist/{uId}/{pId}")
+    suspend fun checkIsWishedClubPost(
+        @Path("uId") uId: Int,
+        @Path("pId") pId: Int
+    ): Response<Boolean>
+
+    @GET("wish/isExist/{uId}/{pId}")
+    suspend fun checkIsWishedHotPlacePost(
+        @Path("uId") uId: Int,
+        @Path("pId") pId: Int
+    ): Response<Boolean>
+
+    @DELETE("wishMeeting/delete/{uId}/{pId}")
+    suspend fun deleteWishedMeetingPost(
+        @Path("uId") uId: Int,
+        @Path("pId") pId: Int
+    ): Response<Boolean>
+
+    @DELETE("wishClub/delete/{uId}/{pId}")
+    suspend fun deleteWishedClubPost(
+        @Path("uId") uId: Int,
+        @Path("pId") pId: Int
+    ): Response<Boolean>
+
+    @DELETE("wish/delete/{uId}/{pId}")
+    suspend fun deleteWishedHotPlacePost(
+        @Path("uId") uId: Int,
+        @Path("pId") pId: Int
+    ): Response<Boolean>
 
     // 이미지
     @Multipart
