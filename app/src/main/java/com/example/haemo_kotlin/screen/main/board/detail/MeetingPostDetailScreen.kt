@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.screen.main.board.detail
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -83,6 +84,7 @@ fun MeetingPostDetailScreen(
     }
 
     LaunchedEffect(commentList) {
+        Log.d("미란 코멘트", "호출ㄹ")
         commentViewModel.getCommentListByPId(pId, 1)
     }
     LaunchedEffect(replyList) {

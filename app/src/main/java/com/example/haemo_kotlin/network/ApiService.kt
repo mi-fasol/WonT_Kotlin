@@ -167,13 +167,13 @@ interface ApiService {
     suspend fun getWishHotPlacePost(@Path("id") uId: Int): Response<List<HotPlaceResponsePostModel>>
 
     @POST("wishMeeting")
-    suspend fun addWishMeetingPost(@Body wish: WishListModel): Response<WishListResponseModel>
+    suspend fun addWishMeetingPost(@Body wish: WishListModel): Response<PostResponseModel>
 
     @POST("wishClub")
-    suspend fun addWishClubPost(@Body wish: WishListModel): Response<WishListResponseModel>
+    suspend fun addWishClubPost(@Body wish: WishListModel): Response<ClubPostResponseModel>
 
     @POST("wish")
-    suspend fun addWishHotPlacePost(@Body wish: WishListModel): Response<WishListResponseModel>
+    suspend fun addWishHotPlacePost(@Body wish: WishListModel): Response<HotPlaceResponsePostModel>
 
     @GET("wishMeeting/isExist/{uId}/{pId}")
     suspend fun checkIsWishedMeetingPost(

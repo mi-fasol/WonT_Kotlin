@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.screen.main.board.list
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,8 +32,10 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -49,23 +52,32 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.wish.WishListModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun HotPlaceScreen(
     postViewModel: HotPlacePostViewModel,
+    wishViewModel: WishViewModel,
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
     val postList = postViewModel.hotPlacePostList.collectAsState().value
     val popularPostList = postViewModel.popularHotPlace.collectAsState().value
     val postListState = postViewModel.hotPlacePostListState.collectAsState().value
+    val wishedPost = wishViewModel.wishHotPlaceList.collectAsState().value
+    val postState = wishViewModel.hotPlaceModelListState.collectAsState().value
+
+    LaunchedEffect(wishedPost) {
+        wishViewModel.getWishHotPlace()
+    }
 
     LaunchedEffect(postList) {
         postViewModel.getHotPlacePost()
@@ -102,13 +114,33 @@ fun HotPlaceScreen(
                     }
 
                     else -> {
-                        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                            PopularPlace(popularPostList, mainViewModel, navController)
-                            HotPlaceBoard(
-                                postList = postList,
-                                viewModel = mainViewModel,
-                                navController
-                            )
+                        when (postState) {
+                            is Resource.Error<List<HotPlaceResponsePostModel>> -> {
+                                ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
+                            }
+
+                            is Resource.Loading<List<HotPlaceResponsePostModel>> -> {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+
+                            else -> {
+                                Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                                    PopularPlace(popularPostList, mainViewModel,
+                                        wishViewModel, navController)
+                                    HotPlaceBoard(
+                                        postList = postList,
+                                        viewModel = mainViewModel,
+                                        wishViewModel,
+                                        wishedPost,
+                                        navController
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -121,6 +153,7 @@ fun HotPlaceScreen(
 fun PopularPlace(
     postList: List<HotPlaceResponsePostModel>,
     viewModel: MainViewModel,
+    wishViewModel : WishViewModel,
     navController: NavController
 ) {
     when (postList.size) {
@@ -129,6 +162,11 @@ fun PopularPlace(
         }
 
         else -> {
+            val wishedPost by wishViewModel.wishHotPlaceList.collectAsState()
+            LaunchedEffect(wishedPost) {
+                wishViewModel.getWishHotPlace()
+            }
+
             Column(
                 Modifier.padding(top = 15.dp, bottom = 10.dp)
             ) {
@@ -141,7 +179,7 @@ fun PopularPlace(
                 LazyRow(
                 ) {
                     items(postList.size) { idx ->
-                        PopularPlaceItem(postList[idx], viewModel, navController)
+                        PopularPlaceItem(postList[idx], viewModel, wishedPost, wishViewModel, navController)
                         if (idx < postList.size - 1) {
                             Spacer(modifier = Modifier.width(15.dp))
                         }
@@ -156,11 +194,21 @@ fun PopularPlace(
 fun PopularPlaceItem(
     post: HotPlaceResponsePostModel,
     viewModel: MainViewModel,
+    wishes : List<HotPlaceResponsePostModel>,
+    wishViewModel: WishViewModel,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+    var isWished by remember { mutableStateOf(false) }
+
+    val wishedPost = wishViewModel.wishHotPlaceList.collectAsState().value
+    isWished = wishedPost.contains(post)
+
+    val iconColor =
+        if (isWished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
+
     Row {
         Box(
             modifier = Modifier
@@ -207,11 +255,19 @@ fun PopularPlaceItem(
                         Icon(
                             Icons.Default.Favorite,
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = iconColor,
                             modifier = Modifier
                                 .size((screenWidth / 20).dp)
                                 .fillMaxWidth()
                                 .align(Alignment.End)
+                                .clickable {
+                                    isWished = !isWished
+                                    if (isWished) {
+                                        wishViewModel.deleteWishList(post.hpId, 3)
+                                    } else {
+                                        wishViewModel.addWishList(post.hpId, 3)
+                                    }
+                                }
                         )
                         Column(
                         ) {
@@ -239,6 +295,8 @@ fun PopularPlaceItem(
 fun HotPlaceBoard(
     postList: List<HotPlaceResponsePostModel>,
     viewModel: MainViewModel,
+    wishViewModel: WishViewModel,
+    wishedPost: List<HotPlaceResponsePostModel>,
     navController: NavController
 ) {
     Column {
@@ -255,7 +313,7 @@ fun HotPlaceBoard(
             modifier = Modifier.fillMaxWidth(),
             content = {
                 items(postList.size) { idx ->
-                    HotPlaceBoardItem(postList[idx], viewModel, navController)
+                    HotPlaceBoardItem(postList[idx], viewModel, wishViewModel, wishedPost, navController)
                 }
             }
         )
@@ -266,15 +324,17 @@ fun HotPlaceBoard(
 fun HotPlaceBoardItem(
     post: HotPlaceResponsePostModel,
     viewModel: MainViewModel,
+    wishViewModel: WishViewModel,
+    wishedPost: List<HotPlaceResponsePostModel>,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
-    val buttonClick = remember {
-        mutableStateOf(false)
-    }
-    val buttonColor = if (buttonClick.value) R.color.white else R.color.mainColor
+
+    val isWished = wishedPost.contains(post)
+    val iconColor =
+        if (isWished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
     Box(
         modifier = Modifier
             .height((screenHeight / 5.8).dp)
@@ -309,13 +369,17 @@ fun HotPlaceBoardItem(
                 Icon(
                     Icons.Default.Favorite,
                     contentDescription = null,
-                    tint = colorResource(id = buttonColor),
+                    tint = iconColor,
                     modifier = Modifier
                         .size((screenWidth / 20).dp)
                         .fillMaxWidth()
                         .align(Alignment.End)
                         .clickable {
-                            buttonClick.value = !buttonClick.value
+                            if (isWished) {
+                                wishViewModel.deleteWishList(post.hpId, 3)
+                            } else {
+                                wishViewModel.addWishList(post.hpId, 3)
+                            }
                         }
                 )
                 Text(

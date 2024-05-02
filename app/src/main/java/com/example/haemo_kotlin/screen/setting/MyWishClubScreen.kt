@@ -53,7 +53,7 @@ fun MyWishClubScreen(
     val postState = wishViewModel.clubModelListState.collectAsState().value
 
     LaunchedEffect(post) {
-        wishViewModel.getWishClub(uId)
+        wishViewModel.getWishClub()
     }
 
     Scaffold(

@@ -23,13 +23,16 @@ class WishListRepository @Inject constructor(private val retrofitClient: Retrofi
         return retrofitClient.service.getWishHotPlacePost(uId)
     }
 
-    suspend fun addWishList(wish: WishListModel, type: Int) : Response<WishListResponseModel>{
-        val api = when(type){
-            1 -> retrofitClient.service.addWishMeetingPost(wish)
-            2 -> retrofitClient.service.addWishClubPost(wish)
-            else -> retrofitClient.service.addWishHotPlacePost(wish)
-        }
-        return api
+    suspend fun addWishPost(wish: WishListModel) : Response<PostResponseModel>{
+        return retrofitClient.service.addWishMeetingPost(wish)
+    }
+
+    suspend fun addWishClub(wish: WishListModel) : Response<ClubPostResponseModel>{
+        return retrofitClient.service.addWishClubPost(wish)
+    }
+
+    suspend fun addWishPlace(wish: WishListModel) : Response<HotPlaceResponsePostModel>{
+        return retrofitClient.service.addWishHotPlacePost(wish)
     }
 
     suspend fun checkIsWishedMeetingPost(uId: Int, pId: Int, type: Int) : Response<Boolean>{

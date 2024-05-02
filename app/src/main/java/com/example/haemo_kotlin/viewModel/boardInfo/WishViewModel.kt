@@ -28,8 +28,6 @@ class WishViewModel @Inject constructor(
 
     private val uId = SharedPreferenceUtil(context).getInt("uId", 0)
 
-    private val _savedWishList = MutableStateFlow<WishListResponseModel?>(null)
-    val savedWishList: StateFlow<WishListResponseModel?> = _savedWishList
 
     private val _isDeleted = MutableStateFlow<Boolean>(false)
     val isDeleted: StateFlow<Boolean> = _isDeleted
@@ -65,7 +63,7 @@ class WishViewModel @Inject constructor(
     private val _isWished = MutableStateFlow(false)
     val isWished: StateFlow<Boolean> = _isWished.asStateFlow()
 
-    suspend fun getWishMeeting(uId: Int) {
+    suspend fun getWishMeeting() {
         viewModelScope.launch {
             _postModelState.value = Resource.loading(null)
             try {
@@ -87,7 +85,7 @@ class WishViewModel @Inject constructor(
         }
     }
 
-    suspend fun getWishClub(uId: Int) {
+    suspend fun getWishClub() {
         viewModelScope.launch {
             _postModelState.value = Resource.loading(null)
             try {
@@ -109,7 +107,7 @@ class WishViewModel @Inject constructor(
         }
     }
 
-    suspend fun getWishHotPlace(uId: Int) {
+    suspend fun getWishHotPlace() {
         viewModelScope.launch {
             _postModelState.value = Resource.loading(null)
             try {
@@ -185,11 +183,29 @@ class WishViewModel @Inject constructor(
         viewModelScope.launch {
             _postModelState.value = Resource.loading(null)
             try {
-                val response = repository.addWishList(wish, type)
+                val response = when (type) {
+                    1 -> repository.addWishPost(wish)
+                    2 -> repository.addWishClub(wish)
+                    else -> repository.addWishPlace(wish)
+                }
                 if (response.isSuccessful && response.body() != null) {
                     val wishList = response.body()
-                    _savedWishList.value = wishList
                     _isWished.value = true
+                    when (type) {
+                        1 -> {
+                            _wishMeetingList.value += wishList as PostResponseModel
+                        }
+
+                        2 -> {
+                            _wishClubList.value += wishList as ClubPostResponseModel
+                        }
+
+                        else -> {
+                            Log.d("미란 이전 핫플", _wishHotPlaceList.value.toString())
+                            _wishHotPlaceList.value += wishList as HotPlaceResponsePostModel
+                            Log.d("미란 이후 핫플", _wishHotPlaceList.value.toString())
+                        }
+                    }
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 에러 응답: $errorBody")

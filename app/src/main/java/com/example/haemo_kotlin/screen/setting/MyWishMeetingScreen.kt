@@ -54,7 +54,7 @@ fun MyWishMeetingScreen(
 
 
     LaunchedEffect(post) {
-        wishViewModel.getWishMeeting(uId)
+        wishViewModel.getWishMeeting()
     }
 
     Scaffold(

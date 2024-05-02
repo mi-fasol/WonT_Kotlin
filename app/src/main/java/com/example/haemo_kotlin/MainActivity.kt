@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController = navController, startDestination = "mainScreen") {
                         composable(NavigationRoutes.MainScreen.route) {
-                            MainScreen(navController, mainViewModel, viewModel, clubPostViewModel, hotPlacePostViewModel, userViewModel)
+                            MainScreen(navController, mainViewModel, viewModel, wishViewModel, clubPostViewModel, hotPlacePostViewModel, userViewModel)
                         }
                         composable(NavigationRoutes.MeetingScreen.route) {
                             MeetingScreen(viewModel, mainViewModel, navController)
@@ -97,7 +97,7 @@ class MainActivity : ComponentActivity() {
                             ClubScreen(clubPostViewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.HotPlaceScreen.route) {
-                            HotPlaceScreen(hotPlacePostViewModel, mainViewModel, navController)
+                            HotPlaceScreen(hotPlacePostViewModel, wishViewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.MyPageScreen.route) {
                             MyPageScreen(userViewModel, mainViewModel, navController)

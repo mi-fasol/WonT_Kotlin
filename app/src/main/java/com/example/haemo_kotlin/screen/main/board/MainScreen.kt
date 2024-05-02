@@ -22,6 +22,7 @@ import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 
 
 @Composable
@@ -29,6 +30,7 @@ fun MainScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
     postViewModel: PostViewModel,
+    wishViewModel : WishViewModel,
     clubPostViewModel: ClubPostViewModel,
     hotPostViewModel: HotPlacePostViewModel,
     userViewModel: UserViewModel
@@ -77,6 +79,7 @@ fun MainScreen(
                 "hotPlaceScreen" -> {
                     HotPlaceScreen(
                         postViewModel = hotPostViewModel,
+                        wishViewModel,
                         mainViewModel,
                         navController = navController
                     )

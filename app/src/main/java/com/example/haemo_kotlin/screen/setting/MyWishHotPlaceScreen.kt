@@ -58,9 +58,8 @@ fun MyWishHotPlaceScreen(
     val post = wishViewModel.wishHotPlaceList.collectAsState().value
     val postState = wishViewModel.hotPlaceModelListState.collectAsState().value
 
-
     LaunchedEffect(post) {
-        wishViewModel.getWishHotPlace(uId)
+        wishViewModel.getWishHotPlace()
     }
 
     Scaffold(
@@ -166,6 +165,7 @@ fun MyWishHotPlaceItem(
             .padding(top = 15.dp)
             .width((screenWidth / 3.5).dp)
             .clickable {
+                       viewModel.deleteWishList(post.hpId, 3)
                 //    navController.navigate(NavigationRoutes.HotPlaceDetailScreen)
             },
     ) {
