@@ -49,6 +49,7 @@ import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ErrorScreen
+import com.example.haemo_kotlin.util.HotPlacePostDetailAppBar
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
@@ -107,7 +108,7 @@ fun HotPlacePostDetailScreen(
 
     Scaffold(
         topBar = {
-            PostDetailAppBar(commentViewModel, wishViewModel,isWished, pId, 3, navController)
+            HotPlacePostDetailAppBar(commentViewModel, wishViewModel,isWished, pId, 3, navController)
         },
         bottomBar = {
             SendReply(

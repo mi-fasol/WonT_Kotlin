@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarColors
@@ -112,6 +113,48 @@ fun PostDetailAppBar(viewModel: CommentViewModel, wishViewModel: WishViewModel, 
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.wish_meeting_icon),
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        },
+        elevation = 0.dp,
+        backgroundColor = Color.White,
+    )
+}
+
+@Composable
+fun HotPlacePostDetailAppBar(viewModel: CommentViewModel, wishViewModel: WishViewModel, isWished: Boolean, pId: Int, type: Int, navController: NavController) {
+    val iconColor =
+        if (isWished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
+    TopAppBar(
+        title = {
+        },
+        navigationIcon = {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(35.dp)
+                    .clickable {
+                        viewModel.isReply.value = false
+                        viewModel.commentId.value = 0
+                        navController.popBackStack()
+                    },
+                tint = Color(0xff545454)
+            )
+        },
+        actions = {
+            IconButton(onClick = {
+                if(isWished){
+                    wishViewModel.deleteWishList(pId, type)
+                } else{
+                    wishViewModel.addWishList(pId, type)
+                }
+            }) {
+                Icon(
+                    Icons.Default.Favorite,
                     contentDescription = null,
                     tint = iconColor,
                     modifier = Modifier.size(20.dp)
