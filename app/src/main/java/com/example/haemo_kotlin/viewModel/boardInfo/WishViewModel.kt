@@ -130,7 +130,8 @@ class WishViewModel @Inject constructor(
         }
     }
 
-    suspend fun checkIsWishedPost(pId: Int, type: Int) {
+    suspend fun checkIsWishedPost(pId: Int, type: Int) : Boolean {
+        var result = false;
         viewModelScope.launch {
             try {
                 val response = repository.checkIsWishedMeetingPost(uId, pId, type)
@@ -139,6 +140,7 @@ class WishViewModel @Inject constructor(
                     if (isExist != null) {
                         _isWished.value = isExist
                     }
+                    result = isExist!!
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 에러 응답: $errorBody")
@@ -147,6 +149,7 @@ class WishViewModel @Inject constructor(
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
             }
         }
+        return result
     }
 
     fun addWishList(pId: Int, type: Int) {

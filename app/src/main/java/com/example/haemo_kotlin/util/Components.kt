@@ -35,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,8 +51,13 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.comment.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.comment.reply.ReplyResponseModel
+import com.example.haemo_kotlin.model.post.ClubPostResponseModel
+import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ErrorScreen(text: String) {
@@ -439,5 +445,68 @@ fun ReplyWidgetItem(
         UserBottomSheet(user = user, navController = navController) {
             bottomSheetOpen = false
         }
+    }
+}
+
+@Composable
+fun WishButton(post : PostResponseModel?, clubPost : ClubPostResponseModel?, hotPlacePost : HotPlaceResponsePostModel?, type : Int, wishViewModel: WishViewModel) {
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp
+    val icon = if(type == 3) painterResource(id = R.drawable.heart_icon) else painterResource(id = R.drawable.wish_meeting_icon)
+
+    var isWished by remember { mutableStateOf(false) }
+    val wishes = wishViewModel.wishMeetingList.collectAsState().value
+    val wishClubs = wishViewModel.wishClubList.collectAsState().value
+    val wishPlaces = wishViewModel.wishHotPlaceList.collectAsState().value
+    val pId = when(type){
+        1 -> post!!.pId
+        2 -> clubPost!!.pId
+        else -> hotPlacePost!!.hpId
+    }
+    val iconColor =
+        if (isWished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
+
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        isWished = false
+        isWished = when(type){
+            1 -> {
+                wishViewModel.getWishMeeting()
+                wishes.contains(post)
+            }
+            2 -> {
+                wishViewModel.getWishClub()
+                wishClubs.contains(clubPost)
+            }
+            else -> {
+                wishViewModel.getWishHotPlace()
+                wishPlaces.contains(hotPlacePost)
+            }
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = iconColor,
+            modifier = Modifier
+                .size((screenWidth / 20).dp)
+                .fillMaxWidth()
+                .clickable {
+                    coroutineScope.launch {
+                        if (!isWished) {
+                            wishViewModel.addWishList(pId, type)
+                        } else {
+                            wishViewModel.deleteWishList(pId, type)
+                        }
+                        isWished = !isWished
+                    }
+                }
+        )
     }
 }
