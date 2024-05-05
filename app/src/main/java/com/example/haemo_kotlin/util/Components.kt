@@ -449,36 +449,46 @@ fun ReplyWidgetItem(
 }
 
 @Composable
-fun WishButton(post : PostResponseModel?, clubPost : ClubPostResponseModel?, hotPlacePost : HotPlaceResponsePostModel?, type : Int, wishViewModel: WishViewModel) {
+fun WishButton(
+    post: PostResponseModel?,
+    clubPost: ClubPostResponseModel?,
+    hotPlacePost: HotPlaceResponsePostModel?,
+    type: Int,
+    wishViewModel: WishViewModel
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
-    val icon = if(type == 3) painterResource(id = R.drawable.heart_icon) else painterResource(id = R.drawable.wish_meeting_icon)
+    val icon =
+        if (type == 3) painterResource(id = R.drawable.heart_icon) else painterResource(id = R.drawable.wish_meeting_icon)
 
     var isWished by remember { mutableStateOf(false) }
     val wishes = wishViewModel.wishMeetingList.collectAsState().value
     val wishClubs = wishViewModel.wishClubList.collectAsState().value
     val wishPlaces = wishViewModel.wishHotPlaceList.collectAsState().value
-    val pId = when(type){
+    val pId = when (type) {
         1 -> post!!.pId
         2 -> clubPost!!.pId
         else -> hotPlacePost!!.hpId
     }
+
     val iconColor =
         if (isWished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
 
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1 = Unit, key2 = true) {
         isWished = false
-        isWished = when(type){
+        isWished = when (type) {
             1 -> {
                 wishViewModel.getWishMeeting()
                 wishes.contains(post)
             }
+
             2 -> {
                 wishViewModel.getWishClub()
                 wishClubs.contains(clubPost)
             }
+
             else -> {
                 wishViewModel.getWishHotPlace()
                 wishPlaces.contains(hotPlacePost)

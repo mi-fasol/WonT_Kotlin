@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -79,7 +80,7 @@ fun HotPlacePostDetailScreen(
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
     val isWished = wishViewModel.isWished.collectAsState().value
-
+    val wished = remember { mutableStateOf(isWished) }
     var openDialog by remember {
         mutableStateOf(false)
     }
@@ -108,7 +109,15 @@ fun HotPlacePostDetailScreen(
 
     Scaffold(
         topBar = {
-            HotPlacePostDetailAppBar(commentViewModel, wishViewModel,isWished, pId, 3, navController)
+            if (post != null) {
+                HotPlacePostDetailAppBar(
+                    commentViewModel,
+                    wishViewModel,
+                    post.hpId,
+                    3,
+                    navController
+                )
+            }
         },
         bottomBar = {
             SendReply(
@@ -222,7 +231,7 @@ fun HotPlacePostInfo(post: HotPlaceResponsePostModel) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun ImageSlider(images: List<String>){
+fun ImageSlider(images: List<String>) {
     val pagerState = rememberPagerState(initialPage = 0)
 
     HorizontalPager(
@@ -245,7 +254,7 @@ fun ImageSlider(images: List<String>){
     Box(
         Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
-    ){
+    ) {
         CustomPagerIndicator(
             pagerState = pagerState,
             activeColor = Color.White,

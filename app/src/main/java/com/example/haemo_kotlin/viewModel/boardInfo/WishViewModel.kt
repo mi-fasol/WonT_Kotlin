@@ -2,8 +2,12 @@ package com.example.haemo_kotlin.viewModel.boardInfo
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
@@ -27,7 +31,7 @@ class WishViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val uId = SharedPreferenceUtil(context).getInt("uId", 0)
-
+    var pId = MutableStateFlow(0)
 
     private val _isDeleted = MutableStateFlow<Boolean>(false)
     val isDeleted: StateFlow<Boolean> = _isDeleted
@@ -130,8 +134,30 @@ class WishViewModel @Inject constructor(
         }
     }
 
-    suspend fun checkIsWishedPost(pId: Int, type: Int) : Boolean {
-        var result = false;
+//    suspend fun checkIsWishedPost(pId: Int, type: Int): Boolean {
+//        var result = mutableStateOf(false);
+//        viewModelScope.launch {
+//            try {
+//                val response = repository.checkIsWishedMeetingPost(uId, pId, type)
+//                if (response.isSuccessful && response.body() != null) {
+//                    val isExist = response.body()
+//                    if (isExist != null) {
+//                        _isWished.value = isExist
+//                        result.value = isExist
+//                    }
+//                } else {
+//                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+//                    Log.e("API Error", "포스트 에러 응답: $errorBody")
+//                }
+//            } catch (e: Exception) {
+//                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+//            }
+//        }
+//        Log.d("미란링 wishViewModel", result.value.toString())
+//        return result.value
+//    }
+
+    suspend fun checkIsWishedPost(pId: Int, type: Int): Boolean {
         viewModelScope.launch {
             try {
                 val response = repository.checkIsWishedMeetingPost(uId, pId, type)
@@ -140,7 +166,6 @@ class WishViewModel @Inject constructor(
                     if (isExist != null) {
                         _isWished.value = isExist
                     }
-                    result = isExist!!
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 에러 응답: $errorBody")
@@ -149,7 +174,8 @@ class WishViewModel @Inject constructor(
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
             }
         }
-        return result
+        Log.d("미란링 wishViewModel", _isWished.value.toString())
+        return _isWished.value
     }
 
     fun addWishList(pId: Int, type: Int) {
@@ -193,7 +219,6 @@ class WishViewModel @Inject constructor(
                 }
                 if (response.isSuccessful && response.body() != null) {
                     val wishList = response.body()
-                    _isWished.value = true
                     when (type) {
                         1 -> {
                             _wishMeetingList.value += wishList as PostResponseModel
@@ -209,6 +234,7 @@ class WishViewModel @Inject constructor(
                             Log.d("미란 이후 핫플", _wishHotPlaceList.value.toString())
                         }
                     }
+                    _isWished.value = true
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 에러 응답: $errorBody")

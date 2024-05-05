@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
@@ -24,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +43,7 @@ import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ErrorScreen
+import com.example.haemo_kotlin.util.HotPlacePostDetailAppBar
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
@@ -48,6 +51,7 @@ import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MeetingPostDetailScreen(
@@ -66,27 +70,32 @@ fun MeetingPostDetailScreen(
     val isReply = commentViewModel.isReply.collectAsState().value
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
-    val isWished = wishViewModel.isWished.collectAsState().value
+    val isWished by wishViewModel.isWished.collectAsState()
 
     var openDialog by remember {
         mutableStateOf(false)
     }
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         wishViewModel.checkIsWishedPost(pId, 1)
         postViewModel.getOnePost(pId)
         postViewModel.getPostingUser(pId)
         postViewModel.getAcceptationUserByPId(pId)
+        commentViewModel.getCommentListByPId(pId, 1)
+        commentViewModel.getReplyListByCId(repliedCId, 1)
+        commentViewModel.getReplyUser(repliedCId, 1)
     }
 
     LaunchedEffect(isWished) {
         wishViewModel.checkIsWishedPost(pId, 1)
+        Log.d("미란링료료2", isWished.toString())
     }
 
     LaunchedEffect(commentList) {
         Log.d("미란 코멘트", "호출ㄹ")
         commentViewModel.getCommentListByPId(pId, 1)
     }
+
     LaunchedEffect(replyList) {
         commentViewModel.getReplyListByCId(repliedCId, 1)
         commentViewModel.getReplyUser(repliedCId, 1)
@@ -94,7 +103,9 @@ fun MeetingPostDetailScreen(
 
     Scaffold(
         topBar = {
-            PostDetailAppBar(commentViewModel,wishViewModel, isWished, pId, 1, navController)
+            if(post != null){
+                HotPlacePostDetailAppBar(commentViewModel, wishViewModel, post.pId, 1, navController)
+            }
         },
         bottomBar = {
             SendReply(

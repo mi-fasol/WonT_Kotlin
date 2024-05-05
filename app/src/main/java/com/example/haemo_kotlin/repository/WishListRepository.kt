@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.repository
 
+import android.util.Log
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.post.PostResponseModel
@@ -41,6 +42,8 @@ class WishListRepository @Inject constructor(private val retrofitClient: Retrofi
             2 -> retrofitClient.service.checkIsWishedClubPost(uId, pId)
             else -> retrofitClient.service.checkIsWishedHotPlacePost(uId, pId)
         }
+        Log.d("미란링 repository pId:", pId.toString())
+        Log.d("미란링 repository", api.body().toString())
         return api
     }
 

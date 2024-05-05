@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +43,7 @@ import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ErrorScreen
+import com.example.haemo_kotlin.util.HotPlacePostDetailAppBar
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
@@ -67,6 +69,7 @@ fun ClubPostDetailScreen(
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
     val isWished = wishViewModel.isWished.collectAsState().value
+    val wished = remember { mutableStateOf(isWished) }
 
     var openDialog by remember {
         mutableStateOf(false)
@@ -96,7 +99,16 @@ fun ClubPostDetailScreen(
 
     Scaffold(
         topBar = {
-            PostDetailAppBar(commentViewModel,  wishViewModel,isWished, pId, 2, navController)
+            if (post != null) {
+                HotPlacePostDetailAppBar(
+                    commentViewModel,
+                    wishViewModel,
+                    pId,
+                    2,
+                    navController
+                )
+            }
+//            PostDetailAppBar(commentViewModel,  wishViewModel,isWished, pId, 2, navController)
         },
         bottomBar = {
             SendReply(
