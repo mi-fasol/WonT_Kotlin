@@ -3,10 +3,8 @@ package com.example.haemo_kotlin.util
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -25,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -93,58 +90,8 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
         backgroundColor = Color.White,
     )
 }
-
 @Composable
 fun PostDetailAppBar(
-    viewModel: CommentViewModel,
-    wishViewModel: WishViewModel,
-    isWished: Boolean,
-    pId: Int,
-    type: Int,
-    navController: NavController
-) {
-    val iconColor =
-        if (isWished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
-    TopAppBar(
-        title = {
-        },
-        navigationIcon = {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(35.dp)
-                    .clickable {
-                        viewModel.isReply.value = false
-                        viewModel.commentId.value = 0
-                        navController.popBackStack()
-                    },
-                tint = Color(0xff545454)
-            )
-        },
-        actions = {
-            IconButton(onClick = {
-                if (isWished) {
-                    wishViewModel.deleteWishList(pId, type)
-                } else {
-                    wishViewModel.addWishList(pId, type)
-                }
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.wish_meeting_icon),
-                    contentDescription = null,
-                    tint = iconColor,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        },
-        elevation = 0.dp,
-        backgroundColor = Color.White,
-    )
-}
-
-@Composable
-fun HotPlacePostDetailAppBar(
     viewModel: CommentViewModel,
     wishViewModel: WishViewModel,
     pId: Int,

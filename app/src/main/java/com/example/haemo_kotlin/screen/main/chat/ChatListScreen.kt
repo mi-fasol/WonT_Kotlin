@@ -52,6 +52,7 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.util.BackArrowAppBar
+import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.userMyPageImageList
 import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
@@ -95,75 +96,84 @@ fun ChatList(
     val conf = LocalConfiguration.current
     val screenWidth = conf.screenWidthDp
 
+    LaunchedEffect(Unit) {
+        viewModel.getChatList()
+    }
+
     LazyColumn {
         items(chatList.size) { idx ->
             val lastMessage = viewModel.checkLastMessage(chatList[idx])
-            val receiver = chatMap[chatList[idx].id]!!
+            val receiver = chatMap[chatList[idx].id]
             val swipeableState = rememberSwipeableState(initialValue = 0)
             val sizePx = with(LocalDensity.current) { ((screenWidth / 8).dp).toPx() }
             val anchors = mapOf(0f to 0, -sizePx to 1)
 
-            Column {
-                Box(
-                    Modifier
-                        .swipeable(
-                            state = swipeableState,
-                            orientation = Orientation.Horizontal,
-                            anchors = anchors,
-                            thresholds = { _, _ -> FractionalThreshold(0.5f) },
-                            velocityThreshold = 1000.dp
-                        )
-                        .fillMaxWidth()
-                ) {
+            if (receiver == null) {
+                ErrorScreen(text = "잠시 후 다시 시도해 주세요.")
+            } else {
+                Column {
                     Box(
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .background(Color.Red)
-                            .fillMaxHeight()
+                        Modifier
+                            .swipeable(
+                                state = swipeableState,
+                                orientation = Orientation.Horizontal,
+                                anchors = anchors,
+                                thresholds = { _, _ -> FractionalThreshold(0.5f) },
+                                velocityThreshold = 1000.dp
+                            )
+                            .fillMaxWidth()
                     ) {
-                        Icon(
-                            Icons.Default.Delete, contentDescription = null, tint = Color.White,
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
-
-                    Box(
-                        modifier = Modifier.offset {
-                            IntOffset(
-                                swipeableState.offset.value.roundToInt(),
-                                0
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .background(Color.Red)
+                                .fillMaxHeight()
+                        ) {
+                            Icon(
+                                Icons.Default.Delete, contentDescription = null, tint = Color.White,
+                                modifier = Modifier.padding(10.dp)
                             )
                         }
-                            .padding(top = 10.dp, start = 15.dp, bottom = 10.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.White)
-                                .clickable {
-                                    navController.navigate(
-                                        NavigationRoutes.ChatScreen.createRoute(
-                                            receiver.uId
-                                        )
+                                .offset {
+                                    IntOffset(
+                                        swipeableState.offset.value.roundToInt(),
+                                        0
                                     )
                                 }
+                                .padding(top = 10.dp, start = 15.dp, bottom = 10.dp)
                         ) {
-                            Image(
-                                painterResource(id = userMyPageImageList[receiver.userImage]),
-                                contentDescription = null,
-                                modifier = Modifier.size((screenWidth / 7).dp)
-                            )
-                            Column(
-                                verticalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.padding(start = 10.dp)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.White)
+                                    .clickable {
+                                        navController.navigate(
+                                            NavigationRoutes.ChatScreen.createRoute(
+                                                receiver.uId
+                                            )
+                                        )
+                                    }
                             ) {
-                                Text(receiver.nickname)
-                                Text(
-                                    text = lastMessage!!.content,
-                                    color = Color.DarkGray,
-                                    fontSize = 12.sp
+                                Image(
+                                    painterResource(id = userMyPageImageList[receiver.userImage]),
+                                    contentDescription = null,
+                                    modifier = Modifier.size((screenWidth / 7).dp)
                                 )
+                                Column(
+                                    verticalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.padding(start = 10.dp)
+                                ) {
+                                    Text(receiver.nickname)
+                                    Text(
+                                        text = lastMessage!!.content,
+                                        color = Color.DarkGray,
+                                        fontSize = 12.sp
+                                    )
+                                }
                             }
                         }
                     }
