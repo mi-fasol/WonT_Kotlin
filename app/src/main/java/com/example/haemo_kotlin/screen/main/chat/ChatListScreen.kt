@@ -2,6 +2,7 @@
 
 package com.example.haemo_kotlin.screen.main.chat
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,6 +65,12 @@ fun ChatListScreen(
     navController: NavController
 ) {
     val chatList = chatListViewModel.fireBaseChatModel.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        chatListViewModel.getChatList()
+        Log.d("미란 새로 되나? Screen 호출", "호출됨.")
+    }
+
     Scaffold(
         topBar = {
             BackArrowAppBar(appBarText = "채팅 목록", navController = navController)
@@ -78,10 +85,6 @@ fun ChatListScreen(
             Divider(color = colorResource(id = R.color.mainColor))
             ChatList(chatList, chatListViewModel, navController)
         }
-    }
-
-    LaunchedEffect(true) {
-        chatListViewModel.getChatList()
     }
 }
 

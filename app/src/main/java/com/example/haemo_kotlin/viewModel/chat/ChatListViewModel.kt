@@ -39,113 +39,140 @@ class ChatListViewModel @Inject constructor(
     var chatList: StateFlow<MutableMap<String, UserResponseModel>> = _chatList
 
     val uId = SharedPreferenceUtil(context).getUser().uId
+    val myNickname = SharedPreferenceUtil(context).getUser().nickname
 
     init {
         getChatList()
     }
 
     fun getLastChatInfo(chatId: String) {
-        val chatListener = object : ValueEventListener {
+        val orderedChatList =
+            chatRef.child(chatId).child("messages").orderByChild("createdAt").limitToLast(1)
+        orderedChatList.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.value?.let { value ->
-                    val result = value as HashMap<String, Any>?
-                    val sender = result?.get("sender") as HashMap<String, Any>?
-                    val receiver = result?.get("receiver") as HashMap<String, Any>?
-                    val _messageData = result?.get("messages") as ArrayList<HashMap<String, Any>>?
+                    if (snapshot.exists()) {
+                        val lastMessage =
+                            snapshot.children.firstOrNull()?.value as HashMap<String, Any?>
+                        Log.d("미란 lastMessage", lastMessage.toString())
+                        val chatUsers = chatId.split("+")
+                        var id = 0
+                        var receiver = 0
+                        var sender = 0
+                        var senderNickname = ""
+                        var receiverNickname = ""
 
-                    var messageData: ArrayList<ChatMessageModel>? = null
-
-                    if (!_messageData.isNullOrEmpty()) {
-                        _messageData.forEach { data ->
-                            if (messageData.isNullOrEmpty()) {
-                                messageData = arrayListOf(
-                                    ChatMessageModel(
-                                        createdAt = data["createdAt"] as Long,
-                                        isRead = data["isRead"] as? Boolean ?: false,
-                                        content = data["content"] as String,
-                                        from = (data["from"] as Long).toInt()
-                                    )
-                                )
-                            } else {
-                                messageData!!.add(
-                                    ChatMessageModel(
-                                        createdAt = data["createdAt"] as Long,
-                                        isRead = data["isRead"] as? Boolean ?: false,
-                                        content = data["content"] as String,
-                                        from = (data["from"] as Long).toInt()
-                                    )
-                                )
-                            }
+                        if (chatUsers[0].toInt() != uId) {
+                            id = chatUsers[0].toInt()
+                            receiver = id
+                            sender = uId
+                        } else {
+                            id = chatUsers[1].toInt()
+                            receiver = uId
+                            sender = id
                         }
-                    }
-                    val _chatData = FireBaseChatModel(
-                        result?.get("id") as String,
-                        ChatUserModel(
-                            (sender?.get("id") as Long).toInt(),
-                            sender["nickname"] as String
-                        ),
-                        ChatUserModel(
-                            (receiver?.get("id") as Long).toInt(),
-                            receiver["nickname"] as String
-                        ),
-                        messageData!!.toList()
-                    )
 
-                    val id = if ((sender["id"] as Long).toInt() != uId) {
-                        (sender["id"] as Long).toInt()
-                    } else {
-                        (receiver["id"] as Long).toInt()
-                    }
 
-                    viewModelScope.launch {
-                        try {
-                            val response = repository.getUserInfoById(id)
-                            if (response.isSuccessful) {
-                                val receiverInfo = response.body()
-                                receiverInfo?.let { userInfo ->
-                                    _chatList.value.put(_chatData.id!!, userInfo)
+                        viewModelScope.launch {
+                            try {
+                                val response = repository.getUserInfoById(id)
+                                if (response.isSuccessful) {
+                                    val receiverInfo = response.body()
+                                    receiverInfo?.let { userInfo ->
+                                        _chatList.value[chatId] = userInfo
+                                        if (userInfo.uId == sender) {
+                                            senderNickname = userInfo.nickname
+                                            receiverNickname = myNickname
+                                        } else {
+                                            senderNickname = myNickname
+                                            receiverNickname = userInfo.nickname
+                                        }
+                                    }
+                                    Log.d("미란 chatList 해시맵", _chatList.value.toString())
+                                } else {
+                                    Log.e(
+                                        "ChatListViewModel",
+                                        "Failed to get receiver info: ${response.errorBody()}"
+                                    )
                                 }
-                                Log.d("미란 chatList 해시맵", _chatList.value.toString())
-                            } else {
+                            } catch (e: Exception) {
                                 Log.e(
                                     "ChatListViewModel",
-                                    "Failed to get receiver info: ${response.errorBody()}"
+                                    "Error while getting receiver info: ${e.message}"
                                 )
                             }
-                        } catch (e: Exception) {
-                            Log.e(
-                                "ChatListViewModel",
-                                "Error while getting receiver info: ${e.message}"
+                        }
+
+                        var messageData: ArrayList<ChatMessageModel>? = null
+
+                        if (lastMessage.isNotEmpty()) {
+                            messageData = arrayListOf(
+                                ChatMessageModel(
+                                    createdAt = (lastMessage["createdAt"] as Long),
+                                    isRead = lastMessage["isRead"] as? Boolean ?: false,
+                                    content = lastMessage["content"] as String,
+                                    from = (lastMessage["from"] as Long).toInt()
+                                )
                             )
                         }
-                    }
 
-                    if (fireBaseChatModel.value.isEmpty()) {
-                        fireBaseChatModel.value = listOf(_chatData)
-                        Log.d("chatList 생성", fireBaseChatModel.value.toString())
-                    } else {
-                        fireBaseChatModel.value.forEach { firebaseChat ->
-                            if (firebaseChat.id == _chatData.id) {
-                                val newChatModel = fireBaseChatModel.value.filter {
-                                    it.id != _chatData.id
+                        val _chatData = messageData?.let {
+                            FireBaseChatModel(
+                                chatId,
+                                ChatUserModel(
+                                    sender,
+                                    senderNickname
+                                ),
+                                ChatUserModel(
+                                    receiver,
+                                    receiverNickname
+                                ),
+                                it
+                            )
+                        }
+
+
+                        if (fireBaseChatModel.value.isEmpty()) {
+                            fireBaseChatModel.value = listOf(_chatData!!)
+                            Log.d("chatList 생성", fireBaseChatModel.value.toString())
+                        } else {
+                            fireBaseChatModel.value.forEach { firebaseChat ->
+                                if (!fireBaseChatModel.value.contains(_chatData)) {
+                                    var newChatModel = fireBaseChatModel.value.filter {
+                                        it.id != chatId
+                                    }
+                                    newChatModel = newChatModel.asReversed()
+                                    fireBaseChatModel.value = newChatModel
+                                    Log.d(
+                                        "미란 새로 되나? before ",
+                                        fireBaseChatModel.value.toString()
+                                    )
+                                    fireBaseChatModel.value += _chatData!!
+                                    Log.d("미란 새로 되나?", fireBaseChatModel.value.toString())
+                                    val currentChatModels =
+                                        fireBaseChatModel.value.toMutableList()
+                                    currentChatModels.reverse()
+                                    fireBaseChatModel.value = currentChatModels.toList()
+                                    Log.d(
+                                        "미란 새로 되나? reversed: ",
+                                        fireBaseChatModel.value.toString()
+                                    )
                                 }
-                                fireBaseChatModel.value = newChatModel
-                                fireBaseChatModel.value.plus(_chatData)
                             }
+                            if (!fireBaseChatModel.value.contains(_chatData)) {
+                                fireBaseChatModel.value += _chatData!!
+                            }
+                            Log.d("chatList 추가", fireBaseChatModel.value.toString())
                         }
-                        if (!fireBaseChatModel.value.contains(_chatData)) {
-                            fireBaseChatModel.value += _chatData
-                        }
-                        Log.d("chatList 추가", fireBaseChatModel.value.toString())
+                    } else {
+                        Log.d("미란", "No message found")
                     }
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.d("미란 ChatListViewModel", "loadMessage:onCancelled", error.toException())
             }
-        }
-        chatRef.child(chatId).addValueEventListener(chatListener)
+        })
     }
 
     fun checkLastMessage(chatData: FireBaseChatModel): ChatMessageModel? {
@@ -163,7 +190,6 @@ class ChatListViewModel @Inject constructor(
                 snapshot.value?.let {
                     val _usersChatList = it as ArrayList<String>
                     userChatList.value = _usersChatList
-
                     userChatList.value.forEach { chatId ->
                         getLastChatInfo(chatId!!)
                     }
