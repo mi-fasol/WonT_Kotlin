@@ -50,7 +50,6 @@ fun ChatScreen(chatViewModel: ChatViewModel,  receiverId: Int, navController: Na
     val uId = SharedPreferenceUtil(context).getInt("uId", 0)
     val receiver = chatViewModel.receiverInfo.collectAsState().value
     val chatMessage = chatViewModel.chatMessages.collectAsState().value
-    val chatData = chatViewModel.fireBaseChatModel.collectAsState().value
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -70,10 +69,12 @@ fun ChatScreen(chatViewModel: ChatViewModel,  receiverId: Int, navController: Na
         ) {
             ChatMessageField(
                 chatMessage,
-                chatData,
-                uId
+                uId,
+                chatViewModel
             )
-            SendMessage(chatViewModel, receiverId, "${receiverId}+${uId}", uId)
+            if (receiver != null) {
+                SendMessage(chatViewModel, receiverId, "${receiverId}+${uId}", uId)
+            }
         }
     }
 
@@ -86,17 +87,9 @@ fun ChatScreen(chatViewModel: ChatViewModel,  receiverId: Int, navController: Na
 @Composable
 fun ChatMessageField(
     message: List<ChatMessageModel>?,
-    fireBaseChatModel: FireBaseChatModel?,
-    uId: Int
+    uId: Int,
+    chatViewModel: ChatViewModel
 ) {
-    val sender: Int? = fireBaseChatModel?.sender?.id
-
-    val nickname = if (sender == uId) {
-        fireBaseChatModel.receiver.nickname
-    } else {
-        fireBaseChatModel?.sender?.nickname
-    }
-
     LazyColumn(
         modifier = Modifier
             .padding(start = 15.dp, end = 15.dp, top = 15.dp),
@@ -104,27 +97,25 @@ fun ChatMessageField(
     ) {
         message?.let {
             items(it) { message ->
-                nickname?.let { nickname ->
-                    MessageItem(message, uId, nickname)
+                    MessageItem(message, uId, chatViewModel)
                 }
             }
-        }
     }
 }
 
 @Composable
-fun MessageItem(message: ChatMessageModel, uId: Int, nickname: String) {
+fun MessageItem(message: ChatMessageModel, uId: Int, chatViewModel: ChatViewModel) {
     val messageFromMe = message.from == uId
 
     if (messageFromMe) {
-        MessageItemFromMe(message = message)
+        MessageItemFromMe(message = message, chatViewModel)
     } else {
-        MessageItemFromOther(message = message)
+        MessageItemFromOther(message = message, chatViewModel)
     }
 }
 
 @Composable
-fun MessageItemFromMe(message: ChatMessageModel) {
+fun MessageItemFromMe(message: ChatMessageModel, chatViewModel: ChatViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -133,7 +124,7 @@ fun MessageItemFromMe(message: ChatMessageModel) {
         verticalAlignment = Alignment.Bottom
     ) {
         Text(
-            text = "방금",
+            text = chatViewModel.formatDateTime(message.createdAt),
             color = Color.Gray,
             modifier = Modifier.padding(start = 7.dp),
             fontSize = 13.sp
@@ -155,8 +146,7 @@ fun MessageItemFromMe(message: ChatMessageModel) {
 }
 
 @Composable
-fun MessageItemFromOther(message: ChatMessageModel) {
-
+fun MessageItemFromOther(message: ChatMessageModel, chatViewModel: ChatViewModel) {
     Column {
         Row(
             modifier = Modifier
@@ -179,7 +169,7 @@ fun MessageItemFromOther(message: ChatMessageModel) {
                 )
             }
             Text(
-                text = "방금",
+                text = chatViewModel.formatDateTime(message.createdAt),
                 color = Color.Gray,
                 modifier = Modifier.padding(start = 7.dp),
                 fontSize = 13.sp
@@ -225,7 +215,7 @@ fun SendMessage(viewModel: ChatViewModel, receiverId: Int, chatId: String, userI
                     if (sendMessage.value.isNotEmpty()) {
                         timestamp.longValue = System.currentTimeMillis()
                         val message =
-                            ChatMessageModel(sendMessage.value, false, timestamp.longValue, userId)
+                            ChatMessageModel(sendMessage.value, timestamp.longValue, userId, SharedPreferenceUtil(context).getString("nickname", "")!!, false)
                         viewModel.sendMessage(chatId, receiverId, message)
                         sendMessage.value = ""
                     }

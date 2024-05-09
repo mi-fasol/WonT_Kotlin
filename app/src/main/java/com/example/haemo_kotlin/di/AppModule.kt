@@ -2,6 +2,7 @@ package com.example.haemo_kotlin.di
 
 import android.app.Application
 import android.content.Context
+import com.example.haemo_kotlin.MyFirebaseMessagingService
 import com.example.haemo_kotlin.network.RetrofitClient
 import dagger.Module
 import dagger.Provides
@@ -23,5 +24,11 @@ object AppModule {
     @Singleton
     fun provideApplicationContext(application: Application): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun provideMyFirebaseMessagingService(): MyFirebaseMessagingService {
+        return MyFirebaseMessagingService()
     }
 }

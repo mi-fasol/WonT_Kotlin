@@ -1,16 +1,19 @@
 package com.example.haemo_kotlin.viewModel.chat
 
+import android.app.ActivityManager
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haemo_kotlin.MyFirebaseMessagingService
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.model.chat.ChatUserModel
 import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -18,6 +21,7 @@ import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatListViewModel @Inject constructor(
     private val repository: UserRepository,
-    private val context: Context
+    private val context: Context,
+    private val messageService: MyFirebaseMessagingService
 ) : ViewModel() {
 
     private val firebaseDB = FirebaseDatabase.getInstance()
@@ -34,7 +39,6 @@ class ChatListViewModel @Inject constructor(
 
     var fireBaseChatModel = MutableStateFlow<List<FireBaseChatModel>>(emptyList())
     var userChatList = MutableStateFlow<List<String?>>(emptyList())
-    var receiverList = MutableStateFlow<List<UserResponseModel?>>(emptyList())
     var _chatList = MutableStateFlow<MutableMap<String, UserResponseModel>>(HashMap())
     var chatList: StateFlow<MutableMap<String, UserResponseModel>> = _chatList
 
@@ -48,6 +52,40 @@ class ChatListViewModel @Inject constructor(
     fun getLastChatInfo(chatId: String) {
         val orderedChatList =
             chatRef.child(chatId).child("messages").orderByChild("createdAt").limitToLast(1)
+
+        orderedChatList.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                Log.d("미란 알림", "새로 만들어져따!")
+
+                // 새로운 채팅 메시지 데이터 확인
+                val chatMessageData = dataSnapshot.getValue(ChatMessageModel::class.java)
+
+                val firebaseChatModel = fireBaseChatModel.value.filter {
+                    it.id == chatId
+                }
+
+                if (chatMessageData != null && chatMessageData.from != uId) {
+                    messageService.sendNotification(chatMessageData, context)
+                }
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+//                TODO("Not yet implemented")
+            }
+
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                // 채팅 메시지 삭제 시 필요한 처리 수행
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+//                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("미란 알림", "에러용")
+            }
+        })
+
         orderedChatList.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.value?.let { value ->
@@ -71,7 +109,6 @@ class ChatListViewModel @Inject constructor(
                             receiver = uId
                             sender = id
                         }
-
 
                         viewModelScope.launch {
                             try {
@@ -109,9 +146,10 @@ class ChatListViewModel @Inject constructor(
                             messageData = arrayListOf(
                                 ChatMessageModel(
                                     createdAt = (lastMessage["createdAt"] as Long),
-                                    isRead = lastMessage["isRead"] as? Boolean ?: false,
+                                    isRead = lastMessage["read"] as? Boolean ?: false,
                                     content = lastMessage["content"] as String,
-                                    from = (lastMessage["from"] as Long).toInt()
+                                    from = (lastMessage["from"] as Long).toInt(),
+                                    senderNickname = lastMessage["senderNickname"] as String
                                 )
                             )
                         }
@@ -131,6 +169,9 @@ class ChatListViewModel @Inject constructor(
                             )
                         }
 
+                        if(messageData!![0].from != uId){
+                            messageService.sendNotification(messageData[0], context)
+                        }
 
                         if (fireBaseChatModel.value.isEmpty()) {
                             fireBaseChatModel.value = listOf(_chatData!!)
@@ -169,19 +210,26 @@ class ChatListViewModel @Inject constructor(
                     }
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
                 Log.d("미란 ChatListViewModel", "loadMessage:onCancelled", error.toException())
             }
-        })
+        }
+        )
     }
 
-    fun checkLastMessage(chatData: FireBaseChatModel): ChatMessageModel? {
-        val lastChat = if (chatData.messages.isNotEmpty()) {
-            chatData.messages[chatData.messages.size - 1]
-        } else {
-            null
+    fun isAppInForeground(): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val appProcesses = activityManager.runningAppProcesses ?: return false
+
+        for (appProcess in appProcesses) {
+            if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+                appProcess.processName == context.packageName
+            ) {
+                return true
+            }
         }
-        return lastChat
+        return false
     }
 
     fun getChatList() {

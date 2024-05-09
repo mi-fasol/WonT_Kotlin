@@ -19,20 +19,21 @@ package com.example.haemo_kotlin.model.chat
 //)
 
 data class FireBaseChatModel(
-    val id: String?,
-    val sender: ChatUserModel,
-    val receiver: ChatUserModel,
-    val messages: List<ChatMessageModel>
+    var id: String?,
+    var sender: ChatUserModel,
+    var receiver: ChatUserModel,
+    var messages: List<ChatMessageModel>
 )
 
 data class ChatUserModel(
-    val id: Int?,
-    val nickname: String
+    var id: Int?,
+    var nickname: String
 )
 
 data class ChatMessageModel(
-    val content: String,
-    val isRead: Boolean,
-    val createdAt: Long,
-    val from: Int
+    var content: String = "",
+    var createdAt: Long = 0,
+    var from: Int = 0,
+    var senderNickname : String = "",
+    var isRead: Boolean = false
 )

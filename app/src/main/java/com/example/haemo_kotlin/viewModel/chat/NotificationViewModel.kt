@@ -4,14 +4,12 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.MyFirebaseMessagingService
 import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.model.chat.ChatUserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -20,16 +18,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(
+class NotificationViewModel @Inject constructor(
     private val repository: UserRepository,
-    private val notification : MyFirebaseMessagingService,
     private val context: Context
 ) : ViewModel() {
 
@@ -47,8 +41,7 @@ class ChatViewModel @Inject constructor(
 
     init {
         val uId = SharedPreferenceUtil(context).getUser().uId
-
-        userRef.child(uId.toString()).get()
+        firebaseDB.reference.child("user").child(uId.toString()).get()
             .addOnSuccessListener {
                 it.value?.let { it ->
                     userChatList.value = it as List<String>
@@ -116,7 +109,7 @@ class ChatViewModel @Inject constructor(
                             it["createdAt"] as Long,
                             (it["from"] as Long).toInt(),
                             it["senderNickname"] as String,
-                            it["isRead"] as? Boolean ?: false
+                            it["isRead"] as? Boolean ?: false,
                         )
                     )
                 }
@@ -231,10 +224,5 @@ class ChatViewModel @Inject constructor(
             .addOnFailureListener {
                 Log.d("미란 UserChatInfo", it.toString())
             }
-    }
-
-    fun formatDateTime(timestamp: Long): String {
-        val sdf = SimpleDateFormat("HH시 mm분", Locale.getDefault())
-        return sdf.format(Date(timestamp))
     }
 }

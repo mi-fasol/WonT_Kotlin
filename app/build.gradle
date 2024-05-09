@@ -64,6 +64,7 @@ dependencies {
     implementation "androidx.compose.material:material:$compose_ui_version"
     implementation 'com.google.firebase:firebase-database-ktx:20.3.1'
     implementation 'androidx.constraintlayout:constraintlayout-compose-android:1.1.0-alpha13'
+    implementation 'androidx.work:work-runtime-ktx:2.9.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -93,6 +94,10 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager-indicators:0.28.0"
 
     implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
+
+    // 알림
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 }
 
 kapt {
