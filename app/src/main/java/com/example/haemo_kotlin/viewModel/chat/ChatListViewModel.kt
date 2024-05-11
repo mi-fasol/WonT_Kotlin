@@ -63,9 +63,9 @@ class ChatListViewModel @Inject constructor(
                     it.id == chatId
                 }
 
-                if (chatMessageData != null && chatMessageData.from != uId) {
-                    messageService.sendNotification(chatMessageData, context)
-                }
+//                if (chatMessageData != null && chatMessageData.from != uId) {
+//                    messageService.sendNotification(chatMessageData, context)
+//                }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -168,9 +168,9 @@ class ChatListViewModel @Inject constructor(
                             )
                         }
 
-                        if(messageData!![0].from != uId){
-                            messageService.sendNotification(messageData[0], context)
-                        }
+//                        if(messageData!![0].from != uId){
+//                            messageService.sendNotification(messageData[0], context)
+//                        }
 
                         if (fireBaseChatModel.value.isEmpty()) {
                             fireBaseChatModel.value = listOf(_chatData!!)

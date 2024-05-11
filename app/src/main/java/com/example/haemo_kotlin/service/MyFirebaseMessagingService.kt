@@ -27,22 +27,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private val userRef = firebaseDB.getReference("user")
     private var userChatList = MutableStateFlow<List<String>>(emptyList())
 
-//    init {
-//        val uId = SharedPreferenceUtil(context).getUser().uId
-//
-//        userRef.child(uId.toString()).get()
-//            .addOnSuccessListener {
-//                it.value?.let {
-//                    userChatList.value = it as List<String>
-//                }
-//                Log.d("유저 채팅 정보 가져옴", userChatList.value.toString())
-//            }
-//            .addOnFailureListener {
-//            }
-//    }
-//
-//    private val userChatList = mutableMapOf<String, Boolean>()
-
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
@@ -50,13 +34,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         userRef.child(uId.toString()).addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val userId = snapshot.key ?: ""
-                val chatIds = snapshot.value as? List<String> ?: emptyList()
-                userChatList.value = chatIds.filter { it.isNotBlank() }
-//                userChatList[userId] = true
-
-                Log.d("미란 파이어베이스", userChatList.value.toString())
-                listenToChatIds(chatIds, uId)
+                val chatId = snapshot.value as String
+                userChatList.value += chatId
+                listenToChatIds(uId)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -64,7 +44,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val chatId = snapshot.value as String
-
+                Log.d("미란 파이어베이스", "헐랭 삭제됨?")
                 userChatList.value -= chatId
             }
 
@@ -77,13 +57,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         })
     }
 
-    private fun listenToChatIds(chatIds: List<String>, uId: Int) {
-        chatIds.forEach { chatId ->
-            chatRef.child(chatId).addChildEventListener(object : ChildEventListener {
+    private fun listenToChatIds(uId: Int) {
+        userChatList.value.forEach { chatId ->
+            chatRef.child(chatId).child("messages").addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                     val chatMessage = snapshot.getValue(ChatMessageModel::class.java)
                     if(chatMessage?.from != uId) {
-
                         chatMessage?.let { sendNotification(it, context) }
                     }
                 }
@@ -109,7 +88,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     @SuppressLint("MissingPermission")
     fun sendNotification(lastChat: ChatMessageModel, context : Context) {
-
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.chat_icon)
             .setContentTitle(lastChat.senderNickname)
@@ -120,7 +98,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         Log.d("미란 알림은요", notification.toString())
 
-        // 알림 표시
         with(NotificationManagerCompat.from(context)) {
             Log.d("미란 알림은요", "우와아")
             notify(NOTIFICATION_ID, notification)
@@ -135,5 +112,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("미란 파이어베이스 토큰", token)
+        sendRegistrationToServer(token)
+    }
+
+    private fun sendRegistrationToServer(token: String?) {
+        // TODO: Implement this method to send token to your app server.
+        Log.d("미란 파이어베이스 토큰", "sendRegistrationTokenToServer($token)")
     }
 }
