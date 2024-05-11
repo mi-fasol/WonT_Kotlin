@@ -4,14 +4,13 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.MyFirebaseMessagingService
+import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.model.chat.ChatUserModel
 import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -37,20 +36,20 @@ class ChatViewModel @Inject constructor(
     private val chatRef = firebaseDB.getReference("chat")
     private val userRef = firebaseDB.getReference("user")
 
-    val _receiverInfo = MutableStateFlow<UserResponseModel?>(null)
+    private val _receiverInfo = MutableStateFlow<UserResponseModel?>(null)
     val receiverInfo: StateFlow<UserResponseModel?> = _receiverInfo
 
     var chatMessages = MutableStateFlow<List<ChatMessageModel>>(emptyList())
-    var fireBaseChatModel = MutableStateFlow<FireBaseChatModel?>(null)
-    var userChatList = MutableStateFlow<List<String>>(emptyList())
-    var receiverChatList = MutableStateFlow<List<String>>(emptyList())
+    private var fireBaseChatModel = MutableStateFlow<FireBaseChatModel?>(null)
+    private var userChatList = MutableStateFlow<List<String>>(emptyList())
+    private var receiverChatList = MutableStateFlow<List<String>>(emptyList())
 
     init {
         val uId = SharedPreferenceUtil(context).getUser().uId
 
         userRef.child(uId.toString()).get()
             .addOnSuccessListener {
-                it.value?.let { it ->
+                it.value?.let {
                     userChatList.value = it as List<String>
                 }
                 Log.d("유저 채팅 정보 가져옴", userChatList.value.toString())

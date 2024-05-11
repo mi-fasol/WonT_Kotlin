@@ -67,6 +67,7 @@ class UserViewModel @Inject constructor(
                     _registerState.value = Resource.success(response.body())
                     _isRegisterSuccess.value = true
                     SharedPreferenceUtil(context).setUser(responseUser!!)
+                    SharedPreferenceUtil(context).setInt("uId", responseUser.uId)
                     Log.d("유저", responseUser.toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"

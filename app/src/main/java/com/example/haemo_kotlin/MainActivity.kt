@@ -155,6 +155,7 @@ class MainActivity : ComponentActivity() {
                                 postViewModel = viewModel,
                                 commentViewModel = commentViewModel,
                                 wishViewModel = wishViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!
                             )
@@ -167,6 +168,7 @@ class MainActivity : ComponentActivity() {
                                 postViewModel = clubPostViewModel,
                                 commentViewModel = commentViewModel,
                                 wishViewModel = wishViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!
                             )
@@ -179,6 +181,7 @@ class MainActivity : ComponentActivity() {
                                 postViewModel = hotPlacePostViewModel,
                                 commentViewModel = commentViewModel,
                                 wishViewModel = wishViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController,
                                 pId = entry.arguments?.getInt("pId")!!
                             )

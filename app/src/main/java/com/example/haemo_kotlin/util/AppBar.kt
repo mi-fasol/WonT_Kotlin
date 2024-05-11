@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import kotlinx.coroutines.launch
@@ -94,6 +95,7 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
 fun PostDetailAppBar(
     viewModel: CommentViewModel,
     wishViewModel: WishViewModel,
+    mainViewModel: MainViewModel,
     pId: Int,
     type: Int,
     navController: NavController
@@ -133,6 +135,11 @@ fun PostDetailAppBar(
                         viewModel.commentId.value = 0
                         wishViewModel.pId.value = 0
                         navController.popBackStack()
+                        mainViewModel.beforeStack.value = when(type){
+                            1 -> "mainScreen"
+                            2 -> "clubScreen"
+                            else -> "hotPlaceScreen"
+                        }
                     },
                 tint = Color(0xff545454)
             )

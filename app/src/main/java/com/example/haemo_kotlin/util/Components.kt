@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.util
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -179,9 +181,17 @@ fun SendReply(
     onValueChange: (String) -> Unit,
     onClickedEvent: () -> Unit
 ) {
+    val context = LocalContext.current
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val cId = commentViewModel.commentId.collectAsState().value
+
+    LaunchedEffect(Unit){
+        launch {
+            commentViewModel.getCommentListByPId(pId, postType)
+            commentViewModel.getReplyListByCId(cId, postType)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -203,6 +213,7 @@ fun SendReply(
             )
             FilledIconButton(
                 onClick = {
+                    SharedPreferenceUtil(context).setString("nickname", "뜽미니에요")
                     if (!isReply) {
                         commentViewModel.registerComment(value, pId, postType)
                     } else {
@@ -281,10 +292,10 @@ fun CommentWidgetItem(
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
 
-    val replyList = viewModel.replyList.collectAsState().value
+    val replyList by viewModel.replyList.collectAsState()
     val replys = replyList[comment.cId]
 
-    val userList = viewModel.replyUserList.collectAsState().value
+    val userList by viewModel.replyUserList.collectAsState()
     val replyUsers = userList[comment.cId]
 
     var bottomSheetOpen by remember { mutableStateOf(false) }
@@ -292,9 +303,19 @@ fun CommentWidgetItem(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(true) {
-        viewModel.getReplyListByCId(comment.cId, type)
-        viewModel.getReplyUser(comment.cId, type)
+    LaunchedEffect(true, key2 = Unit) {
+//        replies = emptyList()
+        launch {
+            viewModel.getReplyListByCId(comment.cId, type)
+            viewModel.getReplyUser(comment.cId, type)
+        }
+//        if (viewModel.replyList.value[comment.cId] != null) {
+//            replies = viewModel.replyList.value[comment.cId]!!
+//        }
+//        if (viewModel.replyUserList.value[comment.cId] != null) {
+//            replyUserList = viewModel.replyUserList.value[comment.cId]!!
+//        }
+//        Log.d("미란 라리루루루 Component", replies.toString())
     }
 
     Column {
@@ -357,6 +378,7 @@ fun CommentWidgetItem(
                 )
             }
         }
+
         if (replys != null) {
             if (replys.isNotEmpty()) {
                 replys.forEachIndexed { index, reply ->
@@ -367,6 +389,15 @@ fun CommentWidgetItem(
                 }
             }
         }
+
+//        if (replies.isNotEmpty()) {
+//            replies.forEachIndexed { index, reply ->
+//                if (replyUserList.isNotEmpty()) {
+//                    replyUserList.getOrNull(index)
+//                        ?.let { ReplyWidgetItem(reply, it, navController) }
+//                }
+//            }
+//        }
     }
 
     if (bottomSheetOpen) {

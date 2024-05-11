@@ -123,9 +123,12 @@ fun loginButton(loginViewModel: LoginViewModel, navController:NavController) {
                 LoginViewModel.LoginUserState.LOGIN -> {
                     navController.navigate(NavigationRoutes.RegisterScreen.route)
                 }
-                else -> {
+                LoginViewModel.LoginUserState.SUCCESS -> {
                     launcher.launch(Intent(context, MainActivity::class.java))
                     (context as? ComponentActivity)?.finish()
+                }
+                else -> {
+
                 }
             }
         }

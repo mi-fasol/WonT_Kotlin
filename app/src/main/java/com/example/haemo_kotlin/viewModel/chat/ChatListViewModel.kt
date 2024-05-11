@@ -6,7 +6,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.MyFirebaseMessagingService
+import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.model.chat.ChatUserModel
 import com.example.haemo_kotlin.model.chat.FireBaseChatModel
@@ -21,7 +21,6 @@ import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

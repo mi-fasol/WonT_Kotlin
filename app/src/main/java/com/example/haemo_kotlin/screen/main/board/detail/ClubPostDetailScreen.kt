@@ -46,6 +46,7 @@ import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.YesOrNoDialog
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
@@ -55,6 +56,7 @@ fun ClubPostDetailScreen(
     pId: Int,
     postViewModel: ClubPostViewModel,
     wishViewModel: WishViewModel,
+    mainViewModel: MainViewModel,
     commentViewModel: CommentViewModel,
     navController: NavController
 ) {
@@ -101,6 +103,7 @@ fun ClubPostDetailScreen(
                 PostDetailAppBar(
                     commentViewModel,
                     wishViewModel,
+                    mainViewModel,
                     pId,
                     2,
                     navController

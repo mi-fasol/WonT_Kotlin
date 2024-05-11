@@ -53,8 +53,10 @@ class LoginViewModel @Inject constructor(
 
         if (studentId.isNotBlank()) {
             if (uId == 0) {
+                Log.d("미란 로그인", "로그인만 됨")
                 _user.value = LoginUserState.LOGIN
             } else {
+                Log.d("미란 로그인", "회원 있음!")
                 _user.value = LoginUserState.SUCCESS
             }
         }

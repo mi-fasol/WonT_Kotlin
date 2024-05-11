@@ -53,6 +53,7 @@ import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.YesOrNoDialog
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
@@ -66,6 +67,7 @@ fun HotPlacePostDetailScreen(
     pId: Int,
     postViewModel: HotPlacePostViewModel,
     wishViewModel: WishViewModel,
+    mainViewModel: MainViewModel,
     commentViewModel: CommentViewModel,
     navController: NavController
 ) {
@@ -111,6 +113,7 @@ fun HotPlacePostDetailScreen(
                 PostDetailAppBar(
                     commentViewModel,
                     wishViewModel,
+                    mainViewModel,
                     post.hpId,
                     3,
                     navController
