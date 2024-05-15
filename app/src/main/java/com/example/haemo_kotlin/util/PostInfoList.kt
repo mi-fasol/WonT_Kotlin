@@ -3,7 +3,6 @@ package com.example.haemo_kotlin.util
 import android.os.Build
 import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
-import java.util.Calendar
 
 val personList = listOf("1명", "2명", "3명", "4명", "5명 이상")
 

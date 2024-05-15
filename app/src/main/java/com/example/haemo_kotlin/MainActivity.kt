@@ -5,6 +5,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.screen.main.board.MainScreen
 import com.example.haemo_kotlin.screen.main.board.detail.ClubPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.detail.HotPlacePostDetailScreen
@@ -43,8 +45,10 @@ import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.screen.setting.MyWishClubScreen
 import com.example.haemo_kotlin.screen.setting.MyWishHotPlaceScreen
 import com.example.haemo_kotlin.screen.setting.MyWishMeetingScreen
+import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
@@ -53,9 +57,15 @@ import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
+import com.example.haemo_kotlin.viewModel.chat.NotificationViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -90,6 +100,7 @@ class MainActivity : ComponentActivity() {
     private val wishViewModel by viewModels<WishViewModel>()
     private val chatViewModel by viewModels<ChatViewModel>()
     private val chatListViewModel by viewModels<ChatListViewModel>()
+    private val notificationViewModel by viewModels<NotificationViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -97,7 +108,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Declare the launcher at the top of your Activity/Fragment:
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
@@ -108,7 +118,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun logRegToken() {
+    private fun logRegToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
@@ -118,7 +128,6 @@ class MainActivity : ComponentActivity() {
             val token = task.result
             val msg = token
             Log.d("미란 토큰", msg)
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         })
     }
 
@@ -134,6 +143,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        askNotificationPermission()
+        logRegToken()
 
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
 

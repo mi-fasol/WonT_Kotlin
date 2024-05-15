@@ -18,13 +18,11 @@ import com.example.haemo_kotlin.screen.intro.LoginScreen
 import com.example.haemo_kotlin.screen.intro.UserRegisterScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.viewModel.user.LoginViewModel
-import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class StartActivity : ComponentActivity() {
-    private val viewModel by viewModels<PostViewModel>()
     private val loginViewModel by viewModels<LoginViewModel>()
     private val userViewModel by viewModels<UserViewModel>()
 
