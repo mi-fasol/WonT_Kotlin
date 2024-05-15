@@ -99,7 +99,7 @@ fun ChatList(
     val conf = LocalConfiguration.current
     val screenWidth = conf.screenWidthDp
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit, key2 = true) {
         viewModel.getChatList()
     }
 
