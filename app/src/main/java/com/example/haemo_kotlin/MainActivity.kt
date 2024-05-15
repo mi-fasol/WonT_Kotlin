@@ -1,11 +1,15 @@
 package com.example.haemo_kotlin
 
+import android.Manifest
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -22,16 +26,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.haemo_kotlin.screen.main.board.detail.ClubPostDetailScreen
-import com.example.haemo_kotlin.screen.main.board.register.ClubPostRegisterScreen
-import com.example.haemo_kotlin.screen.main.board.list.ClubScreen
-import com.example.haemo_kotlin.screen.main.board.list.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.board.MainScreen
+import com.example.haemo_kotlin.screen.main.board.detail.ClubPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.detail.HotPlacePostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.detail.MeetingPostDetailScreen
+import com.example.haemo_kotlin.screen.main.board.list.ClubScreen
+import com.example.haemo_kotlin.screen.main.board.list.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.board.list.MeetingScreen
-import com.example.haemo_kotlin.screen.main.board.register.PostRegisterScreen
+import com.example.haemo_kotlin.screen.main.board.register.ClubPostRegisterScreen
 import com.example.haemo_kotlin.screen.main.board.register.HotPlacePostRegisterScreen
+import com.example.haemo_kotlin.screen.main.board.register.PostRegisterScreen
 import com.example.haemo_kotlin.screen.main.chat.ChatListScreen
 import com.example.haemo_kotlin.screen.main.chat.ChatScreen
 import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
@@ -41,36 +45,28 @@ import com.example.haemo_kotlin.screen.setting.MyWishHotPlaceScreen
 import com.example.haemo_kotlin.screen.setting.MyWishMeetingScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
-import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
-import com.example.haemo_kotlin.viewModel.user.UserViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
+import com.example.haemo_kotlin.viewModel.user.UserViewModel
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import android.Manifest
-import android.app.AlertDialog
-import android.content.ContentValues.TAG
-import android.util.Log
-import android.widget.Toast
-import com.example.haemo_kotlin.util.YesOrNoDialog
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.ktx.messaging
-import kotlinx.coroutines.tasks.await
 
 @HiltAndroidApp
 class MainApplication : Application() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
+
+        FirebaseApp.initializeApp(this)
 
         val notificationChannel = NotificationChannel(
             "chat_notification",
@@ -138,8 +134,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        askNotificationPermission()
-        logRegToken()
 
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
 

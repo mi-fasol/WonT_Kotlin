@@ -1,12 +1,14 @@
 package com.example.haemo_kotlin.service
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.haemo_kotlin.MainApplication
+import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -17,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
+
 
 @AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -31,6 +34,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onCreate()
         context = applicationContext
         val uId = SharedPreferenceUtil(context).getInt("uId", 0)
+
+        Log.d("미란 onCreate", "생성됨")
 
         userRef.child(uId.toString()).addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -88,12 +93,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     @SuppressLint("MissingPermission")
     fun sendNotification(lastChat: ChatMessageModel, context : Context) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0 /* Request code */, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.chat_icon)
             .setContentTitle(lastChat.senderNickname)
             .setContentText(lastChat.content)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .setContentIntent(pendingIntent)
             .build()
 
         Log.d("미란 알림은요", notification.toString())
