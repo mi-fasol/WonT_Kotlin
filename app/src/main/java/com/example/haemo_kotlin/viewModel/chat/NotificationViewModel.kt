@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotificationViewModel @Inject constructor(
-    private val context: Context,
+    context: Context,
     private val firebaseMessagingService: MyFirebaseMessagingService
 ) : ViewModel() {
 

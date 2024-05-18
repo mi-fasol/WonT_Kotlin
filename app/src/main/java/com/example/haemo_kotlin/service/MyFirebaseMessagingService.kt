@@ -30,21 +30,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private val chatRef = firebaseDB.getReference("chat")
     private val userRef = firebaseDB.getReference("user")
     private var userChatList = MutableStateFlow<List<String>>(emptyList())
+    private val chatListeners = mutableMapOf<String, ChildEventListener>()
 
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
         val uId = SharedPreferenceUtil(context).getInt("uId", 0)
-        listenToChatIds(uId)
         newChatRoomCreated(uId)
-        Log.d("미란 onCreate", "생성됨")
     }
-
-//    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-//        remoteMessage.notification?.let {
-//            sendNotification(it.body)
-//        }
-//    }
 
     @SuppressLint("MissingPermission")
     fun sendNotification(lastChat: ChatMessageModel) {
@@ -69,127 +62,64 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         with(NotificationManagerCompat.from(context)) {
             Log.d("미란 알림은요", "우와아")
-            notify(NOTIFICATION_ID, notification)
+            val notificationId = System.currentTimeMillis().toInt()
+            notify(notificationId, notification)
         }
     }
-
 
     private fun newChatRoomCreated(uId: Int) {
         userRef.child(uId.toString()).addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatId = snapshot.value as String
-                userChatList.value += chatId
-                chatRef.child(chatId).child("messages")
-                    .addChildEventListener(object : ChildEventListener {
-                        override fun onChildAdded(
-                            snapshot: DataSnapshot,
-                            previousChildName: String?
-                        ) {
-                            val chatMessage = snapshot.getValue(ChatMessageModel::class.java)
-                            if (chatMessage?.from != uId) {
-                                chatMessage?.let { sendNotification(it, context) }
-                            }
-                        }
-
-                        override fun onChildChanged(
-                            snapshot: DataSnapshot,
-                            previousChildName: String?
-                        ) {
-                        }
-
-                        override fun onChildRemoved(snapshot: DataSnapshot) {
-                        }
-
-                        override fun onChildMoved(
-                            snapshot: DataSnapshot,
-                            previousChildName: String?
-                        ) {
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            Log.e("Firebase", "Error: ${error.message}")
-                        }
-                    })
+                if (chatId !in userChatList.value) {
+                    userChatList.value += chatId
+                    addChatListener(chatId, uId)
+                }
             }
 
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val chatId = snapshot.value as String
-                Log.d("미란 파이어베이스", "헐랭 삭제됨?")
                 userChatList.value -= chatId
+                removeChatListener(chatId)
             }
 
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {
                 Log.e("Firebase", "Error: ${error.message}")
             }
         })
     }
 
-    private fun listenToChatIds(uId: Int) {
-        userChatList.value.forEach { chatId ->
-            chatRef.child(chatId).child("messages")
-                .addChildEventListener(object : ChildEventListener {
-                    override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                        val chatMessage = snapshot.getValue(ChatMessageModel::class.java)
-                        if (chatMessage?.from != uId) {
-                            chatMessage?.let { sendNotification(it, context) }
-                        }
-                    }
+    private fun addChatListener(chatId: String, uId: Int) {
+        val listener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val chatMessage = snapshot.getValue(ChatMessageModel::class.java)
+                if (chatMessage?.from != uId && chatMessage?.createdAt == System.currentTimeMillis()) {
+                    sendNotification(chatMessage)
+                }
+            }
 
-                    override fun onChildChanged(
-                        snapshot: DataSnapshot,
-                        previousChildName: String?
-                    ) {
-                    }
-
-                    override fun onChildRemoved(snapshot: DataSnapshot) {
-                    }
-
-                    override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        Log.e("Firebase", "Error: ${error.message}")
-                    }
-                })
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error: ${error.message}")
+            }
         }
+        chatRef.child(chatId).child("messages").addChildEventListener(listener)
+        chatListeners[chatId] = listener
     }
 
-    @SuppressLint("MissingPermission")
-    fun sendNotification(lastChat: ChatMessageModel, context: Context) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.chat_icon)
-            .setContentTitle(lastChat.senderNickname)
-            .setContentText(lastChat.content)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .build()
-
-        Log.d("미란 알림은요", notification.toString())
-
-        with(NotificationManagerCompat.from(context)) {
-            Log.d("미란 알림은요", "우와아")
-            notify(NOTIFICATION_ID, notification)
+    private fun removeChatListener(chatId: String) {
+        chatListeners[chatId]?.let {
+            chatRef.child(chatId).child("messages").removeEventListener(it)
         }
+        chatListeners.remove(chatId)
     }
 
     companion object {
         private const val CHANNEL_ID = "chat_notification"
-        private var NOTIFICATION_ID = 100
     }
 
     override fun onNewToken(token: String) {
