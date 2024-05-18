@@ -37,10 +37,10 @@ class UserViewModel @Inject constructor(
     val fetchUserState: StateFlow<Resource<UserResponseModel>> = _fetchUserState.asStateFlow()
 
     private val _user = MutableStateFlow<UserResponseModel?>(null)
-    val user : StateFlow<UserResponseModel?> = _user
+    val user: StateFlow<UserResponseModel?> = _user
 
     private val _otherPerson = MutableStateFlow<UserResponseModel?>(null)
-    val otherPerson : StateFlow<UserResponseModel?> = _otherPerson
+    val otherPerson: StateFlow<UserResponseModel?> = _otherPerson
 
     private val _isRegisterSuccess = MutableStateFlow<Boolean>(false)
     val isRegisterSuccess: StateFlow<Boolean> = _isRegisterSuccess.asStateFlow()
@@ -68,6 +68,10 @@ class UserViewModel @Inject constructor(
                     _isRegisterSuccess.value = true
                     SharedPreferenceUtil(context).setUser(responseUser!!)
                     SharedPreferenceUtil(context).setInt("uId", responseUser.uId)
+                    SharedPreferenceUtil(context).setInt("image", responseUser.userImage)
+                    SharedPreferenceUtil(context).setString("gender", responseUser.gender)
+                    SharedPreferenceUtil(context).setString("major", responseUser.major)
+                    SharedPreferenceUtil(context).setString("nickname", responseUser.nickname)
                     Log.d("유저", responseUser.toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
@@ -82,7 +86,7 @@ class UserViewModel @Inject constructor(
     }
 
 
-    fun fetchUserInfoById(uId : Int) {
+    fun fetchUserInfoById(uId: Int) {
         viewModelScope.launch {
             _registerState.value = Resource.loading(null)
             try {
@@ -91,7 +95,6 @@ class UserViewModel @Inject constructor(
                     val responseUser = response.body()
                     _user.value = responseUser
                     _fetchUserState.value = Resource.success(response.body())
-                    SharedPreferenceUtil(context).setUser(responseUser!!)
                     Log.d("유저", responseUser.toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
@@ -105,8 +108,8 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun getUserByNickname(nickname: String) : UserResponseModel? {
-        var user : UserResponseModel? = null
+    fun getUserByNickname(nickname: String): UserResponseModel? {
+        var user: UserResponseModel? = null
         viewModelScope.launch {
             _registerState.value = Resource.loading(null)
             try {

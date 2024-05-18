@@ -51,7 +51,6 @@ fun MainBottomNavigation(
                 Icon(
                     painter = painterResource(id = R.drawable.meeting_bottom_icon),
                     contentDescription = null,
-                    tint = colorResource(id = mainColor),
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
@@ -68,7 +67,6 @@ fun MainBottomNavigation(
                 Icon(
                     painter = painterResource(id = R.drawable.club_bottom_icon),
                     contentDescription = null,
-                    tint = colorResource(id = mainColor),
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
@@ -85,7 +83,6 @@ fun MainBottomNavigation(
                 Icon(
                     painter = painterResource(id = R.drawable.hotplace_bottom_icon),
                     contentDescription = null,
-                    tint = colorResource(id = mainColor),
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
@@ -103,7 +100,7 @@ fun MainBottomNavigation(
                 val borderColor = if (isSelected) mainColor else R.color.mainGreyColor
                 Icon(
                     painter = painterResource(
-                        id = userMyPageImageList[SharedPreferenceUtil(context).getUser().userImage]
+                        id = userMyPageImageList[SharedPreferenceUtil(context).getInt("image", 0)]
                     ),
                     contentDescription = null,
                     modifier = Modifier
