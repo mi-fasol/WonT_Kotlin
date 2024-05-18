@@ -35,6 +35,7 @@ import com.example.haemo_kotlin.R
 @Composable
 fun YesOrNoDialog(
     content: String,
+    mainColor: Int,
     onClickCancel: () -> Unit,
     onClickConfirm: () -> Unit
 ) {
@@ -69,7 +70,9 @@ fun YesOrNoDialog(
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                 ) {
                     Button(
                         modifier = Modifier
@@ -90,7 +93,7 @@ fun YesOrNoDialog(
                             .weight(1f),
                         onClick = { onClickConfirm() },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.mainColor),
+                            containerColor = colorResource(id = mainColor),
                             contentColor = Color.White
                         )
                     ) {
@@ -105,6 +108,7 @@ fun YesOrNoDialog(
 @Composable
 fun ConfirmDialog(
     content: String,
+    mainColor: Int,
     onClickConfirm: () -> Unit
 ) {
     Dialog(
@@ -138,7 +142,7 @@ fun ConfirmDialog(
                 Button(
                     onClick = { onClickConfirm() },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.mainColor),
+                        containerColor = colorResource(id = mainColor),
                         contentColor = Color.White
                     ),
                     modifier = Modifier
@@ -148,18 +152,6 @@ fun ConfirmDialog(
                     Text("확인")
                 }
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun preview() {
-    Surface(
-        Modifier.fillMaxSize()
-    ) {
-        YesOrNoDialog(content = "확인됏슘동", onClickCancel = {}) {
-
         }
     }
 }

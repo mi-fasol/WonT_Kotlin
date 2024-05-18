@@ -30,6 +30,7 @@ class MainViewModel @Inject constructor(
     val mainColor: StateFlow<ColorOption> = _mainColor
 
     fun updateColor(colorOption: ColorOption) {
+        SharedPreferenceUtil(context).setInt("themeColor", colorOption.colorResId)
         viewModelScope.launch {
             _mainColor.emit(colorOption)
         }

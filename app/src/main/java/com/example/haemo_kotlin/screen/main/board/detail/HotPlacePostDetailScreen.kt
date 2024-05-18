@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +53,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
@@ -81,12 +83,15 @@ fun HotPlacePostDetailScreen(
     val repliedCId = commentViewModel.commentId.collectAsState().value
     val isWished = wishViewModel.isWished.collectAsState().value
     val wished = remember { mutableStateOf(isWished) }
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+
     var openDialog by remember {
         mutableStateOf(false)
     }
 
     if (openDialog) {
-        YesOrNoDialog(content = "답글 작성을 취소하시겠습니까?", onClickCancel = {
+        YesOrNoDialog(content = "답글 작성을 취소하시겠습니까?", mainColor = mainColor, onClickCancel = {
             openDialog = false
         }) {
             commentViewModel.isReply.value = false
@@ -114,6 +119,7 @@ fun HotPlacePostDetailScreen(
                     commentViewModel,
                     wishViewModel,
                     mainViewModel,
+                    mainColor,
                     post.hpId,
                     3,
                     navController
@@ -125,6 +131,7 @@ fun HotPlacePostDetailScreen(
                 isReply,
                 postType = 3,
                 pId = pId,
+                mainColor = mainColor,
                 value = content,
                 commentViewModel = commentViewModel,
                 onValueChange = { newValue ->
@@ -140,7 +147,7 @@ fun HotPlacePostDetailScreen(
                     bottom = innerPadding.calculateBottomPadding() + 10.dp
                 )
         ) {
-            Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
+            Divider(thickness = 1.dp, color = colorResource(mainColor))
             when (postState) {
                 is Resource.Error<HotPlaceResponsePostModel> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
@@ -166,6 +173,7 @@ fun HotPlacePostDetailScreen(
                                 type = 3,
                                 pId = pId,
                                 commentViewModel = commentViewModel,
+                                mainColor = mainColor,
                                 navController = navController
                             )
                         }

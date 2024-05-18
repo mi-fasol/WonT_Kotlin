@@ -30,9 +30,8 @@ fun MainBottomNavigation(
     val context = LocalContext.current
     val screenWidth = configuration.screenWidthDp
 
-    val currentRoute = navController.currentDestination?.route ?: ""
-
     val selectedItem = viewModel.beforeStack.collectAsState().value
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     val onNavigationItemSelected: (String) -> Unit = { route ->
         viewModel.beforeStack.value = route
@@ -43,7 +42,7 @@ fun MainBottomNavigation(
         backgroundColor = Color.White,
         modifier = Modifier.border(
             1.dp,
-            color = colorResource(id = R.color.mainColor),
+            color = colorResource(id = mainColor),
             RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
         )
     ) {
@@ -52,6 +51,7 @@ fun MainBottomNavigation(
                 Icon(
                     painter = painterResource(id = R.drawable.meeting_bottom_icon),
                     contentDescription = null,
+                    tint = colorResource(id = mainColor),
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
@@ -60,7 +60,7 @@ fun MainBottomNavigation(
                 onNavigationItemSelected("mainScreen")
                 onItemSelected("mainScreen")
             },
-            selectedContentColor = colorResource(id = R.color.mainColor),
+            selectedContentColor = colorResource(id = mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
         )
         BottomNavigationItem(
@@ -68,6 +68,7 @@ fun MainBottomNavigation(
                 Icon(
                     painter = painterResource(id = R.drawable.club_bottom_icon),
                     contentDescription = null,
+                    tint = colorResource(id = mainColor),
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
@@ -76,7 +77,7 @@ fun MainBottomNavigation(
                 onNavigationItemSelected("clubScreen")
                 onItemSelected("clubScreen")
             },
-            selectedContentColor = colorResource(id = R.color.mainColor),
+            selectedContentColor = colorResource(id = mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
         )
         BottomNavigationItem(
@@ -84,6 +85,7 @@ fun MainBottomNavigation(
                 Icon(
                     painter = painterResource(id = R.drawable.hotplace_bottom_icon),
                     contentDescription = null,
+                    tint = colorResource(id = mainColor),
                     modifier = Modifier.size((screenWidth / 15).dp)
                 )
             },
@@ -92,19 +94,16 @@ fun MainBottomNavigation(
                 onNavigationItemSelected("hotPlaceScreen")
                 onItemSelected("hotPlaceScreen")
             },
-            selectedContentColor = colorResource(id = R.color.mainColor),
+            selectedContentColor = colorResource(id = mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
         )
         BottomNavigationItem(
             icon = {
                 val isSelected = selectedItem == "myPageScreen"
-                val borderColor = if (isSelected) R.color.mainColor else R.color.mainGreyColor
+                val borderColor = if (isSelected) mainColor else R.color.mainGreyColor
                 Icon(
                     painter = painterResource(
-                        id = userMyPageImageList[SharedPreferenceUtil(context).getInt(
-                            "image",
-                            0
-                        )]
+                        id = userMyPageImageList[SharedPreferenceUtil(context).getUser().userImage]
                     ),
                     contentDescription = null,
                     modifier = Modifier
@@ -122,7 +121,7 @@ fun MainBottomNavigation(
                 onNavigationItemSelected("myPageScreen")
                 onItemSelected("myPageScreen")
             },
-            selectedContentColor = colorResource(id = R.color.mainColor),
+            selectedContentColor = colorResource(id = mainColor),
             unselectedContentColor = colorResource(id = R.color.mainGreyColor)
         )
     }

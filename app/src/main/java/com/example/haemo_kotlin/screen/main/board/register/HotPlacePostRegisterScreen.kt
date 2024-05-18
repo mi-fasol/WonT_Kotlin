@@ -36,15 +36,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.*
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
 @Composable
-fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, navController: NavController) {
+fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, mainViewModel: MainViewModel, navController: NavController) {
 
     val title = viewModel.title.collectAsState().value
     val description = viewModel.description.collectAsState().value
@@ -53,6 +55,8 @@ fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, navController: 
     var dialogOpen by remember{ mutableStateOf(false) }
     var confirmDialogOpen by remember{ mutableStateOf(false) }
     var errorDialogOpen by remember{ mutableStateOf(false) }
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(postRegisterState) {
         when (postRegisterState) {
@@ -68,20 +72,20 @@ fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, navController: 
     }
 
     if(dialogOpen){
-        YesOrNoDialog(content = "등록하시겠습니까?", onClickCancel = { navController.popBackStack() }) {
+        YesOrNoDialog(content = "등록하시겠습니까?", mainColor, onClickCancel = { navController.popBackStack() }) {
             viewModel.registerPost()
             dialogOpen = false
             confirmDialogOpen = true
         }
     }
     if(confirmDialogOpen){
-        ConfirmDialog(content = "등록이 완료되었습니다.") {
+        ConfirmDialog(content = "등록이 완료되었습니다.", mainColor) {
             confirmDialogOpen = false
             navController.popBackStack()
         }
     }
     if(errorDialogOpen){
-        ConfirmDialog(content = "오류가 발생했습니다.\n다시 시도해 주세요.") {
+        ConfirmDialog(content = "오류가 발생했습니다.\n다시 시도해 주세요.", mainColor) {
             errorDialogOpen = false
         }
     }
@@ -92,12 +96,12 @@ fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, navController: 
             .verticalScroll(rememberScrollState())
     ) {
         Column {
-            PostRegisterAppBar("핫플 등록", navController)
+            PostRegisterAppBar("핫플 등록", mainColor, navController)
             Column(modifier = Modifier.padding(horizontal = 40.dp)) {
-                TextEnterField("장소", title) {
+                TextEnterField("장소", title, mainColor) {
                     viewModel.title.value = it
                 }
-                TextEnterField("설명", description) {
+                TextEnterField("설명", description, mainColor) {
                     viewModel.description.value = it
                 }
                 HotPlacePostInfo(viewModel)
@@ -106,7 +110,7 @@ fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, navController: 
                         viewModel.content.value = it
                     }
                 }
-                PostRegisterButton(null, null, viewModel, 3, navController) {
+                PostRegisterButton(null, null, viewModel, 3, mainColor, navController) {
                     dialogOpen = true
                 }
             }

@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,6 +50,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
@@ -76,6 +78,8 @@ fun MeetingPostDetailScreen(
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
     val isWished by wishViewModel.isWished.collectAsState()
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     var replies by remember { mutableStateOf<List<ReplyResponseModel>>(emptyList()) }
     var replyUserList by remember { mutableStateOf<List<UserResponseModel>>(emptyList()) }
@@ -116,7 +120,7 @@ fun MeetingPostDetailScreen(
     Scaffold(
         topBar = {
             if (post != null) {
-                PostDetailAppBar(commentViewModel, wishViewModel, mainViewModel, post.pId, 1, navController)
+                PostDetailAppBar(commentViewModel, wishViewModel, mainViewModel, mainColor, post.pId, 1,  navController)
             }
         },
         bottomBar = {
@@ -126,6 +130,7 @@ fun MeetingPostDetailScreen(
                 pId = pId,
                 value = content,
                 commentViewModel = commentViewModel,
+                mainColor = mainColor,
                 onValueChange = { newValue ->
                     commentViewModel.content.value = newValue
                 }) {
@@ -146,7 +151,7 @@ fun MeetingPostDetailScreen(
                     bottom = innerPadding.calculateBottomPadding() + 10.dp
                 )
         ) {
-            Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
+            Divider(thickness = 1.dp, color = colorResource(mainColor))
             when (postState) {
                 is Resource.Error<PostResponseModel> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
@@ -165,13 +170,14 @@ fun MeetingPostDetailScreen(
                     if (user != null && post != null) {
                         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                             PostUserInfo(user, post.date, navController)
-                            PostInfo(post, accept)
+                            PostInfo(post, mainColor, accept)
                             Spacer(modifier = Modifier.height(15.dp))
                             Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
                             CommentWidget(
                                 type = 1,
                                 pId = pId,
                                 commentViewModel = commentViewModel,
+                                mainColor = mainColor,
                                 navController = navController
                             )
                         }
@@ -181,7 +187,7 @@ fun MeetingPostDetailScreen(
         }
     }
     if (openDialog) {
-        YesOrNoDialog(content = "답글 작성을 취소하시겠습니까?", onClickCancel = {
+        YesOrNoDialog(content = "답글 작성을 취소하시겠습니까?", mainColor = mainColor, onClickCancel = {
             openDialog = false
         }) {
             commentViewModel.isReply.value = false
@@ -190,7 +196,7 @@ fun MeetingPostDetailScreen(
 }
 
 @Composable
-fun PostInfo(post: PostResponseModel, accept: List<AcceptationResponseModel>) {
+fun PostInfo(post: PostResponseModel, mainColor:Int, accept: List<AcceptationResponseModel>) {
     val config = LocalConfiguration.current
     val screenHeight = config.screenHeightDp
     val screenWidth = config.screenWidthDp
@@ -215,7 +221,7 @@ fun PostInfo(post: PostResponseModel, accept: List<AcceptationResponseModel>) {
         ) {
             Text(
                 "${accept.size}/${post.person}",
-                color = colorResource(id = R.color.mainColor),
+                color = colorResource(mainColor),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(4.dp)
             )
@@ -225,7 +231,7 @@ fun PostInfo(post: PostResponseModel, accept: List<AcceptationResponseModel>) {
                     .height((screenHeight / 26).dp)
                     .width((screenWidth / 5).dp)
                     .background(
-                        colorResource(id = R.color.mainColor),
+                        colorResource(mainColor),
                         RoundedCornerShape(23.dp)
                     )
                     .clickable { },

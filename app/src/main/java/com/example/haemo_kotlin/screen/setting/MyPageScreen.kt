@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,6 +59,7 @@ fun MyPageScreen(
     val user = viewModel.user.collectAsState().value
     val userState = viewModel.fetchUserState.collectAsState().value
     val uId = SharedPreferenceUtil(context).getInt("uId", 0)
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
     Log.d("미란 user", user.toString())
 
     LaunchedEffect(true) {
@@ -66,7 +68,7 @@ fun MyPageScreen(
 
     Scaffold(
         topBar = {
-            MainPageAppBar("마이페이지", navController)
+            MainPageAppBar("마이페이지", mainColor, navController)
         },
         modifier = Modifier.background(Color(0xfff4f4f4))
     ) { innerPadding ->
@@ -102,9 +104,9 @@ fun MyPageScreen(
                                 UserProfile(user = user)
                                 Divider(
                                     thickness = 1.dp,
-                                    color = colorResource(id = R.color.mainColor)
+                                    color = colorResource(mainColor,)
                                 )
-                                MyPageList(user.uId, user.nickname, mainViewModel, navController)
+                                MyPageList(user.uId, mainColor, user.nickname, mainViewModel, navController)
                             }
                         }
                     }
@@ -160,6 +162,7 @@ fun UserProfile(user: UserResponseModel) {
 @Composable
 fun MyPageList(
     uId: Int,
+    mainColor: Int,
     nickname: String,
     mainViewModel: MainViewModel,
     navController: NavController
@@ -173,7 +176,7 @@ fun MyPageList(
             Modifier.padding(bottom = 10.dp)
         ) {
             items(4) { idx ->
-                MyPageListItem(idx, uId, nickname, mainViewModel, navController)
+                MyPageListItem(idx, uId, mainColor, nickname, mainViewModel, navController)
                 Spacer(Modifier.height(5.dp))
             }
         }
@@ -185,6 +188,7 @@ fun MyPageList(
 fun MyPageListItem(
     idx: Int,
     uId: Int,
+    mainColor: Int,
     nickname: String,
     mainViewModel: MainViewModel,
     navController: NavController
@@ -194,7 +198,8 @@ fun MyPageListItem(
     val screenHeight = configuration.screenHeightDp
     val textList = listOf("내가 작성한 글", "찜한 장소", "가고 싶은 모임", "가고 싶은 소모임")
     val navigationRoutes = listOf(
-        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
+        NavigationRoutes.ThemeChangeScreen.route,
+//        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
         NavigationRoutes.MyWishHotPlaceScreen.createRoute(uId),
         NavigationRoutes.MyWishMeetingScreen.createRoute(uId),
         NavigationRoutes.MyWishClubScreen.createRoute(uId)
@@ -220,7 +225,7 @@ fun MyPageListItem(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
                 tint = colorResource(
-                    id = R.color.mainColor
+                    id = mainColor
                 )
             )
         }

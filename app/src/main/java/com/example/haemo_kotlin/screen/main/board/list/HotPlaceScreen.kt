@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,6 +52,7 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.WishButton
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
@@ -66,6 +68,8 @@ fun HotPlaceScreen(
     val postList = postViewModel.hotPlacePostList.collectAsState().value
     val popularPostList = postViewModel.popularHotPlace.collectAsState().value
     val postListState = postViewModel.hotPlacePostListState.collectAsState().value
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(Unit) {
         postViewModel.getHotPlacePost()
@@ -74,7 +78,7 @@ fun HotPlaceScreen(
 
     Scaffold(
         topBar = {
-            MainPageAppBar("요즘 핫한 핫플레이스", navController)
+            MainPageAppBar("요즘 핫한 핫플레이스", mainColor, navController)
         },
     ) { innerPadding ->
         BoxWithConstraints {
@@ -103,12 +107,15 @@ fun HotPlaceScreen(
                         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                             PopularPlace(
                                 popularPostList, mainViewModel,
-                                wishViewModel, navController
+                                wishViewModel,
+                                mainColor,
+                                navController
                             )
                             HotPlaceBoard(
                                 postList = postList,
                                 viewModel = mainViewModel,
                                 wishViewModel,
+                                mainColor,
                                 navController
                             )
                         }
@@ -124,6 +131,7 @@ fun PopularPlace(
     postList: List<HotPlaceResponsePostModel>,
     viewModel: MainViewModel,
     wishViewModel: WishViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     when (postList.size) {
@@ -153,6 +161,7 @@ fun PopularPlace(
                             postList[idx],
                             viewModel,
                             wishViewModel,
+                            mainColor,
                             navController
                         )
                         if (idx < postList.size - 1) {
@@ -170,6 +179,7 @@ fun PopularPlaceItem(
     post: HotPlaceResponsePostModel,
     viewModel: MainViewModel,
     wishViewModel: WishViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
@@ -224,7 +234,7 @@ fun PopularPlaceItem(
                             .fillMaxSize(),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        WishButton(null, null, post, 3, wishViewModel = wishViewModel)
+                        WishButton(null, null, post, mainColor, 3, wishViewModel = wishViewModel)
                         Column(
                         ) {
                             Text(
@@ -252,6 +262,7 @@ fun HotPlaceBoard(
     postList: List<HotPlaceResponsePostModel>,
     viewModel: MainViewModel,
     wishViewModel: WishViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     Column {
@@ -272,6 +283,7 @@ fun HotPlaceBoard(
                         postList[idx],
                         viewModel,
                         wishViewModel,
+                        mainColor,
                         navController
                     )
                 }
@@ -285,6 +297,7 @@ fun HotPlaceBoardItem(
     post: HotPlaceResponsePostModel,
     viewModel: MainViewModel,
     wishViewModel: WishViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
@@ -331,7 +344,7 @@ fun HotPlaceBoardItem(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                WishButton(null, null, post, 3, wishViewModel = wishViewModel)
+                WishButton(null, null, post, mainColor, 3, wishViewModel = wishViewModel)
                 Text(
                     post.title,
                     fontSize = 14.sp,

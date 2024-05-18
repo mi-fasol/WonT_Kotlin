@@ -39,10 +39,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -55,17 +57,21 @@ import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.util.BackArrowAppBar
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.userMyPageImageList
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
 import kotlin.math.roundToInt
 
 @Composable
 fun ChatListScreen(
     chatListViewModel: ChatListViewModel,
+    mainViewModel: MainViewModel,
     navController: NavController
 ) {
     val chatList = chatListViewModel.fireBaseChatModel.collectAsState().value
-
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
     LaunchedEffect(Unit) {
         chatListViewModel.getChatList()
         Log.d("미란 새로 되나? Screen 호출", "호출됨.")
@@ -82,7 +88,7 @@ fun ChatListScreen(
                 .padding(it)
                 .background(Color.White)
         ) {
-            Divider(color = colorResource(id = R.color.mainColor))
+            Divider(color = colorResource(id = mainColor))
             ChatList(chatList, chatListViewModel, navController)
         }
     }

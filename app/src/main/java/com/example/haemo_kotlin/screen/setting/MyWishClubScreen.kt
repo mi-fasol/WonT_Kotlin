@@ -23,6 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,17 +41,23 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.util.WishButton
 import com.example.haemo_kotlin.util.convertDate
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 
 @Composable
 fun MyWishClubScreen(
     wishViewModel: WishViewModel,
+    mainViewModel: MainViewModel,
     navController: NavController,
     uId: Int,
 ) {
     val post = wishViewModel.wishClubList.collectAsState().value
     val postState = wishViewModel.clubModelListState.collectAsState().value
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(post) {
         wishViewModel.getWishClub()
@@ -58,11 +65,8 @@ fun MyWishClubScreen(
 
     Scaffold(
         topBar = {
-            MyPageListAppBar(navController)
-        },
-//        bottomBar = {
-//            MainBottomNavigation(navController = navController)
-//        }
+            MyPageListAppBar(mainColor, navController)
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -70,7 +74,7 @@ fun MyWishClubScreen(
                     bottom = innerPadding.calculateBottomPadding() + 10.dp
                 )
         ) {
-            Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
+            Divider(thickness = 1.dp, color = colorResource(id = mainColor))
             when (postState) {
                 is Resource.Error<List<ClubPostResponseModel>> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
@@ -111,7 +115,7 @@ fun MyWishClubScreen(
                                 modifier = Modifier.padding(vertical = 15.dp)
                             )
                             Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                            MyWishClubList(post, uId, wishViewModel, navController)
+                            MyWishClubList(post, mainColor, wishViewModel, navController)
                         }
                     }
                 }
@@ -122,14 +126,12 @@ fun MyWishClubScreen(
 
 @Composable
 fun MyWishClubList(
-    postList: List<ClubPostResponseModel>, uId: Int, viewModel: WishViewModel,
+    postList: List<ClubPostResponseModel>, mainColor: Int, viewModel: WishViewModel,
     navController: NavController
 ) {
-    val context = LocalContext.current
-
     Column {
         postList.forEachIndexed { _, post ->
-            MyWishClubItem(post, viewModel, navController)
+            MyWishClubItem(post, viewModel, mainColor, navController)
         }
     }
 }
@@ -138,6 +140,7 @@ fun MyWishClubList(
 fun MyWishClubItem(
     post: ClubPostResponseModel,
     viewModel: WishViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
@@ -173,13 +176,13 @@ fun MyWishClubItem(
                         .weight(10f)
                         .fillMaxWidth()
                 )
-                Icon(
-                    painter = painterResource(id = R.drawable.wish_meeting_icon),
-                    tint = colorResource(
-                        id = R.color.mainColor
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier.size(17.dp)
+                WishButton(
+                    post = null,
+                    clubPost = post,
+                    hotPlacePost = null,
+                    mainColor = mainColor,
+                    type = 2,
+                    wishViewModel = viewModel
                 )
             }
             Row(
@@ -190,7 +193,6 @@ fun MyWishClubItem(
                 Text(
                     text = "${post.person}명",
                     fontSize = 11.5.sp,
-//                    fontWeight = FontWeight.SemiBold,
                     color = Color(0xff999999)
                 )
                 Text(

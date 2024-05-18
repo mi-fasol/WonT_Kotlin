@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,8 @@ import com.example.haemo_kotlin.R
 @Composable
 fun PostRegisterFloatingButton(navController: NavController) {
     var isExpanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     Column(horizontalAlignment = Alignment.End) {
         if (isExpanded) {
@@ -46,6 +49,7 @@ fun PostRegisterFloatingButton(navController: NavController) {
             ) {
                 FabItem(
                     title = "모임 등록",
+                    mainColor,
                     onClicked = {
                         navController.navigate(NavigationRoutes.PostRegisterScreen.route)
                     }
@@ -53,6 +57,7 @@ fun PostRegisterFloatingButton(navController: NavController) {
                 Spacer(modifier = Modifier.height(10.dp))
                 FabItem(
                     title = "소모임 등록",
+                    mainColor,
                     onClicked = {
                         navController.navigate(NavigationRoutes.ClubPostRegisterScreen.route)
                     }
@@ -60,6 +65,7 @@ fun PostRegisterFloatingButton(navController: NavController) {
                 Spacer(modifier = Modifier.height(10.dp))
                 FabItem(
                     title = "핫플 등록",
+                    mainColor,
                     onClicked = {
                         navController.navigate(NavigationRoutes.HotPlacePostRegisterScreen.route)
                     }
@@ -69,7 +75,7 @@ fun PostRegisterFloatingButton(navController: NavController) {
         FloatingActionButton(
             onClick = { isExpanded = !isExpanded },
             shape = CircleShape,
-            backgroundColor = colorResource(id = R.color.mainColor)
+            backgroundColor = colorResource(id = mainColor)
         ) {
             Icon(
                 imageVector = if (isExpanded) Icons.Default.Close else Icons.Default.Add,
@@ -82,16 +88,17 @@ fun PostRegisterFloatingButton(navController: NavController) {
 
 
 @Composable
-fun FabItem(title: String, onClicked: () -> Unit) {
+fun FabItem(title: String, mainColor: Int, onClicked: () -> Unit) {
     val conf = LocalConfiguration.current
     val screenWidth = conf.screenWidthDp
     val screenHeight = conf.screenHeightDp
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .width((screenWidth / 4.5).dp)
             .clickable { onClicked() }
-            .background(colorResource(id = R.color.mainColor), RoundedCornerShape(10.dp))
+            .background(colorResource(id = mainColor), RoundedCornerShape(10.dp))
     ) {
         Text(
             title,

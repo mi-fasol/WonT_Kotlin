@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,15 +42,22 @@ import com.example.haemo_kotlin.model.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.util.ChatRoomAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
 
 @Composable
-fun ChatScreen(chatViewModel: ChatViewModel,  receiverId: Int, navController: NavController) {
+fun ChatScreen(
+    chatViewModel: ChatViewModel,
+    mainViewModel: MainViewModel,
+    receiverId: Int,
+    navController: NavController
+) {
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     val uId = SharedPreferenceUtil(context).getInt("uId", 0)
     val receiver = chatViewModel.receiverInfo.collectAsState().value
     val chatMessage = chatViewModel.chatMessages.collectAsState().value
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -57,6 +65,7 @@ fun ChatScreen(chatViewModel: ChatViewModel,  receiverId: Int, navController: Na
             receiver?.let {
                 ChatRoomAppBar(
                     it.nickname,
+                    mainColor,
                     navController
                 )
             }
@@ -73,7 +82,13 @@ fun ChatScreen(chatViewModel: ChatViewModel,  receiverId: Int, navController: Na
                 chatViewModel
             )
             if (receiver != null) {
-                SendMessage(chatViewModel, receiverId, "${receiverId}+${uId}", uId)
+                SendMessage(
+                    chatViewModel,
+                    receiverId,
+                    "${receiverId}+${uId}",
+                    uId,
+                    mainColor
+                )
             }
         }
     }
@@ -81,7 +96,6 @@ fun ChatScreen(chatViewModel: ChatViewModel,  receiverId: Int, navController: Na
     LaunchedEffect(Unit) {
         chatViewModel.getChatRoomInfo("${receiverId}+${uId}", receiverId)
     }
-
 }
 
 @Composable
@@ -97,9 +111,9 @@ fun ChatMessageField(
     ) {
         message?.let {
             items(it) { message ->
-                    MessageItem(message, uId, chatViewModel)
-                }
+                MessageItem(message, uId, chatViewModel)
             }
+        }
     }
 }
 
@@ -179,7 +193,13 @@ fun MessageItemFromOther(message: ChatMessageModel, chatViewModel: ChatViewModel
 }
 
 @Composable
-fun SendMessage(viewModel: ChatViewModel, receiverId: Int, chatId: String, userId: Int) {
+fun SendMessage(
+    viewModel: ChatViewModel,
+    receiverId: Int,
+    chatId: String,
+    userId: Int,
+    mainColor: Int
+) {
     val sendMessage = remember {
         mutableStateOf("")
     }
@@ -215,16 +235,22 @@ fun SendMessage(viewModel: ChatViewModel, receiverId: Int, chatId: String, userI
                     if (sendMessage.value.isNotEmpty()) {
                         timestamp.longValue = System.currentTimeMillis()
                         val message =
-                            ChatMessageModel(sendMessage.value, timestamp.longValue, userId, SharedPreferenceUtil(context).getString("nickname", "")!!, false)
+                            ChatMessageModel(
+                                sendMessage.value,
+                                timestamp.longValue,
+                                userId,
+                                SharedPreferenceUtil(context).getString("nickname", "")!!,
+                                false
+                            )
                         viewModel.sendMessage(chatId, receiverId, message)
                         sendMessage.value = ""
                     }
                 },
                 shape = IconButtonDefaults.filledShape,
                 colors = IconButtonColors(
-                    containerColor = colorResource(id = R.color.mainColor),
+                    containerColor = colorResource(id = mainColor),
                     contentColor = Color.White,
-                    disabledContainerColor = colorResource(id = R.color.mainColor),
+                    disabledContainerColor = colorResource(id = mainColor),
                     disabledContentColor = Color.White
                 ),
             ) {

@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -49,52 +50,71 @@ import com.example.haemo_kotlin.util.ContentEnterField
 import com.example.haemo_kotlin.util.PostRegisterAppBar
 import com.example.haemo_kotlin.util.PostRegisterButton
 import com.example.haemo_kotlin.util.PostSelectDropDownMenu
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.TextEnterField
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.util.personList
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
 @Composable
-fun ClubPostRegisterScreen(viewModel: ClubPostViewModel, navController: NavController) {
+fun ClubPostRegisterScreen(
+    viewModel: ClubPostViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
 
     val title = viewModel.title.collectAsState().value
     val description = viewModel.description.collectAsState().value
     val content = viewModel.content.collectAsState().value
     val postRegisterState = viewModel.clubPostRegisterState.collectAsState().value
-    var dialogOpen by remember{ mutableStateOf(false) }
-    var confirmDialogOpen by remember{ mutableStateOf(false) }
-    var errorDialogOpen by remember{ mutableStateOf(false) }
+    var dialogOpen by remember { mutableStateOf(false) }
+    var confirmDialogOpen by remember { mutableStateOf(false) }
+    var errorDialogOpen by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(postRegisterState) {
         when (postRegisterState) {
             is Resource.Success<ClubPostResponseModel> -> {
                 confirmDialogOpen = true
             }
+
             is Resource.Error<ClubPostResponseModel> -> {
                 errorDialogOpen = true
             }
+
             else -> {
             }
         }
     }
 
-    if(dialogOpen){
-        YesOrNoDialog(content = "등록하시겠습니까?", onClickCancel = { navController.popBackStack() }) {
+    if (dialogOpen) {
+        YesOrNoDialog(
+            content = "등록하시겠습니까?",
+            mainColor = mainColor,
+            onClickCancel = { navController.popBackStack() }) {
             viewModel.registerPost()
             dialogOpen = false
             confirmDialogOpen = true
         }
     }
-    if(confirmDialogOpen){
-        ConfirmDialog(content = "등록이 완료되었습니다.") {
+    if (confirmDialogOpen) {
+        ConfirmDialog(
+            content = "등록이 완료되었습니다.",
+            mainColor = mainColor,
+        ) {
             confirmDialogOpen = false
             navController.popBackStack()
         }
     }
-    if(errorDialogOpen){
-        ConfirmDialog(content = "오류가 발생했습니다.\n다시 시도해 주세요.") {
+    if (errorDialogOpen) {
+        ConfirmDialog(
+            content = "오류가 발생했습니다.\n다시 시도해 주세요.",
+            mainColor = mainColor,
+        ) {
             errorDialogOpen = false
         }
     }
@@ -105,21 +125,33 @@ fun ClubPostRegisterScreen(viewModel: ClubPostViewModel, navController: NavContr
             .verticalScroll(rememberScrollState())
     ) {
         Column {
-            PostRegisterAppBar("소모임 등록", navController)
+            PostRegisterAppBar(
+                "소모임 등록",
+                mainColor = mainColor,
+                navController
+            )
             Column(modifier = Modifier.padding(horizontal = 40.dp)) {
-                TextEnterField("소모임", title) {
+                TextEnterField(
+                    "소모임",
+                    mainColor = mainColor,
+                    value = title
+                ) {
                     viewModel.title.value = it
                 }
-                TextEnterField("설명", description) {
+                TextEnterField(
+                    "설명",
+                    mainColor = mainColor,
+                    value = description
+                ) {
                     viewModel.description.value = it
                 }
-                ClubPostInfo(viewModel)
+                ClubPostInfo(viewModel, mainColor)
                 ContentEnterField(value = content) {
                     if (it.length <= 300) {
                         viewModel.content.value = it
                     }
                 }
-                PostRegisterButton(null, viewModel, null, 2, navController) {
+                PostRegisterButton(null, viewModel, null, 2, mainColor, navController) {
                     dialogOpen = true
                 }
             }
@@ -129,7 +161,7 @@ fun ClubPostRegisterScreen(viewModel: ClubPostViewModel, navController: NavContr
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ClubPostInfo(viewModel: ClubPostViewModel) {
+fun ClubPostInfo(viewModel: ClubPostViewModel, mainColor: Int) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
 
@@ -144,6 +176,7 @@ fun ClubPostInfo(viewModel: ClubPostViewModel) {
             PostSelectDropDownMenu(
                 "0명",
                 list = personList,
+                mainColor = mainColor,
                 modifier = Modifier
                     .weight(2f)
                     .width((screenWidth / 5).dp)
@@ -153,93 +186,6 @@ fun ClubPostInfo(viewModel: ClubPostViewModel) {
         }
     }
 }
-
-//@Composable
-//fun ImagePickerBox(viewModel: ClubPostViewModel) {
-//    val context = LocalContext.current
-//    val launcher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.GetContent()
-//    ) { uri: Uri? ->
-//        uri?.let { selectedImageUri ->
-//            viewModel.uploadImage(selectedImageUri)
-//        }
-//    }
-//
-//    val imageUrl by viewModel.imageUrl.observeAsState()
-//
-//    Box(
-//        modifier = Modifier
-//            .background(Color.LightGray, RoundedCornerShape(15.dp))
-//            .clickable { launcher.launch("image/*") }
-//            .fillMaxSize(),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        imageUrl?.let { url ->
-//            Image(
-//                painter = rememberAsyncImagePainter(url),
-//                contentDescription = "Uploaded Image",
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .clip(RoundedCornerShape(15.dp)),
-//                contentScale = ContentScale.FillBounds
-//            )
-//        } ?: Icon(
-//            painter = painterResource(id = R.drawable.image_picker_icon),
-//            contentDescription = "Add Image",
-//            tint = Color.Gray
-//        )
-//    }
-//}
-
-//@Composable
-//fun ImagePickerBox(viewModel: ClubPostViewModel, modifier: Modifier) {
-//    val conf = LocalConfiguration.current
-//    val screenWidth = conf.screenWidthDp
-//
-//    val launcher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.GetContent()
-//    ) { uri: Uri? ->
-//        uri?.let { selectedImageUri ->
-//            viewModel.uploadImage(selectedImageUri)
-//        }
-//    }
-//    val imageUrl = viewModel.image.collectAsState().value
-//
-//    LaunchedEffect(imageUrl) {
-//
-//    }
-//
-//    Box(
-//        modifier
-//    ) {
-//        Box(
-//            modifier = Modifier
-//                .background(Color.Unspecified, RoundedCornerShape(15.dp))
-//                .clickable { launcher.launch("image/*") }
-//                .width((screenWidth / 2.5).dp)
-//                .height((screenWidth / 2.5).dp),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            if (imageUrl == "") {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.accept_user_icon),
-//                    contentDescription = "Add Image",
-//                    tint = Color.Gray
-//                )
-//            } else {
-//                Log.d("미란란", imageUrl)
-//                Image(
-//                    painter = rememberAsyncImagePainter(imageUrl),
-//                    contentDescription = "Uploaded Image",
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .clip(RoundedCornerShape(15.dp)),
-//                    contentScale = ContentScale.FillBounds
-//                )
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun ImagePickerBox(

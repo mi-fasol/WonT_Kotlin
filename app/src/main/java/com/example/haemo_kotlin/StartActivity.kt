@@ -17,6 +17,7 @@ import com.example.haemo_kotlin.screen.intro.LoadingScreen
 import com.example.haemo_kotlin.screen.intro.LoginScreen
 import com.example.haemo_kotlin.screen.intro.UserRegisterScreen
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.user.LoginViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class StartActivity : ComponentActivity() {
     private val loginViewModel by viewModels<LoginViewModel>()
     private val userViewModel by viewModels<UserViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,18 +44,21 @@ class StartActivity : ComponentActivity() {
                         composable("loadingScreen") {
                             LoadingScreen(
                                 loginViewModel = loginViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController
                             )
                         }
                         composable("loginScreen") {
                             LoginScreen(
                                 loginViewModel = loginViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController
                             )
                         }
                         composable("userRegisterScreen") {
                             UserRegisterScreen(
                                 viewModel = userViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController
                             )
                         }

@@ -50,7 +50,7 @@ import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @Composable
-fun TextEnterField(type: String, value: String, onValueChange: (String) -> Unit) {
+fun TextEnterField(type: String, value: String, mainColor: Int, onValueChange: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,7 +61,7 @@ fun TextEnterField(type: String, value: String, onValueChange: (String) -> Unit)
             type,
             fontSize = 17.5.sp,
             fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.mainColor),
+            color = colorResource(id = mainColor),
             modifier = Modifier.weight(1f)
         )
         Column(
@@ -89,6 +89,7 @@ fun PostSelectDropDownMenu(
     text: String,
     list: List<String>,
     modifier: Modifier,
+    mainColor: Int,
     onValueChange: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -100,7 +101,7 @@ fun PostSelectDropDownMenu(
         Icons.Filled.KeyboardArrowDown
 
     val borderColor =
-        if (expanded) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
+        if (expanded) colorResource(id = mainColor) else colorResource(id = R.color.postRegisterTextColor)
 
     Box(
         modifier = Modifier
@@ -184,6 +185,7 @@ fun PostRegisterButton(
     clubViewModel: ClubPostViewModel?,
     hotPlacePostViewModel: HotPlacePostViewModel?,
     type: Int,
+    mainColor: Int,
     navController: NavController,
     onClicked: () -> Unit
 ) {
@@ -202,7 +204,7 @@ fun PostRegisterButton(
         },
         enabled = isValid,
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.mainColor),
+            containerColor = colorResource(id = mainColor),
             contentColor = Color.White,
             disabledContainerColor = Color.LightGray,
             disabledContentColor = Color.White,

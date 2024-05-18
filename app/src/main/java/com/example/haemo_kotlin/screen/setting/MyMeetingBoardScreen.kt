@@ -21,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,18 +38,22 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.convertDate
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @Composable
 fun MyMeetingBoardScreen(
     postViewModel: PostViewModel,
+    mainViewModel: MainViewModel,
     navController: NavController,
     nickname: String,
 ) {
     val post = postViewModel.postModelList.collectAsState().value
     val postState = postViewModel.postModelListState.collectAsState().value
-
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(post) {
         postViewModel.getPost()
@@ -56,11 +61,8 @@ fun MyMeetingBoardScreen(
 
     Scaffold(
         topBar = {
-            MyPageListAppBar(navController)
-        },
-//        bottomBar = {
-//            MainBottomNavigation(navController = navController)
-//        }
+            MyPageListAppBar(mainColor, navController)
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -68,7 +70,7 @@ fun MyMeetingBoardScreen(
                     bottom = innerPadding.calculateBottomPadding() + 10.dp
                 )
         ) {
-            Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
+            Divider(thickness = 1.dp, color = colorResource(id = mainColor))
             when (postState) {
                 is Resource.Error<List<PostResponseModel>> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
@@ -105,7 +107,13 @@ fun MyMeetingBoardScreen(
                                     modifier = Modifier.padding(vertical = 15.dp)
                                 )
                                 Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                                MyMeetingBoardList(post, nickname, postViewModel, navController)
+                                MyMeetingBoardList(
+                                    post,
+                                    nickname,
+                                    mainColor,
+                                    postViewModel,
+                                    navController
+                                )
                             }
                         }
                     }
@@ -117,7 +125,10 @@ fun MyMeetingBoardScreen(
 
 @Composable
 fun MyMeetingBoardList(
-    postList: List<PostResponseModel>, nickname: String, postViewModel: PostViewModel,
+    postList: List<PostResponseModel>,
+    nickname: String,
+    mainColor: Int,
+    postViewModel: PostViewModel,
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -126,7 +137,7 @@ fun MyMeetingBoardList(
     }
     Column {
         list.forEachIndexed { _, post ->
-            MyMeetingBoardItem(post, postViewModel, navController)
+            MyMeetingBoardItem(post, postViewModel, mainColor, navController)
         }
     }
 }
@@ -135,6 +146,7 @@ fun MyMeetingBoardList(
 fun MyMeetingBoardItem(
     post: PostResponseModel,
     viewModel: PostViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
@@ -172,7 +184,7 @@ fun MyMeetingBoardItem(
                 Text(
                     "3/${post.person}", fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xff82C0EA),
+                    color = colorResource(id = mainColor),
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -186,7 +198,6 @@ fun MyMeetingBoardItem(
                 Text(
                     text = "${post.person}명",
                     fontSize = 11.5.sp,
-//                    fontWeight = FontWeight.SemiBold,
                     color = Color(0xff999999)
                 )
                 Text(

@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,16 +48,23 @@ import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
+import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.util.WishButton
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 
 @Composable
 fun MyWishHotPlaceScreen(
     wishViewModel: WishViewModel,
+    mainViewModel: MainViewModel,
     navController: NavController,
     uId: Int,
 ) {
     val post = wishViewModel.wishHotPlaceList.collectAsState().value
     val postState = wishViewModel.hotPlaceModelListState.collectAsState().value
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(post) {
         wishViewModel.getWishHotPlace()
@@ -64,11 +72,8 @@ fun MyWishHotPlaceScreen(
 
     Scaffold(
         topBar = {
-            MyPageListAppBar(navController)
-        },
-//        bottomBar = {
-//            MainBottomNavigation(navController = navController)
-//        }
+            MyPageListAppBar(mainColor, navController)
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -76,7 +81,7 @@ fun MyWishHotPlaceScreen(
                     bottom = innerPadding.calculateBottomPadding() + 10.dp
                 )
         ) {
-            Divider(thickness = 1.dp, color = colorResource(id = R.color.mainColor))
+            Divider(thickness = 1.dp, color = colorResource(id = mainColor))
             when (postState) {
                 is Resource.Error<List<HotPlaceResponsePostModel>> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
@@ -116,7 +121,12 @@ fun MyWishHotPlaceScreen(
                                     modifier = Modifier.padding(vertical = 15.dp)
                                 )
                                 Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                                MyWishHotPlaceList(post, uId, wishViewModel, navController)
+                                MyWishHotPlaceList(
+                                    post,
+                                    mainColor,
+                                    wishViewModel,
+                                    navController
+                                )
                             }
                     }
                 }
@@ -127,10 +137,9 @@ fun MyWishHotPlaceScreen(
 
 @Composable
 fun MyWishHotPlaceList(
-    postList: List<HotPlaceResponsePostModel>, uId: Int, viewModel: WishViewModel,
+    postList: List<HotPlaceResponsePostModel>, mainColor: Int, viewModel: WishViewModel,
     navController: NavController
 ) {
-    val context = LocalContext.current
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         verticalItemSpacing = 5.dp,
@@ -140,7 +149,7 @@ fun MyWishHotPlaceList(
             .padding(horizontal = 5.dp),
         content = {
             items(postList.size) { idx ->
-                MyWishHotPlaceItem(postList[idx], viewModel, navController)
+                MyWishHotPlaceItem(postList[idx], viewModel, mainColor, navController)
             }
         }
     )
@@ -150,23 +159,21 @@ fun MyWishHotPlaceList(
 fun MyWishHotPlaceItem(
     post: HotPlaceResponsePostModel,
     viewModel: WishViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
-    val buttonClick = remember {
-        mutableStateOf(false)
-    }
-    val buttonColor = if (buttonClick.value) R.color.white else R.color.mainColor
+
     Box(
         modifier = Modifier
             .height((screenHeight / 6).dp)
             .padding(top = 15.dp)
             .width((screenWidth / 3.5).dp)
             .clickable {
-                       viewModel.deleteWishList(post.hpId, 3)
-                //    navController.navigate(NavigationRoutes.HotPlaceDetailScreen)
+//                viewModel.deleteWishList(post.hpId, 3)
+                navController.navigate(NavigationRoutes.HotPlacePostDetailScreen.createRoute(post.hpId))
             },
     ) {
         Card(
@@ -191,17 +198,13 @@ fun MyWishHotPlaceItem(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
-                Icons.Default.Favorite,
-                contentDescription = null,
-                tint = colorResource(id = buttonColor),
-                modifier = Modifier
-                    .size((screenWidth / 20).dp)
-                    .fillMaxWidth()
-                    .align(Alignment.End)
-                    .clickable {
-                        buttonClick.value = !buttonClick.value
-                    }
+            WishButton(
+                post = null,
+                clubPost = null,
+                hotPlacePost = post,
+                mainColor = mainColor,
+                type = 3,
+                wishViewModel = viewModel
             )
             Text(
                 post.title,

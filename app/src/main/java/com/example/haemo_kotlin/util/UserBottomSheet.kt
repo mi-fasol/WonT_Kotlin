@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +40,8 @@ fun UserBottomSheet(
 ) {
     val conf = LocalConfiguration.current
     val screenWidth = conf.screenWidthDp
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     ModalBottomSheet(
         onDismissRequest = { onCloseUnit() },
@@ -67,7 +70,7 @@ fun UserBottomSheet(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((screenWidth/9).dp)
+                    .height((screenWidth / 9).dp)
                     .background(Color(0xfff5f5f5), RoundedCornerShape(15.dp))
                     .padding(bottom = 30.dp),
             ) {
@@ -75,14 +78,15 @@ fun UserBottomSheet(
             }
             Row(
                 Modifier
-                    .fillMaxWidth().padding(top = 15.dp, bottom = 50.dp),
+                    .fillMaxWidth()
+                    .padding(top = 15.dp, bottom = 50.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .background(
-                            colorResource(id = R.color.mainColor),
+                            colorResource(id = mainColor),
                             RoundedCornerShape(20.dp)
                         )
                         .weight(3f)

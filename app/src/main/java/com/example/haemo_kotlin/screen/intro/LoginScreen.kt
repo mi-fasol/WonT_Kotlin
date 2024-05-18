@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,15 +41,18 @@ import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.EnterInfo
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.user.LoginViewModel
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
+fun LoginScreen(loginViewModel: LoginViewModel, mainViewModel: MainViewModel, navController: NavController) {
     val context = LocalContext.current
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
 
     Box(
@@ -67,16 +71,18 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.size((screenWidth / 2).dp)
             ) {
-                Image(
+                Icon(
                     painter = painterResource(id = R.drawable.wont_icon),
                     contentDescription = "",
+                    tint = colorResource(id = mainColor),
                     modifier = Modifier
                         .weight(2f)
                         .fillMaxSize()
                 )
-                Image(
+                Icon(
                     painter = painterResource(id = R.drawable.wont),
                     contentDescription = "",
+                    tint = colorResource(id = mainColor),
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
@@ -86,6 +92,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
             EnterInfo(
                 type = "ID",
                 value = loginViewModel.id.collectAsState().value,
+                mainColor = mainColor,
                 onValueChange = { newValue ->
                     loginViewModel.id.value = newValue
                 })
@@ -93,18 +100,19 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
             EnterInfo(
                 type = "P/W",
                 value = loginViewModel.pwd.collectAsState().value,
+                mainColor = mainColor,
                 onValueChange = { newValue ->
                     loginViewModel.pwd.value = newValue
                 })
             Spacer(modifier = Modifier.height(30.dp))
-            loginButton(loginViewModel, navController)
+            loginButton(loginViewModel, mainColor, navController)
         }
     }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun loginButton(loginViewModel: LoginViewModel, navController:NavController) {
+fun loginButton(loginViewModel: LoginViewModel, mainColor: Int, navController:NavController) {
     val id by loginViewModel.id.collectAsState()
     val pwd by loginViewModel.pwd.collectAsState()
     val isValid = loginViewModel.isValid.collectAsState().value
@@ -152,7 +160,7 @@ fun loginButton(loginViewModel: LoginViewModel, navController:NavController) {
             },
             enabled = isValid,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xff82C0EA),
+                containerColor = colorResource(id = mainColor),
                 contentColor = Color.White,
                 disabledContainerColor = Color.LightGray,
                 disabledContentColor = Color.White,

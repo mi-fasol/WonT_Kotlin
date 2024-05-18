@@ -1,6 +1,5 @@
 package com.example.haemo_kotlin.util
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -88,7 +87,7 @@ fun ErrorScreen(text: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EnterInfo(type: String, value: String, onValueChange: (String) -> Unit) {
+fun EnterInfo(type: String, mainColor: Int, value: String, onValueChange: (String) -> Unit) {
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -102,7 +101,7 @@ fun EnterInfo(type: String, value: String, onValueChange: (String) -> Unit) {
                 value = value,
                 onValueChange = onValueChange,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0xff82C0EA),
+                    focusedBorderColor = colorResource(id = mainColor),
                     unfocusedBorderColor = Color.LightGray,
                     containerColor = Color.White
                 ),
@@ -152,7 +151,7 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
                 ) {
                     Text(text = "${user.major} / ", fontSize = 8.5.sp, color = Color(0xff3f3f3f))
                     val iconColor =
-                        if (user.gender == "남자") Color(0xff82c0e2) else Color(0xffFF9B9B)
+                        if (user.gender == "남자") colorResource(id =  R.color.mainColor) else colorResource(id = R.color.pinkMainColor)
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = null,
@@ -176,6 +175,7 @@ fun SendReply(
     isReply: Boolean,
     postType: Int,
     pId: Int,
+    mainColor: Int,
     commentViewModel: CommentViewModel,
     value: String,
     onValueChange: (String) -> Unit,
@@ -223,9 +223,9 @@ fun SendReply(
                 },
                 shape = IconButtonDefaults.filledShape,
                 colors = IconButtonColors(
-                    containerColor = colorResource(id = R.color.mainColor),
+                    containerColor = colorResource(mainColor),
                     contentColor = Color.White,
-                    disabledContainerColor = colorResource(id = R.color.mainColor),
+                    disabledContainerColor = colorResource(mainColor),
                     disabledContentColor = Color.White
                 ),
             ) {
@@ -244,6 +244,7 @@ fun SendReply(
 fun CommentWidget(
     type: Int,
     pId: Int,
+    mainColor: Int,
     commentViewModel: CommentViewModel,
     navController: NavController
 ) {
@@ -267,14 +268,14 @@ fun CommentWidget(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(
-                    id = R.color.mainColor
+                    id = mainColor
                 )
             )
         }
         if (commentList.isNotEmpty()) {
             commentList.forEachIndexed { index, comment ->
                 userList.getOrNull(index)
-                    ?.let { CommentWidgetItem(comment, it, type, commentViewModel, navController) }
+                    ?.let { CommentWidgetItem(comment, it, type, mainColor, commentViewModel, navController) }
             }
         }
     }
@@ -285,6 +286,7 @@ fun CommentWidgetItem(
     comment: CommentResponseModel,
     user: UserResponseModel,
     type: Int,
+    mainColor: Int,
     viewModel: CommentViewModel,
     navController: NavController
 ) {
@@ -407,7 +409,7 @@ fun CommentWidgetItem(
     }
 
     if (dialogOpen) {
-        YesOrNoDialog(content = "답글을 작성하시겠습니까?", onClickCancel = {
+        YesOrNoDialog(content = "답글을 작성하시겠습니까?", mainColor, onClickCancel = {
             dialogOpen = false
         }) {
             viewModel.isReply.value = true
@@ -484,6 +486,7 @@ fun WishButton(
     post: PostResponseModel?,
     clubPost: ClubPostResponseModel?,
     hotPlacePost: HotPlaceResponsePostModel?,
+    mainColor: Int,
     type: Int,
     wishViewModel: WishViewModel
 ) {
@@ -503,7 +506,7 @@ fun WishButton(
     }
 
     val iconColor =
-        if (isWished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
+        if (isWished) colorResource(mainColor) else colorResource(id = R.color.postRegisterTextColor)
 
     val coroutineScope = rememberCoroutineScope()
 

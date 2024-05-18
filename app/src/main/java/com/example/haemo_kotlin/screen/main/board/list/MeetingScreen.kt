@@ -29,21 +29,26 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
@@ -58,6 +63,8 @@ fun MeetingScreen(
     val postList = postViewModel.postModelList.collectAsState().value
     val todayPostList = postViewModel.todayPostList.collectAsState().value
     val postListState = postViewModel.postModelListState.collectAsState().value
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(postList) {
         postViewModel.getPost()
@@ -68,7 +75,7 @@ fun MeetingScreen(
 
     Scaffold(
         topBar = {
-            MainPageAppBar("친구 구하는 곳", navController)
+            MainPageAppBar("친구 구하는 곳", mainColor, navController)
         }
     ) { innerPadding ->
         Column(
@@ -98,6 +105,7 @@ fun MeetingScreen(
                         Today24HoursBoard(
                             todayPostList,
                             postViewModel,
+                            mainColor,
                             mainViewModel,
                             navController
                         )
@@ -105,6 +113,7 @@ fun MeetingScreen(
                             postList = postList,
                             viewModel = postViewModel,
                             mainViewModel,
+                            mainColor,
                             navController = navController
                         )
                     }
@@ -118,6 +127,7 @@ fun MeetingScreen(
 fun Today24HoursBoard(
     postList: List<PostResponseModel>,
     viewModel: PostViewModel,
+    mainColor: Int,
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
@@ -133,7 +143,7 @@ fun Today24HoursBoard(
                 Text("공지 24시간", fontSize = 13.sp, color = Color(0xff393939))
                 LazyRow {
                     items(postList.size) { idx ->
-                        TodayNotice(postList[idx], mainViewModel, navController)
+                        TodayNotice(postList[idx], mainViewModel, mainColor, navController)
                     }
                 }
             }
@@ -142,7 +152,7 @@ fun Today24HoursBoard(
 }
 
 @Composable
-fun TodayNotice(post: PostResponseModel, viewModel: MainViewModel, navController: NavController) {
+fun TodayNotice(post: PostResponseModel, viewModel: MainViewModel, mainColor: Int, navController: NavController) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -160,7 +170,7 @@ fun TodayNotice(post: PostResponseModel, viewModel: MainViewModel, navController
                 }
                 .width((screenWidth / 3).dp),
             shape = RoundedCornerShape(15.dp),
-            border = BorderStroke(1.dp, Color(0xff82C0EA))
+            border = BorderStroke(1.dp, colorResource(mainColor))
         ) {
             Column(
                 Modifier.padding(10.dp),
@@ -197,6 +207,7 @@ fun MeetingBoard(
     postList: List<PostResponseModel>,
     viewModel: PostViewModel,
     mainViewModel: MainViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     when (postList.size) {
@@ -207,7 +218,7 @@ fun MeetingBoard(
         else -> {
             LazyColumn {
                 items(postList.size) { idx ->
-                    MeetingBoardItem(postList[idx], viewModel, mainViewModel, navController)
+                    MeetingBoardItem(postList[idx], viewModel, mainViewModel, mainColor, navController)
                     Divider()
                 }
             }
@@ -220,6 +231,7 @@ fun MeetingBoardItem(
     post: PostResponseModel,
     postViewModel: PostViewModel,
     viewModel: MainViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
@@ -263,7 +275,7 @@ fun MeetingBoardItem(
                 Text(
                     "${accept.size}/${post.person}", fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xff82C0EA),
+                    color = colorResource(id = mainColor),
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()

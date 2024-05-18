@@ -65,14 +65,14 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
 }
 
 @Composable
-fun MainPageAppBar(appBarText: String, navController: NavController) {
+fun MainPageAppBar(appBarText: String, mainColor: Int, navController: NavController) {
     TopAppBar(
         title = {
             Text(
                 text = appBarText,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.mainColor)
+                color = colorResource(mainColor)
             )
         },
         actions = {
@@ -82,7 +82,7 @@ fun MainPageAppBar(appBarText: String, navController: NavController) {
                 Icon(
                     painterResource(id = R.drawable.chat_icon),
                     contentDescription = null,
-                    tint = colorResource(id = R.color.mainColor),
+                    tint = colorResource(mainColor),
                     modifier = Modifier.size(30.dp)
                 )
             }
@@ -96,6 +96,7 @@ fun PostDetailAppBar(
     viewModel: CommentViewModel,
     wishViewModel: WishViewModel,
     mainViewModel: MainViewModel,
+    mainColor: Int,
     pId: Int,
     type: Int,
     navController: NavController
@@ -115,7 +116,7 @@ fun PostDetailAppBar(
     }
 
     val iconColor =
-        if (wished) colorResource(id = R.color.mainColor) else colorResource(id = R.color.postRegisterTextColor)
+        if (wished) colorResource(mainColor) else colorResource(id = R.color.postRegisterTextColor)
 
     val icon =
         if (type == 3) painterResource(id = R.drawable.heart_icon) else painterResource(id = R.drawable.wish_meeting_icon)
@@ -135,7 +136,7 @@ fun PostDetailAppBar(
                         viewModel.commentId.value = 0
                         wishViewModel.pId.value = 0
                         navController.popBackStack()
-                        mainViewModel.beforeStack.value = when(type){
+                        mainViewModel.beforeStack.value = when (type) {
                             1 -> "mainScreen"
                             2 -> "clubScreen"
                             else -> "hotPlaceScreen"
@@ -173,12 +174,13 @@ fun PostDetailAppBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyPageListAppBar(navController: NavController) {
+fun MyPageListAppBar(mainColor: Int, navController: NavController) {
     CenterAlignedTopAppBar(
         title = {
-            Image(
+            Icon(
                 painter = painterResource(id = R.drawable.wont),
                 contentDescription = null,
+                tint = colorResource(id = mainColor),
                 modifier = Modifier.fillMaxHeight()
             )
         },
@@ -205,7 +207,7 @@ fun MyPageListAppBar(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostRegisterAppBar(appBarText: String, navController: NavController) {
+fun PostRegisterAppBar(appBarText: String, mainColor: Int, navController: NavController) {
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -228,7 +230,7 @@ fun PostRegisterAppBar(appBarText: String, navController: NavController) {
             )
         },
         colors = TopAppBarColors(
-            containerColor = colorResource(id = R.color.mainColor),
+            containerColor = colorResource(id = mainColor),
             scrolledContainerColor = Color.Transparent,
             navigationIconContentColor = Color.White,
             titleContentColor = Color.White,
@@ -238,7 +240,7 @@ fun PostRegisterAppBar(appBarText: String, navController: NavController) {
 }
 
 @Composable
-fun ChatRoomAppBar(nickname: String, navController: NavController) {
+fun ChatRoomAppBar(nickname: String, mainColor: Int, navController: NavController) {
     TopAppBar(
         title = {
             Text(
@@ -256,7 +258,7 @@ fun ChatRoomAppBar(nickname: String, navController: NavController) {
                     contentDescription = "뒤로 가기",
                     modifier = Modifier.size(35.dp),
                     tint = colorResource(
-                        id = R.color.mainColor
+                        id = mainColor
                     )
                 )
             }
@@ -268,7 +270,7 @@ fun ChatRoomAppBar(nickname: String, navController: NavController) {
                     contentDescription = "채팅 목록",
                     modifier = Modifier.size(30.dp),
                     tint = colorResource(
-                        id = R.color.mainColor
+                        id = mainColor
                     )
                 )
             }

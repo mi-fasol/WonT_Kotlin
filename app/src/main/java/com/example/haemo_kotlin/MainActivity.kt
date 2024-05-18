@@ -46,6 +46,7 @@ import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.screen.setting.MyWishClubScreen
 import com.example.haemo_kotlin.screen.setting.MyWishHotPlaceScreen
 import com.example.haemo_kotlin.screen.setting.MyWishMeetingScreen
+import com.example.haemo_kotlin.screen.setting.ThemeChangeScreen
 import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
@@ -241,6 +242,7 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             MyMeetingBoardScreen(
                                 postViewModel = viewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController,
                                 nickname = entry.arguments?.getString("nickname")!!
                             )
@@ -251,6 +253,7 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             MyWishMeetingScreen(
                                 wishViewModel = wishViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController,
                                 uId = entry.arguments?.getInt("uId")!!
                             )
@@ -261,6 +264,7 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             MyWishClubScreen(
                                 wishViewModel = wishViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController,
                                 uId = entry.arguments?.getInt("uId")!!
                             )
@@ -271,18 +275,19 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             MyWishHotPlaceScreen(
                                 wishViewModel = wishViewModel,
+                                mainViewModel = mainViewModel,
                                 navController = navController,
                                 uId = entry.arguments?.getInt("uId")!!
                             )
                         }
                         composable(NavigationRoutes.PostRegisterScreen.route) {
-                            PostRegisterScreen(viewModel, navController)
+                            PostRegisterScreen(viewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.ClubPostRegisterScreen.route) {
-                            ClubPostRegisterScreen(clubPostViewModel, navController)
+                            ClubPostRegisterScreen(clubPostViewModel,mainViewModel,navController)
                         }
                         composable(NavigationRoutes.HotPlacePostRegisterScreen.route) {
-                            HotPlacePostRegisterScreen(hotPlacePostViewModel, navController)
+                            HotPlacePostRegisterScreen(hotPlacePostViewModel,mainViewModel,navController)
                         }
                         composable(NavigationRoutes.ChatScreen.route, arguments = listOf(
                             navArgument("receiverId") { type = NavType.IntType }
@@ -290,12 +295,16 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             ChatScreen(
                                 chatViewModel = chatViewModel,
+                                mainViewModel = mainViewModel,
                                 receiverId = entry.arguments?.getInt("receiverId")!!,
                                 navController = navController
                             )
                         }
                         composable(NavigationRoutes.ChatListScreen.route) {
-                            ChatListScreen(chatListViewModel, navController)
+                            ChatListScreen(chatListViewModel, mainViewModel, navController)
+                        }
+                        composable(NavigationRoutes.ThemeChangeScreen.route) {
+                            ThemeChangeScreen(viewModel = mainViewModel, navController)
                         }
                     }
                 }

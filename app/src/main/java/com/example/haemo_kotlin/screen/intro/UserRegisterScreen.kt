@@ -1,6 +1,5 @@
 package com.example.haemo_kotlin.screen.intro
 
-//noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.activity.ComponentActivity
@@ -57,14 +56,17 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.*
+import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun UserRegisterScreen(viewModel: UserViewModel, navController: NavController) {
+fun UserRegisterScreen(viewModel: UserViewModel, mainViewModel: MainViewModel, navController: NavController) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     Scaffold(
         topBar = {
@@ -72,7 +74,7 @@ fun UserRegisterScreen(viewModel: UserViewModel, navController: NavController) {
         }
     ) {
         Column {
-            Divider(thickness = 0.5.dp, color = colorResource(id = R.color.mainColor))
+            Divider(thickness = 0.5.dp, color = colorResource(id = mainColor))
 
             Box(
                 contentAlignment = Alignment.Center,
@@ -85,9 +87,10 @@ fun UserRegisterScreen(viewModel: UserViewModel, navController: NavController) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
+                    Icon(
                         painter = painterResource(id = R.drawable.wont),
                         contentDescription = "",
+                        tint = colorResource(id = mainColor),
                         modifier = Modifier
                             .width((screenWidth / 2).dp)
                             .height((screenHeight / 7).dp)
@@ -100,6 +103,7 @@ fun UserRegisterScreen(viewModel: UserViewModel, navController: NavController) {
                     EnterInfo(
                         type = "닉네임",
                         value = viewModel.nickname.collectAsState().value,
+                        mainColor = mainColor,
                         onValueChange = { newValue ->
                             viewModel.nickname.value = newValue
                         })
@@ -114,7 +118,8 @@ fun UserRegisterScreen(viewModel: UserViewModel, navController: NavController) {
                             modifier = Modifier.weight(1f),
                             onValueChange = { newValue ->
                                 viewModel.gender.value = newValue
-                            }
+                            },
+                            mainColor = mainColor
                         )
                         Spacer(Modifier.width(10.dp))
                         SelectDropDownMenu(
@@ -124,11 +129,12 @@ fun UserRegisterScreen(viewModel: UserViewModel, navController: NavController) {
                             modifier = Modifier.weight(2f),
                             onValueChange = { newValue ->
                                 viewModel.major.value = newValue
-                            }
+                            },
+                            mainColor = mainColor
                         )
                     }
                     Spacer(Modifier.height(20.dp))
-                    UserRegisterButton(viewModel, navController)
+                    UserRegisterButton(viewModel, mainColor, navController)
                 }
             }
         }
@@ -180,6 +186,7 @@ fun SelectUserImage(viewModel: UserViewModel, width: Int) {
 fun SelectDropDownMenu(
     type: String,
     text: String,
+    mainColor : Int,
     list: List<String>,
     modifier: Modifier,
     onValueChange: (String) -> Unit
@@ -204,8 +211,8 @@ fun SelectDropDownMenu(
             readOnly = true,
             onValueChange = onValueChange,
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xff82C0EA),
-                unfocusedBorderColor = Color(0xff82C0EA),
+                focusedBorderColor = colorResource(id = mainColor),
+                unfocusedBorderColor = colorResource(id = mainColor),
                 containerColor = Color.White
             ),
             shape = RoundedCornerShape(15.dp),
@@ -235,7 +242,7 @@ fun SelectDropDownMenu(
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun UserRegisterButton(viewModel: UserViewModel, navController: NavController) {
+fun UserRegisterButton(viewModel: UserViewModel, mainColor: Int, navController: NavController) {
     val nickname by viewModel.nickname.collectAsState()
     val gender by viewModel.gender.collectAsState()
     val major by viewModel.major.collectAsState()
@@ -272,7 +279,7 @@ fun UserRegisterButton(viewModel: UserViewModel, navController: NavController) {
             },
             enabled = isValid,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xff82C0EA),
+                containerColor = colorResource(id = mainColor),
                 contentColor = Color.White,
                 disabledContainerColor = Color.LightGray,
                 disabledContentColor = Color.White,

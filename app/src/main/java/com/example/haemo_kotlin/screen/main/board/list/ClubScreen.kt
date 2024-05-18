@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -54,6 +55,7 @@ import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 
@@ -69,6 +71,8 @@ fun ClubScreen(
     var filteredPosts by remember { mutableStateOf(postList) }
     val postListState = postViewModel.clubPostListState.collectAsState().value
     val list = if (searchText.isNotBlank()) filteredPosts else postList
+    val context = LocalContext.current
+    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(Unit) {
         postViewModel.getClubPostList()
@@ -76,7 +80,7 @@ fun ClubScreen(
 
     Scaffold(
         topBar = {
-            MainPageAppBar("소모임/동아리 게시판", navController)
+            MainPageAppBar("소모임/동아리 게시판", mainColor, navController)
         }
     ) { innerPadding ->
         Column(
@@ -104,6 +108,7 @@ fun ClubScreen(
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                         SearchBarWidget(
                             value = searchText,
+                            mainColor,
                             onValueChange = {
                                 searchText = it
                                 filteredPosts = postList.filter { post ->
@@ -112,7 +117,7 @@ fun ClubScreen(
                             }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        ClubBoard(postList = list, viewModel = mainViewModel, navController)
+                        ClubBoard(postList = list, viewModel = mainViewModel, mainColor, navController)
                     }
                 }
             }
@@ -123,6 +128,7 @@ fun ClubScreen(
 @Composable
 fun SearchBarWidget(
     value: String,
+    mainColor: Int,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -153,7 +159,7 @@ fun SearchBarWidget(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .background(colorResource(id = R.color.mainColor), CircleShape)
+                    .background(colorResource(mainColor), CircleShape)
                     .size((screenWidth / 15).dp)
             ) {
                 Image(
@@ -171,12 +177,13 @@ fun SearchBarWidget(
 fun ClubBoard(
     postList: List<ClubPostResponseModel>,
     viewModel: MainViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     LazyColumn(
     ) {
         items(postList.size) { idx ->
-            ClubBoardItem(postList[idx], viewModel, navController)
+            ClubBoardItem(postList[idx], viewModel, mainColor, navController)
             Divider()
         }
     }
@@ -186,6 +193,7 @@ fun ClubBoard(
 fun ClubBoardItem(
     post: ClubPostResponseModel,
     viewModel: MainViewModel,
+    mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
@@ -220,7 +228,7 @@ fun ClubBoardItem(
                     modifier = Modifier
                         .size((screenWidth / 6).dp)
                         .clip(CircleShape)
-                        .border(2.dp, colorResource(id = R.color.mainColor), CircleShape)
+                        .border(2.dp, colorResource(mainColor), CircleShape)
                 )
             }
             Column(
@@ -234,7 +242,7 @@ fun ClubBoardItem(
                         text = post.title,
                         fontSize = 8.5.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = colorResource(id = R.color.mainColor)
+                        color = colorResource(mainColor)
                     )
                     Text(
                         text = post.title,
