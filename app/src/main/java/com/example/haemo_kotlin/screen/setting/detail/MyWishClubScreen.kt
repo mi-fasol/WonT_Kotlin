@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.screen.setting
+package com.example.haemo_kotlin.screen.setting.detail
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,7 +21,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,30 +32,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.post.PostResponseModel
+import com.example.haemo_kotlin.model.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.util.WishButton
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.MainViewModel
-import com.example.haemo_kotlin.viewModel.board.PostViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 
 @Composable
-fun MyMeetingBoardScreen(
-    postViewModel: PostViewModel,
+fun MyWishClubScreen(
+    wishViewModel: WishViewModel,
     mainViewModel: MainViewModel,
     navController: NavController,
-    nickname: String,
+    uId: Int,
 ) {
-    val post = postViewModel.postModelList.collectAsState().value
-    val postState = postViewModel.postModelListState.collectAsState().value
+    val post = wishViewModel.wishClubList.collectAsState().value
+    val postState = wishViewModel.clubModelListState.collectAsState().value
     val context = LocalContext.current
     val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(post) {
-        postViewModel.getPost()
+        wishViewModel.getWishClub()
     }
 
     Scaffold(
@@ -72,11 +72,11 @@ fun MyMeetingBoardScreen(
         ) {
             Divider(thickness = 1.dp, color = colorResource(id = mainColor))
             when (postState) {
-                is Resource.Error<List<PostResponseModel>> -> {
+                is Resource.Error<List<ClubPostResponseModel>> -> {
                     ErrorScreen("오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.")
                 }
 
-                is Resource.Loading<List<PostResponseModel>> -> {
+                is Resource.Loading<List<ClubPostResponseModel>> -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -87,34 +87,31 @@ fun MyMeetingBoardScreen(
 
                 else -> {
                     when (post.size) {
-                        0 -> {
-                            ErrorScreen("등록한 글이 아직 없어요!")
-                        }
 
-                        else -> {
-                            Column(
-                                modifier = Modifier
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(horizontal = 10.dp)
+                        0 ->
+                            Box(
+                                Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    "내가 작성한 글",
-                                    fontSize = 17.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = colorResource(
-                                        id = R.color.myBoardColor
-                                    ),
-                                    modifier = Modifier.padding(vertical = 15.dp)
-                                )
-                                Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                                MyMeetingBoardList(
-                                    post,
-                                    nickname,
-                                    mainColor,
-                                    postViewModel,
-                                    navController
-                                )
+                                ErrorScreen("찜한 소모임이 아직 없어요!")
                             }
+
+                        else -> Column(
+                            modifier = Modifier
+                                .verticalScroll(rememberScrollState())
+                                .padding(horizontal = 10.dp)
+                        ) {
+                            Text(
+                                "가고 싶은 모임",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colorResource(
+                                    id = R.color.myBoardColor
+                                ),
+                                modifier = Modifier.padding(vertical = 15.dp)
+                            )
+                            Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
+                            MyWishClubList(post, mainColor, wishViewModel, navController)
                         }
                     }
                 }
@@ -124,39 +121,33 @@ fun MyMeetingBoardScreen(
 }
 
 @Composable
-fun MyMeetingBoardList(
-    postList: List<PostResponseModel>,
-    nickname: String,
-    mainColor: Int,
-    postViewModel: PostViewModel,
+fun MyWishClubList(
+    postList: List<ClubPostResponseModel>, mainColor: Int, viewModel: WishViewModel,
     navController: NavController
 ) {
-    val context = LocalContext.current
-    val list = postList.filter {
-        it.nickname == nickname
-    }
     Column {
-        list.forEachIndexed { _, post ->
-            MyMeetingBoardItem(post, postViewModel, mainColor, navController)
+        postList.forEachIndexed { _, post ->
+            MyWishClubItem(post, viewModel, mainColor, navController)
         }
     }
 }
 
 @Composable
-fun MyMeetingBoardItem(
-    post: PostResponseModel,
-    viewModel: PostViewModel,
+fun MyWishClubItem(
+    post: ClubPostResponseModel,
+    viewModel: WishViewModel,
     mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+    val date = convertDate(post.date)
     Box(
         modifier = Modifier
             .height((screenHeight / 9).dp)
             .clickable {
-                navController.navigate(NavigationRoutes.MeetingPostDetailScreen.createRoute(post.pId))
+                navController.navigate(NavigationRoutes.ClubPostDetailScreen.createRoute(post.pId))
             }
             .padding(top = 10.dp)
             .border(width = 1.dp, color = Color(0xffd9d9d9), shape = RoundedCornerShape(15.dp))
@@ -181,13 +172,13 @@ fun MyMeetingBoardItem(
                         .weight(10f)
                         .fillMaxWidth()
                 )
-                Text(
-                    "3/${post.person}", fontSize = 12.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = mainColor),
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
+                WishButton(
+                    post = null,
+                    clubPost = post,
+                    hotPlacePost = null,
+                    mainColor = mainColor,
+                    type = 2,
+                    wishViewModel = viewModel
                 )
             }
             Row(
@@ -201,7 +192,7 @@ fun MyMeetingBoardItem(
                     color = Color(0xff999999)
                 )
                 Text(
-                    convertDate(post.date), fontSize = 12.5.sp,
+                    date, fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff595959)
                 )

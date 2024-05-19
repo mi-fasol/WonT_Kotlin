@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.screen.setting
+package com.example.haemo_kotlin.screen.setting.detail
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,25 +38,24 @@ import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
-import com.example.haemo_kotlin.util.WishButton
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.MainViewModel
-import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
+import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @Composable
-fun MyWishMeetingScreen(
-    wishViewModel: WishViewModel,
+fun MyMeetingBoardScreen(
+    postViewModel: PostViewModel,
     mainViewModel: MainViewModel,
     navController: NavController,
-    uId: Int,
+    nickname: String,
 ) {
-    val post = wishViewModel.wishMeetingList.collectAsState().value
-    val postState = wishViewModel.postModelListState.collectAsState().value
+    val post = postViewModel.postModelList.collectAsState().value
+    val postState = postViewModel.postModelListState.collectAsState().value
     val context = LocalContext.current
     val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
     LaunchedEffect(post) {
-        wishViewModel.getWishMeeting()
+        postViewModel.getPost()
     }
 
     Scaffold(
@@ -87,22 +86,18 @@ fun MyWishMeetingScreen(
 
                 else -> {
                     when (post.size) {
-                        0 ->
-                            Box(
-                                Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                ErrorScreen("찜한 모임이 아직 없어요!")
-                            }
+                        0 -> {
+                            ErrorScreen("등록한 글이 아직 없어요!")
+                        }
 
-                        else ->
+                        else -> {
                             Column(
                                 modifier = Modifier
                                     .verticalScroll(rememberScrollState())
                                     .padding(horizontal = 10.dp)
                             ) {
                                 Text(
-                                    "가고 싶은 모임",
+                                    "내가 작성한 글",
                                     fontSize = 17.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = colorResource(
@@ -111,8 +106,15 @@ fun MyWishMeetingScreen(
                                     modifier = Modifier.padding(vertical = 15.dp)
                                 )
                                 Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                                MyWishMeetingList(post, uId, wishViewModel, navController)
+                                MyMeetingBoardList(
+                                    post,
+                                    nickname,
+                                    mainColor,
+                                    postViewModel,
+                                    navController
+                                )
                             }
+                        }
                     }
                 }
             }
@@ -121,28 +123,34 @@ fun MyWishMeetingScreen(
 }
 
 @Composable
-fun MyWishMeetingList(
-    postList: List<PostResponseModel>, mainColor: Int, viewModel: WishViewModel,
+fun MyMeetingBoardList(
+    postList: List<PostResponseModel>,
+    nickname: String,
+    mainColor: Int,
+    postViewModel: PostViewModel,
     navController: NavController
 ) {
+    val context = LocalContext.current
+    val list = postList.filter {
+        it.nickname == nickname
+    }
     Column {
-        postList.forEachIndexed { _, post ->
-            MyWishMeetingItem(post, viewModel, mainColor, navController)
+        list.forEachIndexed { _, post ->
+            MyMeetingBoardItem(post, postViewModel, mainColor, navController)
         }
     }
 }
 
 @Composable
-fun MyWishMeetingItem(
+fun MyMeetingBoardItem(
     post: PostResponseModel,
-    viewModel: WishViewModel,
+    viewModel: PostViewModel,
     mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
-    val date = convertDate(post.date)
     Box(
         modifier = Modifier
             .height((screenHeight / 9).dp)
@@ -172,13 +180,13 @@ fun MyWishMeetingItem(
                         .weight(10f)
                         .fillMaxWidth()
                 )
-                WishButton(
-                    post = post,
-                    clubPost = null,
-                    hotPlacePost = null,
-                    mainColor = mainColor,
-                    type = 1,
-                    wishViewModel = viewModel
+                Text(
+                    "3/${post.person}", fontSize = 12.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = mainColor),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
                 )
             }
             Row(
@@ -192,7 +200,7 @@ fun MyWishMeetingItem(
                     color = Color(0xff999999)
                 )
                 Text(
-                    date, fontSize = 12.5.sp,
+                    convertDate(post.date), fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xff595959)
                 )

@@ -19,4 +19,7 @@
     <color name="chatFromOtherColor">#FFDEDEDE</color>
     <color name="meetingDetailButtonTextColor">#FF717171</color>
     <color name="meetingDetailButtonColor">#FFEDEDED</color>
+    <color name="settingScreenBackgroundColor">#FFF4F4F4</color>
+    <color name="settingScreenTitleTextColor">#FF969696</color>
+    <color name="settingScreenContentTextColor">#FF515151</color>
 </resources>

@@ -51,4 +51,6 @@ sealed class NavigationRoutes(val route: String) {
     }
 
     data object ChatListScreen : NavigationRoutes("chatListScreen")
+
+    data object SettingScreen : NavigationRoutes("settingScreen")
 }

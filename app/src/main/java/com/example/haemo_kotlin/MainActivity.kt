@@ -5,13 +5,11 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -28,7 +26,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.haemo_kotlin.model.chat.ChatMessageModel
 import com.example.haemo_kotlin.screen.main.board.MainScreen
 import com.example.haemo_kotlin.screen.main.board.detail.ClubPostDetailScreen
 import com.example.haemo_kotlin.screen.main.board.detail.HotPlacePostDetailScreen
@@ -41,16 +38,16 @@ import com.example.haemo_kotlin.screen.main.board.register.HotPlacePostRegisterS
 import com.example.haemo_kotlin.screen.main.board.register.PostRegisterScreen
 import com.example.haemo_kotlin.screen.main.chat.ChatListScreen
 import com.example.haemo_kotlin.screen.main.chat.ChatScreen
-import com.example.haemo_kotlin.screen.setting.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
-import com.example.haemo_kotlin.screen.setting.MyWishClubScreen
-import com.example.haemo_kotlin.screen.setting.MyWishHotPlaceScreen
-import com.example.haemo_kotlin.screen.setting.MyWishMeetingScreen
+import com.example.haemo_kotlin.screen.setting.SettingScreen
 import com.example.haemo_kotlin.screen.setting.ThemeChangeScreen
+import com.example.haemo_kotlin.screen.setting.detail.MyMeetingBoardScreen
+import com.example.haemo_kotlin.screen.setting.detail.MyWishClubScreen
+import com.example.haemo_kotlin.screen.setting.detail.MyWishHotPlaceScreen
+import com.example.haemo_kotlin.screen.setting.detail.MyWishMeetingScreen
 import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.util.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
@@ -63,11 +60,6 @@ import com.example.haemo_kotlin.viewModel.chat.NotificationViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -89,6 +81,26 @@ class MainApplication : Application() {
         notificationManager.createNotificationChannel(notificationChannel)
 
         startFirebaseMessagingService()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel()
+        }
+
+        startFirebaseMessagingService()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel() {
+        val channel = NotificationChannel(
+            "chat_notification",
+            "Chat Notifications",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Channel for chat notifications"
+        }
+
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
     }
 
     private fun startFirebaseMessagingService() {
@@ -142,7 +154,10 @@ class MainActivity : ComponentActivity() {
 
     private fun askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) !=
                 PackageManager.PERMISSION_GRANTED
             ) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -209,9 +224,10 @@ class MainActivity : ComponentActivity() {
                                 pId = entry.arguments?.getInt("pId")!!
                             )
                         }
-                        composable(NavigationRoutes.ClubPostDetailScreen.route, arguments = listOf(
-                            navArgument("pId") { type = NavType.IntType }
-                        )
+                        composable(NavigationRoutes.ClubPostDetailScreen.route,
+                            arguments = listOf(
+                                navArgument("pId") { type = NavType.IntType }
+                            )
                         ) { entry ->
                             ClubPostDetailScreen(
                                 postViewModel = clubPostViewModel,
@@ -236,9 +252,10 @@ class MainActivity : ComponentActivity() {
                                 pId = entry.arguments?.getInt("pId")!!
                             )
                         }
-                        composable(NavigationRoutes.MyMeetingBoardScreen.route, arguments = listOf(
-                            navArgument("nickname") { type = NavType.StringType }
-                        )
+                        composable(NavigationRoutes.MyMeetingBoardScreen.route,
+                            arguments = listOf(
+                                navArgument("nickname") { type = NavType.StringType }
+                            )
                         ) { entry ->
                             MyMeetingBoardScreen(
                                 postViewModel = viewModel,
@@ -247,9 +264,10 @@ class MainActivity : ComponentActivity() {
                                 nickname = entry.arguments?.getString("nickname")!!
                             )
                         }
-                        composable(NavigationRoutes.MyWishMeetingScreen.route, arguments = listOf(
-                            navArgument("uId") { type = NavType.IntType }
-                        )
+                        composable(NavigationRoutes.MyWishMeetingScreen.route,
+                            arguments = listOf(
+                                navArgument("uId") { type = NavType.IntType }
+                            )
                         ) { entry ->
                             MyWishMeetingScreen(
                                 wishViewModel = wishViewModel,
@@ -269,9 +287,10 @@ class MainActivity : ComponentActivity() {
                                 uId = entry.arguments?.getInt("uId")!!
                             )
                         }
-                        composable(NavigationRoutes.MyWishHotPlaceScreen.route, arguments = listOf(
-                            navArgument("uId") { type = NavType.IntType }
-                        )
+                        composable(NavigationRoutes.MyWishHotPlaceScreen.route,
+                            arguments = listOf(
+                                navArgument("uId") { type = NavType.IntType }
+                            )
                         ) { entry ->
                             MyWishHotPlaceScreen(
                                 wishViewModel = wishViewModel,
@@ -284,10 +303,18 @@ class MainActivity : ComponentActivity() {
                             PostRegisterScreen(viewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.ClubPostRegisterScreen.route) {
-                            ClubPostRegisterScreen(clubPostViewModel,mainViewModel,navController)
+                            ClubPostRegisterScreen(
+                                clubPostViewModel,
+                                mainViewModel,
+                                navController
+                            )
                         }
                         composable(NavigationRoutes.HotPlacePostRegisterScreen.route) {
-                            HotPlacePostRegisterScreen(hotPlacePostViewModel,mainViewModel,navController)
+                            HotPlacePostRegisterScreen(
+                                hotPlacePostViewModel,
+                                mainViewModel,
+                                navController
+                            )
                         }
                         composable(NavigationRoutes.ChatScreen.route, arguments = listOf(
                             navArgument("receiverId") { type = NavType.IntType }
@@ -305,6 +332,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.ThemeChangeScreen.route) {
                             ThemeChangeScreen(viewModel = mainViewModel, navController)
+                        }
+                        composable(NavigationRoutes.SettingScreen.route) {
+                            SettingScreen(mainViewModel = mainViewModel, navController)
                         }
                     }
                 }

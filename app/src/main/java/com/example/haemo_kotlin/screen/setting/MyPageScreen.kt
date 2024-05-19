@@ -42,6 +42,7 @@ import com.example.haemo_kotlin.model.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
+import com.example.haemo_kotlin.util.MyPageAppBar
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.userProfileList
@@ -68,7 +69,7 @@ fun MyPageScreen(
 
     Scaffold(
         topBar = {
-            MainPageAppBar("마이페이지", mainColor, navController)
+            MyPageAppBar("마이페이지", mainColor, navController)
         },
         modifier = Modifier.background(Color(0xfff4f4f4))
     ) { innerPadding ->

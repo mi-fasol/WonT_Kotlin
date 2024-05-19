@@ -64,6 +64,34 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
     )
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingScreenAppBar(mainColor: Int, navController: NavController) {
+    CenterAlignedTopAppBar(
+        title = { Text(text = "설정", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White) },
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(35.dp)
+                )
+            }
+        },
+        colors = TopAppBarColors(
+            containerColor = colorResource(id = mainColor),
+            scrolledContainerColor = Color.Transparent,
+            navigationIconContentColor = Color.White,
+            titleContentColor = Color.White,
+            actionIconContentColor = Color.Transparent
+        )
+    )
+}
+
 @Composable
 fun MainPageAppBar(appBarText: String, mainColor: Int, navController: NavController) {
     TopAppBar(
@@ -91,6 +119,35 @@ fun MainPageAppBar(appBarText: String, mainColor: Int, navController: NavControl
         backgroundColor = Color.White,
     )
 }
+
+@Composable
+fun MyPageAppBar(appBarText: String, mainColor: Int, navController: NavController) {
+    TopAppBar(
+        title = {
+            Text(
+                text = appBarText,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(mainColor)
+            )
+        },
+        actions = {
+            IconButton(onClick = {
+                navController.navigate(NavigationRoutes.SettingScreen.route)
+            }) {
+                Icon(
+                    painterResource(id = R.drawable.setting_icon),
+                    contentDescription = null,
+                    tint = colorResource(mainColor),
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        },
+        elevation = 0.dp,
+        backgroundColor = Color.White,
+    )
+}
+
 @Composable
 fun PostDetailAppBar(
     viewModel: CommentViewModel,
@@ -103,7 +160,7 @@ fun PostDetailAppBar(
 ) {
     val isWished by wishViewModel.isWished.collectAsState()
     val postId by wishViewModel.pId.collectAsState()
-    var wished by remember{ mutableStateOf(false) }
+    var wished by remember { mutableStateOf(false) }
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
 
@@ -146,17 +203,18 @@ fun PostDetailAppBar(
             )
         },
         actions = {
-            IconButton(onClick = {
-                coroutineScope.launch {
-                    if (!wished) {
-                        wishViewModel.addWishList(pId, type)
-                    } else {
-                        wishViewModel.deleteWishList(pId, type)
+            IconButton(
+                onClick = {
+                    coroutineScope.launch {
+                        if (!wished) {
+                            wishViewModel.addWishList(pId, type)
+                        } else {
+                            wishViewModel.deleteWishList(pId, type)
+                        }
+                        wished = !wished
                     }
-                    wished = !wished
-                }
-            },
-                ) {
+                },
+            ) {
                 Icon(
                     icon,
                     contentDescription = null,

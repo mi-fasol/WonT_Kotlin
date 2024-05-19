@@ -37,6 +37,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         context = applicationContext
         val uId = SharedPreferenceUtil(context).getInt("uId", 0)
         newChatRoomCreated(uId)
+        Log.d("미란 파이어베이스 서비스", "onCreate")
+    }
+
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        remoteMessage.data.isNotEmpty().let {
+            val message = remoteMessage.data["message"]
+            val sender = remoteMessage.data["sender"]
+            if (message != null && sender != null) {
+                val chatMessage = ChatMessageModel(
+                    content = message,
+                    createdAt = System.currentTimeMillis(),
+                    from = 0,
+                    senderNickname = sender
+                )
+                sendNotification(chatMessage)
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -62,8 +79,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         with(NotificationManagerCompat.from(context)) {
             Log.d("미란 알림은요", "우와아")
-            val notificationId = System.currentTimeMillis().toInt()
-            notify(notificationId, notification)
+            notify(System.currentTimeMillis().toInt(), notification)
         }
     }
 
