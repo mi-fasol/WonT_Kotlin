@@ -46,7 +46,7 @@ fun SettingScreen(mainViewModel: MainViewModel, navController: NavController) {
 
     Scaffold(
         topBar = {
-            SettingScreenAppBar(mainColor, navController = navController)
+            SettingScreenAppBar("설정", mainColor, navController = navController)
         },
         modifier = Modifier.background(Color(0xfff4f4f4))
     ) { innerPadding ->

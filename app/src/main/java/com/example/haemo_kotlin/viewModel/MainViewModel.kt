@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.theme.ColorOption
 import com.example.haemo_kotlin.model.user.LoginModel
 import com.example.haemo_kotlin.network.Resource
@@ -29,10 +30,20 @@ class MainViewModel @Inject constructor(
     private val _mainColor = MutableStateFlow(ColorOption.BLUE)
     val mainColor: StateFlow<ColorOption> = _mainColor
 
+    private val _colorState = MutableStateFlow(R.color.mainColor)
+    val colorState: StateFlow<Int> = _colorState
+
+    init {
+        val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+        _colorState.value = mainColor
+    }
+
+
     fun updateColor(colorOption: ColorOption) {
         SharedPreferenceUtil(context).setInt("themeColor", colorOption.colorResId)
         viewModelScope.launch {
             _mainColor.emit(colorOption)
+            _colorState.emit(colorOption.colorResId)
         }
     }
 }

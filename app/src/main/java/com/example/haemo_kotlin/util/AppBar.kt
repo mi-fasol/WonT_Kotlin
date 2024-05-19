@@ -67,9 +67,9 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreenAppBar(mainColor: Int, navController: NavController) {
+fun SettingScreenAppBar(text: String, mainColor: Int, navController: NavController) {
     CenterAlignedTopAppBar(
-        title = { Text(text = "설정", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White) },
+        title = { Text(text = text, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = Color.White) },
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
