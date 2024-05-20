@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.screen.setting
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,6 +38,7 @@ import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.google.firebase.database.collection.BuildConfig
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
@@ -64,7 +66,7 @@ fun SettingScreen(mainViewModel: MainViewModel, navController: NavController) {
                 ) {
                     AccountSettingField(mainColor, navController)
                     AppSettingField(mainColor, navController)
-                    AppInfoField(mainColor = mainColor, navController = navController)
+                    AppInfoField(mainColor = mainColor, mainViewModel, navController = navController)
                 }
             }
         }
@@ -124,7 +126,7 @@ fun AppSettingField(mainColor: Int, navController: NavController) {
 }
 
 @Composable
-fun AppInfoField(mainColor: Int, navController: NavController) {
+fun AppInfoField(mainColor: Int, mainViewModel: MainViewModel, navController: NavController) {
     val textList = listOf("문의하기", "공지사항")
     val navRoutes = listOf(
         NavigationRoutes.ThemeChangeScreen.route,
@@ -133,7 +135,7 @@ fun AppInfoField(mainColor: Int, navController: NavController) {
 
     Column() {
         SettingTitleField(text = "앱 정보")
-        AppVersionField(mainColor)
+        AppVersionField(mainColor, mainViewModel)
         Divider(
             thickness = 2.5.dp,
             color = colorResource(id = R.color.settingScreenBackgroundColor)
@@ -216,8 +218,9 @@ fun SettingContentField(text: String, mainColor: Int, route: String, navControll
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
-fun AppVersionField(mainColor: Int) {
+fun AppVersionField(mainColor: Int, mainViewModel: MainViewModel) {
     val conf = LocalConfiguration.current
     val screenHeight = conf.screenHeightDp
     Box(
@@ -242,7 +245,7 @@ fun AppVersionField(mainColor: Int) {
                 fontSize = 16.sp
             )
             Text(
-                "0.0.0",
+                mainViewModel.getVersion().toString(),
                 color = colorResource(id = mainColor),
                 modifier = Modifier
                     .padding(start = 10.dp),

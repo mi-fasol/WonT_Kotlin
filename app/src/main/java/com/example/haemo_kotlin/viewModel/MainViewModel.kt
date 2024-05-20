@@ -38,12 +38,19 @@ class MainViewModel @Inject constructor(
         _colorState.value = mainColor
     }
 
-
     fun updateColor(colorOption: ColorOption) {
         SharedPreferenceUtil(context).setInt("themeColor", colorOption.colorResId)
         viewModelScope.launch {
             _mainColor.emit(colorOption)
             _colorState.emit(colorOption.colorResId)
         }
+    }
+
+    fun getVersion(): String? {
+        var versionName = ""
+        val pm = context.packageManager.getPackageInfo(context.packageName, 0)
+        versionName = pm.versionName
+
+        return versionName
     }
 }
