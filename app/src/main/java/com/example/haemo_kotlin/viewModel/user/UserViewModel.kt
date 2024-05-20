@@ -26,8 +26,6 @@ class UserViewModel @Inject constructor(
     private val context: Context
 ) : ViewModel() {
 
-    enum class LoginUserState { SUCCESS, LOGIN, NONE }
-
     private val _registerState =
         MutableStateFlow<Resource<UserResponseModel>>(Resource.loading(null))
     val registerState: StateFlow<Resource<UserResponseModel>> = _registerState.asStateFlow()
@@ -44,6 +42,9 @@ class UserViewModel @Inject constructor(
 
     private val _isRegisterSuccess = MutableStateFlow<Boolean>(false)
     val isRegisterSuccess: StateFlow<Boolean> = _isRegisterSuccess.asStateFlow()
+
+    private val _isDeleteSuccess = MutableStateFlow<Boolean>(false)
+    val isDeleteSuccess: StateFlow<Boolean> = _isDeleteSuccess.asStateFlow()
 
     val image = MutableStateFlow(0)
     val nickname = MutableStateFlow("")
@@ -84,7 +85,6 @@ class UserViewModel @Inject constructor(
             }
         }
     }
-
 
     fun fetchUserInfoById(uId: Int) {
         viewModelScope.launch {
@@ -131,5 +131,24 @@ class UserViewModel @Inject constructor(
             }
         }
         return user
+    }
+
+    fun deleteUser() {
+        val uId = SharedPreferenceUtil(context).getInt("uId", 0)
+
+        viewModelScope.launch {
+            try {
+                val response = repository.deleteUser(uId)
+                if (response.isSuccessful && response.body() != null) {
+                    _isDeleteSuccess.value = response.body()!!
+                    Log.d("미란 유저 삭제", _isDeleteSuccess.value.toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
     }
 }

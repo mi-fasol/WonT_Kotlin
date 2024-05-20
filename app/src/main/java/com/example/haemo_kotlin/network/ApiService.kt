@@ -60,6 +60,9 @@ interface ApiService {
     @GET("user/find/student/{studentId}")
     suspend fun checkHaveAccount(@Path("studentId") studentId: Int): Response<UserResponseModel>
 
+    @DELETE("user/delete/{id}")
+    suspend fun deleteUser(@Path("id") id: Int): Response<Boolean>
+
     // 소모임
 
     @POST("club")
