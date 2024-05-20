@@ -2,6 +2,7 @@ package com.example.haemo_kotlin.screen.intro
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -116,7 +117,7 @@ fun loginButton(loginViewModel: LoginViewModel, mainColor: Int, navController:Na
     val id by loginViewModel.id.collectAsState()
     val pwd by loginViewModel.pwd.collectAsState()
     val isValid = loginViewModel.isValid.collectAsState().value
-    val haveId = loginViewModel.loginUser.collectAsState().value
+    val haveId by loginViewModel.loginUser.collectAsState()
     val loginResult by loginViewModel.isLoginSuccess.collectAsState()
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
@@ -126,18 +127,22 @@ fun loginButton(loginViewModel: LoginViewModel, mainColor: Int, navController:Na
 
     LaunchedEffect(loginResult) {
         if (loginResult) {
+            Log.d("미란", "로그인 true!")
             loginViewModel.checkUserExists()
-            when(haveId){
-                LoginViewModel.LoginUserState.LOGIN -> {
-                    navController.navigate(NavigationRoutes.RegisterScreen.route)
-                }
-                LoginViewModel.LoginUserState.SUCCESS -> {
-                    launcher.launch(Intent(context, MainActivity::class.java))
-                    (context as? ComponentActivity)?.finish()
-                }
-                else -> {
+        }
+    }
 
-                }
+    LaunchedEffect(haveId){
+        when(haveId){
+            LoginViewModel.LoginUserState.LOGIN -> {
+                navController.navigate(NavigationRoutes.RegisterScreen.route)
+            }
+            LoginViewModel.LoginUserState.SUCCESS -> {
+                launcher.launch(Intent(context, MainActivity::class.java))
+                (context as? ComponentActivity)?.finish()
+            }
+            else -> {
+
             }
         }
     }

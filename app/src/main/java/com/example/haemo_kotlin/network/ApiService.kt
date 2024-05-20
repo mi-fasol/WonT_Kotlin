@@ -57,6 +57,9 @@ interface ApiService {
     @GET("user/{nickname}")
     suspend fun getUserByNickname(@Path("nickname") nickname: String): Response<UserResponseModel>
 
+    @GET("user/find/student/{studentId}")
+    suspend fun checkHaveAccount(@Path("studentId") studentId: Int): Response<UserResponseModel>
+
     // 소모임
 
     @POST("club")

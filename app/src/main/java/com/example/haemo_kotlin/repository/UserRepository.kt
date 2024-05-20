@@ -25,4 +25,8 @@ class UserRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.getUserByNickname(nickname)
     }
 
+    suspend fun checkHaveAccount(studentId: Int): Response<UserResponseModel> {
+        return retrofitClient.service.checkHaveAccount(studentId)
+    }
+
 }

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.model.retrofit.user.LoginModel
+import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -30,11 +31,8 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<Resource<LoginModel>>(Resource.loading(null))
     val loginState: StateFlow<Resource<LoginModel>> = _loginState.asStateFlow()
 
-    private val _loginId = MutableStateFlow<String?>("")
-    val loginId: StateFlow<String?> = _loginId.asStateFlow()
-
-    private val _user = MutableStateFlow(LoginUserState.NONE)
-    val loginUser: StateFlow<LoginUserState> = _user.asStateFlow()
+    private val _userState = MutableStateFlow(LoginUserState.NONE)
+    val loginUser: StateFlow<LoginUserState> = _userState.asStateFlow()
 
     private val _isLoginSuccess = MutableStateFlow<Boolean>(false)
     val isLoginSuccess: StateFlow<Boolean> = _isLoginSuccess.asStateFlow()
@@ -46,18 +44,26 @@ class LoginViewModel @Inject constructor(
         id.isNotBlank() && pwd.isNotBlank()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    fun checkUserExists() {
-        _user.value = LoginUserState.NONE
+    suspend fun checkUserExists() {
+        _userState.value = LoginUserState.NONE
         val studentId = SharedPreferenceUtil(context).getString("studentId", "").toString()
-        val uId = SharedPreferenceUtil(context).getInt("uId", 0)
-
         if (studentId.isNotBlank()) {
-            if (uId == 0) {
-                Log.d("미란 로그인", "로그인만 됨")
-                _user.value = LoginUserState.LOGIN
-            } else {
-                Log.d("미란 로그인", "회원 있음!")
-                _user.value = LoginUserState.SUCCESS
+            viewModelScope.launch {
+                try {
+                    val response = repository.checkHaveAccount(studentId.toInt())
+                    if (response.isSuccessful && response.body() != null) {
+                        val responseUser = response.body()
+                        _userState.value = LoginUserState.SUCCESS
+                        SharedPreferenceUtil(context).setUser(responseUser!!)
+                        SharedPreferenceUtil(context).setInt("uId", responseUser.uId)
+                        Log.d("미란 유저", responseUser.toString())
+                        Log.d("미란 유저", SharedPreferenceUtil(context).getUser().toString())
+                    } else {
+                        _userState.value = LoginUserState.LOGIN
+                    }
+                } catch (e: Exception) {
+                    Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+                }
             }
         }
     }
