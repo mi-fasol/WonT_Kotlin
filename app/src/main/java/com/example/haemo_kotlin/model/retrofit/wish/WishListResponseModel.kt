@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.model.wish
+package com.example.haemo_kotlin.model.retrofit.wish
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serial

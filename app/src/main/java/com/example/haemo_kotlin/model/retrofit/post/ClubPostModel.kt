@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.model.post
+package com.example.haemo_kotlin.model.retrofit.post
 
 import com.example.haemo_kotlin.util.HangulUtils
 import com.google.gson.annotations.SerializedName

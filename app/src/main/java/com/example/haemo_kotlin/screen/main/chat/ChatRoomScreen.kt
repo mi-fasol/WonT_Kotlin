@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.chat.FireBaseChatModel
-import com.example.haemo_kotlin.model.chat.ChatMessageModel
+import com.example.haemo_kotlin.model.retrofit.chat.FireBaseChatModel
+import com.example.haemo_kotlin.model.retrofit.chat.ChatMessageModel
 import com.example.haemo_kotlin.util.ChatRoomAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel

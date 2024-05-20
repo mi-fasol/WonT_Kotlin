@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.model.comment.comment.CommentModel
-import com.example.haemo_kotlin.model.comment.comment.CommentResponseModel
-import com.example.haemo_kotlin.model.comment.reply.ReplyModel
-import com.example.haemo_kotlin.model.comment.reply.ReplyResponseModel
-import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.model.retrofit.comment.comment.CommentModel
+import com.example.haemo_kotlin.model.retrofit.comment.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.retrofit.comment.reply.ReplyModel
+import com.example.haemo_kotlin.model.retrofit.comment.reply.ReplyResponseModel
+import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.CommentRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil

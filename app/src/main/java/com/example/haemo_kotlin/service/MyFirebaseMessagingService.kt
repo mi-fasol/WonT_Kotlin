@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.chat.ChatMessageModel
+import com.example.haemo_kotlin.model.retrofit.chat.ChatMessageModel
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot

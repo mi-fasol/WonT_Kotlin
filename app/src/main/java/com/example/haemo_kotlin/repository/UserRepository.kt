@@ -1,8 +1,8 @@
 package com.example.haemo_kotlin.repository
 
-import com.example.haemo_kotlin.model.user.LoginModel
-import com.example.haemo_kotlin.model.user.UserModel
-import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.model.retrofit.user.LoginModel
+import com.example.haemo_kotlin.model.retrofit.user.UserModel
+import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.RetrofitClient
 import retrofit2.Response
 import javax.inject.Inject

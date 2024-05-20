@@ -53,7 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.chat.FireBaseChatModel
+import com.example.haemo_kotlin.model.retrofit.chat.FireBaseChatModel
 import com.example.haemo_kotlin.util.BackArrowAppBar
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.NavigationRoutes

@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ErrorScreen

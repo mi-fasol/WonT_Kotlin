@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.model.acceptation
+package com.example.haemo_kotlin.model.retrofit.acceptation
 
 import com.google.gson.annotations.SerializedName
 

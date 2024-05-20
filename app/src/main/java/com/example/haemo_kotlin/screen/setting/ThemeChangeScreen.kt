@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.theme.ColorOption
+import com.example.haemo_kotlin.model.system.theme.ColorOption
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.viewModel.MainViewModel
 

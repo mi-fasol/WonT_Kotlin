@@ -5,10 +5,10 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.model.chat.ChatMessageModel
-import com.example.haemo_kotlin.model.chat.ChatUserModel
-import com.example.haemo_kotlin.model.chat.FireBaseChatModel
-import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.model.retrofit.chat.ChatMessageModel
+import com.example.haemo_kotlin.model.retrofit.chat.ChatUserModel
+import com.example.haemo_kotlin.model.retrofit.chat.FireBaseChatModel
+import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.util.SharedPreferenceUtil

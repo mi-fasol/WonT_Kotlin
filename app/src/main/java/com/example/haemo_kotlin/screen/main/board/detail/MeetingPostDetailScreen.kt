@@ -40,10 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.acceptation.AcceptationResponseModel
-import com.example.haemo_kotlin.model.comment.reply.ReplyResponseModel
-import com.example.haemo_kotlin.model.post.PostResponseModel
-import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.model.retrofit.acceptation.AcceptationResponseModel
+import com.example.haemo_kotlin.model.retrofit.comment.reply.ReplyResponseModel
+import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
+import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ErrorScreen

@@ -3,7 +3,7 @@ package com.example.haemo_kotlin.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 
 class SharedPreferenceUtil(context: Context) {
     private val PREF_NAME = "MyPrefs"
@@ -53,5 +53,9 @@ class SharedPreferenceUtil(context: Context) {
             prefs.getString("gender", "")!!,
             prefs.getInt("image", -1)
         )
+    }
+
+    fun removeAll() {
+        prefs.edit().clear().apply()
     }
 }

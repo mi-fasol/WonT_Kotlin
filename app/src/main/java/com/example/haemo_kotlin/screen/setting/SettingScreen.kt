@@ -1,8 +1,6 @@
 package com.example.haemo_kotlin.screen.setting
 
 import android.annotation.SuppressLint
-import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,8 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,11 +32,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.StartActivity
 import com.example.haemo_kotlin.util.NavigationRoutes
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
-import com.google.firebase.database.collection.BuildConfig
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
@@ -64,9 +63,13 @@ fun SettingScreen(mainViewModel: MainViewModel, navController: NavController) {
                 Column(
                     //    modifier = Modifier.padding(horizontal = 20.dp)
                 ) {
-                    AccountSettingField(mainColor, navController)
-                    AppSettingField(mainColor, navController)
-                    AppInfoField(mainColor = mainColor, mainViewModel, navController = navController)
+                    AccountSettingField(mainColor, mainViewModel, navController)
+                    AppSettingField(mainColor, mainViewModel, navController)
+                    AppInfoField(
+                        mainColor = mainColor,
+                        mainViewModel,
+                        navController = navController
+                    )
                 }
             }
         }
@@ -74,10 +77,13 @@ fun SettingScreen(mainViewModel: MainViewModel, navController: NavController) {
 }
 
 @Composable
-fun AccountSettingField(mainColor: Int, navController: NavController) {
+fun AccountSettingField(
+    mainColor: Int,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     val textList = listOf("로그아웃", "계정 탈퇴")
     val navRoutes = listOf(
-        NavigationRoutes.ThemeChangeScreen.route,
         NavigationRoutes.ThemeChangeScreen.route
     )
 
@@ -87,7 +93,8 @@ fun AccountSettingField(mainColor: Int, navController: NavController) {
             SettingContentField(
                 text = text,
                 mainColor = mainColor,
-                route = navRoutes[textList.indexOf(text)],
+                route = navRoutes[0],
+                mainViewModel,
                 navController = navController
             )
             if (textList.indexOf(text) < textList.size - 1)
@@ -100,7 +107,7 @@ fun AccountSettingField(mainColor: Int, navController: NavController) {
 }
 
 @Composable
-fun AppSettingField(mainColor: Int, navController: NavController) {
+fun AppSettingField(mainColor: Int, mainViewModel: MainViewModel, navController: NavController) {
     val textList = listOf("알림 설정", "화면 설정")
     val navRoutes = listOf(
         NavigationRoutes.ThemeChangeScreen.route,
@@ -114,6 +121,7 @@ fun AppSettingField(mainColor: Int, navController: NavController) {
                 text = text,
                 mainColor = mainColor,
                 route = navRoutes[textList.indexOf(text)],
+                mainViewModel,
                 navController = navController
             )
             if (textList.indexOf(text) < textList.size - 1)
@@ -145,6 +153,7 @@ fun AppInfoField(mainColor: Int, mainViewModel: MainViewModel, navController: Na
                 text = text,
                 mainColor = mainColor,
                 route = navRoutes[textList.indexOf(text)],
+                mainViewModel,
                 navController = navController
             )
             if (textList.indexOf(text) < textList.size - 1)
@@ -177,14 +186,27 @@ fun SettingTitleField(text: String) {
 }
 
 @Composable
-fun SettingContentField(text: String, mainColor: Int, route: String, navController: NavController) {
+fun SettingContentField(
+    text: String,
+    mainColor: Int,
+    route: String,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
+    val context = LocalContext.current
     val conf = LocalConfiguration.current
     val screenHeight = conf.screenHeightDp
+    val dialogOpen = remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navController.navigate(route)
+                if (text == "로그아웃") {
+                    dialogOpen.value = true
+                } else {
+                    navController.navigate(route)
+                }
             }
             .height((screenHeight / 17).dp)
             .background(Color.White),
@@ -214,6 +236,16 @@ fun SettingContentField(text: String, mainColor: Int, route: String, navControll
                     )
                 )
             }
+        }
+    }
+
+    if (dialogOpen.value) {
+        YesOrNoDialog(
+            content = "로그아웃 하시겠습니까?",
+            mainColor = mainColor,
+            onClickCancel = { dialogOpen.value = false }) {
+            SharedPreferenceUtil(context).removeAll()
+            mainViewModel.navigateToAnotherActivity(context, StartActivity::class.java)
         }
     }
 }

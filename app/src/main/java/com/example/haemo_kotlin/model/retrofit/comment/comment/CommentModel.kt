@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.model.comment.comment
+package com.example.haemo_kotlin.model.retrofit.comment.comment
 
 import com.google.gson.annotations.SerializedName
 

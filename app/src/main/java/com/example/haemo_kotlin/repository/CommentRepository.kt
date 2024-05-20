@@ -1,10 +1,10 @@
 package com.example.haemo_kotlin.repository
 
-import com.example.haemo_kotlin.model.comment.comment.CommentModel
-import com.example.haemo_kotlin.model.comment.comment.CommentResponseModel
-import com.example.haemo_kotlin.model.comment.reply.ReplyModel
-import com.example.haemo_kotlin.model.comment.reply.ReplyResponseModel
-import com.example.haemo_kotlin.model.user.UserResponseModel
+import com.example.haemo_kotlin.model.retrofit.comment.comment.CommentModel
+import com.example.haemo_kotlin.model.retrofit.comment.comment.CommentResponseModel
+import com.example.haemo_kotlin.model.retrofit.comment.reply.ReplyModel
+import com.example.haemo_kotlin.model.retrofit.comment.reply.ReplyResponseModel
+import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.RetrofitClient
 import retrofit2.Response
 import javax.inject.Inject

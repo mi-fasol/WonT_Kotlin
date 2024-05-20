@@ -8,11 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.post.ClubPostResponseModel
-import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
-import com.example.haemo_kotlin.model.post.PostResponseModel
-import com.example.haemo_kotlin.model.wish.WishListModel
-import com.example.haemo_kotlin.model.wish.WishListResponseModel
+import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
+import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
+import com.example.haemo_kotlin.model.retrofit.wish.WishListModel
+import com.example.haemo_kotlin.model.retrofit.wish.WishListResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.WishListRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil

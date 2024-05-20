@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.model.user.LoginModel
+import com.example.haemo_kotlin.model.retrofit.user.LoginModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil

@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.model.theme
+package com.example.haemo_kotlin.model.system.theme
 
 import com.example.haemo_kotlin.R
 

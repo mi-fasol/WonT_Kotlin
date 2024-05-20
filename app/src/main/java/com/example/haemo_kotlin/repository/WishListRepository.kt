@@ -1,11 +1,11 @@
 package com.example.haemo_kotlin.repository
 
 import android.util.Log
-import com.example.haemo_kotlin.model.post.ClubPostResponseModel
-import com.example.haemo_kotlin.model.post.HotPlaceResponsePostModel
-import com.example.haemo_kotlin.model.post.PostResponseModel
-import com.example.haemo_kotlin.model.wish.WishListModel
-import com.example.haemo_kotlin.model.wish.WishListResponseModel
+import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
+import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
+import com.example.haemo_kotlin.model.retrofit.wish.WishListModel
+import com.example.haemo_kotlin.model.retrofit.wish.WishListResponseModel
 import com.example.haemo_kotlin.network.RetrofitClient
 import retrofit2.Response
 import javax.inject.Inject

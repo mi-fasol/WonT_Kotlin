@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.model.chat
+package com.example.haemo_kotlin.model.retrofit.chat
 
 //data class ChatModel(
 //    val id: String? = null,

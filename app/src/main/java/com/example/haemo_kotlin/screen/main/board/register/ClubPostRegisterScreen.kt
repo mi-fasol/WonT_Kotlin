@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.post.ClubPostResponseModel
+import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ContentEnterField
