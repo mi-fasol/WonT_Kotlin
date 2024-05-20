@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -170,6 +171,13 @@ class MainActivity : ComponentActivity() {
 
         askNotificationPermission()
         logRegToken()
+
+        mainViewModel.navigateToAnotherActivity.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { intent ->
+                startActivity(intent)
+                finish()
+            }
+        })
 
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
 

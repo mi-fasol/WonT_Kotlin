@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,6 +31,13 @@ class StartActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        mainViewModel.navigateToAnotherActivity.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { intent ->
+                startActivity(intent)
+                finish()
+            }
+        })
 
         setContent {
             Haemo_kotlinTheme {
