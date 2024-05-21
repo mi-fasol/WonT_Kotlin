@@ -42,13 +42,14 @@ import com.example.haemo_kotlin.screen.main.chat.ChatScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.screen.setting.SettingScreen
 import com.example.haemo_kotlin.screen.setting.ThemeChangeScreen
+import com.example.haemo_kotlin.screen.setting.WithdrawScreen
 import com.example.haemo_kotlin.screen.setting.detail.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.detail.MyWishClubScreen
 import com.example.haemo_kotlin.screen.setting.detail.MyWishHotPlaceScreen
 import com.example.haemo_kotlin.screen.setting.detail.MyWishMeetingScreen
 import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
-import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
@@ -218,7 +219,8 @@ class MainActivity : ComponentActivity() {
                         composable(NavigationRoutes.MyPageScreen.route) {
                             MyPageScreen(userViewModel, mainViewModel, navController)
                         }
-                        composable(NavigationRoutes.MeetingPostDetailScreen.route,
+                        composable(
+                            NavigationRoutes.MeetingPostDetailScreen.route,
                             arguments = listOf(
                                 navArgument("pId") { type = NavType.IntType }
                             )
@@ -232,7 +234,8 @@ class MainActivity : ComponentActivity() {
                                 pId = entry.arguments?.getInt("pId")!!
                             )
                         }
-                        composable(NavigationRoutes.ClubPostDetailScreen.route,
+                        composable(
+                            NavigationRoutes.ClubPostDetailScreen.route,
                             arguments = listOf(
                                 navArgument("pId") { type = NavType.IntType }
                             )
@@ -246,7 +249,8 @@ class MainActivity : ComponentActivity() {
                                 pId = entry.arguments?.getInt("pId")!!
                             )
                         }
-                        composable(NavigationRoutes.HotPlacePostDetailScreen.route,
+                        composable(
+                            NavigationRoutes.HotPlacePostDetailScreen.route,
                             arguments = listOf(
                                 navArgument("pId") { type = NavType.IntType }
                             )
@@ -260,7 +264,8 @@ class MainActivity : ComponentActivity() {
                                 pId = entry.arguments?.getInt("pId")!!
                             )
                         }
-                        composable(NavigationRoutes.MyMeetingBoardScreen.route,
+                        composable(
+                            NavigationRoutes.MyMeetingBoardScreen.route,
                             arguments = listOf(
                                 navArgument("nickname") { type = NavType.StringType }
                             )
@@ -272,7 +277,8 @@ class MainActivity : ComponentActivity() {
                                 nickname = entry.arguments?.getString("nickname")!!
                             )
                         }
-                        composable(NavigationRoutes.MyWishMeetingScreen.route,
+                        composable(
+                            NavigationRoutes.MyWishMeetingScreen.route,
                             arguments = listOf(
                                 navArgument("uId") { type = NavType.IntType }
                             )
@@ -284,7 +290,8 @@ class MainActivity : ComponentActivity() {
                                 uId = entry.arguments?.getInt("uId")!!
                             )
                         }
-                        composable(NavigationRoutes.MyWishClubScreen.route, arguments = listOf(
+                        composable(
+                            NavigationRoutes.MyWishClubScreen.route, arguments = listOf(
                             navArgument("uId") { type = NavType.IntType }
                         )
                         ) { entry ->
@@ -295,7 +302,8 @@ class MainActivity : ComponentActivity() {
                                 uId = entry.arguments?.getInt("uId")!!
                             )
                         }
-                        composable(NavigationRoutes.MyWishHotPlaceScreen.route,
+                        composable(
+                            NavigationRoutes.MyWishHotPlaceScreen.route,
                             arguments = listOf(
                                 navArgument("uId") { type = NavType.IntType }
                             )
@@ -324,7 +332,8 @@ class MainActivity : ComponentActivity() {
                                 navController
                             )
                         }
-                        composable(NavigationRoutes.ChatScreen.route, arguments = listOf(
+                        composable(
+                            NavigationRoutes.ChatScreen.route, arguments = listOf(
                             navArgument("receiverId") { type = NavType.IntType }
                         )
                         ) { entry ->
@@ -343,6 +352,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.SettingScreen.route) {
                             SettingScreen(mainViewModel = mainViewModel, navController)
+                        }
+                        composable(NavigationRoutes.WithdrawScreen.route) {
+                            WithdrawScreen(userViewModel, mainViewModel, navController)
                         }
                     }
                 }

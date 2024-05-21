@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.StartActivity
-import com.example.haemo_kotlin.util.NavigationRoutes
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
@@ -83,9 +83,6 @@ fun AccountSettingField(
     navController: NavController
 ) {
     val textList = listOf("로그아웃", "계정 탈퇴")
-    val navRoutes = listOf(
-        NavigationRoutes.ThemeChangeScreen.route
-    )
 
     Column() {
         SettingTitleField(text = "계정 관리")
@@ -93,7 +90,7 @@ fun AccountSettingField(
             SettingContentField(
                 text = text,
                 mainColor = mainColor,
-                route = navRoutes[0],
+                route = NavigationRoutes.WithdrawScreen.route,
                 mainViewModel,
                 navController = navController
             )

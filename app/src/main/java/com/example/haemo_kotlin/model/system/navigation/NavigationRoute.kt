@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.util
+package com.example.haemo_kotlin.model.system.navigation
 
 sealed class NavigationRoutes(val route: String) {
     data object LoadingScreen : NavigationRoutes("loadingScreen")
@@ -53,4 +53,6 @@ sealed class NavigationRoutes(val route: String) {
     data object ChatListScreen : NavigationRoutes("chatListScreen")
 
     data object SettingScreen : NavigationRoutes("settingScreen")
+
+    data object WithdrawScreen : NavigationRoutes("withdrawScreen")
 }

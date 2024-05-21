@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 
 @Composable
 fun PostRegisterFloatingButton(navController: NavController) {
