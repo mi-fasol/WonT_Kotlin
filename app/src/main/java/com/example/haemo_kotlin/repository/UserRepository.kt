@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.repository
 
+import android.util.Log
 import com.example.haemo_kotlin.model.retrofit.user.LoginModel
 import com.example.haemo_kotlin.model.retrofit.user.UserModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
@@ -25,7 +26,8 @@ class UserRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.getUserByNickname(nickname)
     }
 
-    suspend fun checkHaveAccount(studentId: Int): Response<UserResponseModel> {
+    suspend fun checkHaveAccount(studentId: Int): Response<Int> {
+        Log.d("미란 checkHaveAccount", "실행")
         return retrofitClient.service.checkHaveAccount(studentId)
     }
 

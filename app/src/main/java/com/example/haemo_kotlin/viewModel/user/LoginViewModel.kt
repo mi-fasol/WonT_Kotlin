@@ -34,7 +34,7 @@ class LoginViewModel @Inject constructor(
     private val _userState = MutableStateFlow(LoginUserState.NONE)
     val loginUser: StateFlow<LoginUserState> = _userState.asStateFlow()
 
-    private val _isLoginSuccess = MutableStateFlow<Boolean>(false)
+    private val _isLoginSuccess = MutableStateFlow(false)
     val isLoginSuccess: StateFlow<Boolean> = _isLoginSuccess.asStateFlow()
 
     val id = MutableStateFlow("")
@@ -50,16 +50,22 @@ class LoginViewModel @Inject constructor(
         if (studentId.isNotBlank()) {
             viewModelScope.launch {
                 try {
+                    Log.d("미란 ", "실행은 됨")
+                    Log.d("미란 이전 state", _userState.value.toString())
                     val response = repository.checkHaveAccount(studentId.toInt())
                     if (response.isSuccessful && response.body() != null) {
-                        val responseUser = response.body()
-                        _userState.value = LoginUserState.SUCCESS
-                        SharedPreferenceUtil(context).setUser(responseUser!!)
-                        SharedPreferenceUtil(context).setInt("uId", responseUser.uId)
-                        Log.d("미란 유저", responseUser.toString())
-                        Log.d("미란 유저", SharedPreferenceUtil(context).getUser().toString())
-                    } else {
-                        _userState.value = LoginUserState.LOGIN
+                        val responseUId = response.body()
+                        if (responseUId == 0) {
+                            _userState.value = LoginUserState.LOGIN
+                            Log.d("미란", "회원가입 필요")
+                        } else {
+                            _userState.value = LoginUserState.SUCCESS
+                            SharedPreferenceUtil(context).setInt("uId", responseUId!!)
+                            Log.d("미란 유저", responseUId.toString())
+                        }
+                        Log.d("미란 state", _userState.value.toString())
+                    } else{
+                        Log.e("API Exception", "널로 받아짐")
                     }
                 } catch (e: Exception) {
                     Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
@@ -69,6 +75,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun login(id: String, pwd: String) {
+        _isLoginSuccess.value = false
         viewModelScope.launch {
             _loginState.value = Resource.loading(null)
             try {
@@ -93,5 +100,10 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = Resource.error(e.message ?: "An error occurred", null)
             }
         }
+    }
+
+    fun signOut(mainColor: Int) {
+        SharedPreferenceUtil(context).removeAll()
+        SharedPreferenceUtil(context).setInt("mainColor", mainColor)
     }
 }

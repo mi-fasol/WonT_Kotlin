@@ -44,6 +44,14 @@ fun MainScreen(
 
     val context = LocalContext.current
     val uId = SharedPreferenceUtil(context).getInt("uId", 0)
+    val nickname = SharedPreferenceUtil(context).getString("nickname", "")
+
+    if(nickname.isNullOrBlank()){
+        LaunchedEffect(true){
+
+        }
+    }
+
 
     LaunchedEffect(true) {
         userViewModel.fetchUserInfoById(uId)

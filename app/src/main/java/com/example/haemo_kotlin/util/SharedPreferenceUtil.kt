@@ -34,14 +34,13 @@ class SharedPreferenceUtil(context: Context) {
         return prefs.getBoolean(key, defaultValue) ?: defaultValue
     }
 
-    @SuppressLint("CommitPrefEdits")
     fun setUser(user: UserResponseModel) {
-        prefs.edit().putInt("uId", user.uId)
-        prefs.edit().putString("nickname", user.nickname)
-        prefs.edit().putString("studentId", user.studentId.toString())
-        prefs.edit().putString("major", user.major)
-        prefs.edit().putString("gender", user.gender)
-        prefs.edit().putInt("image", user.userImage)
+        prefs.edit().putInt("uId", user.uId).apply()
+        prefs.edit().putString("nickname", user.nickname).apply()
+        prefs.edit().putString("studentId", user.studentId.toString()).apply()
+        prefs.edit().putString("major", user.major).apply()
+        prefs.edit().putString("gender", user.gender).apply()
+        prefs.edit().putInt("image", user.userImage).apply()
     }
 
     fun getUser(): UserResponseModel {

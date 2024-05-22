@@ -58,7 +58,7 @@ interface ApiService {
     suspend fun getUserByNickname(@Path("nickname") nickname: String): Response<UserResponseModel>
 
     @GET("user/find/student/{studentId}")
-    suspend fun checkHaveAccount(@Path("studentId") studentId: Int): Response<UserResponseModel>
+    suspend fun checkHaveAccount(@Path("studentId") studentId: Int): Response<Int>
 
     @DELETE("user/delete/{id}")
     suspend fun deleteUser(@Path("id") id: Int): Response<Boolean>

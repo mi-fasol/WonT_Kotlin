@@ -59,6 +59,7 @@ import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
 import com.example.haemo_kotlin.viewModel.chat.NotificationViewModel
+import com.example.haemo_kotlin.viewModel.user.LoginViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
@@ -119,6 +120,7 @@ class MainActivity : ComponentActivity() {
     private val clubPostViewModel by viewModels<ClubPostViewModel>()
     private val hotPlacePostViewModel by viewModels<HotPlacePostViewModel>()
     private val userViewModel by viewModels<UserViewModel>()
+    private val loginViewModel by viewModels<LoginViewModel>()
     private val commentViewModel by viewModels<CommentViewModel>()
     private val wishViewModel by viewModels<WishViewModel>()
     private val chatViewModel by viewModels<ChatViewModel>()
@@ -351,7 +353,7 @@ class MainActivity : ComponentActivity() {
                             ThemeChangeScreen(viewModel = mainViewModel, navController)
                         }
                         composable(NavigationRoutes.SettingScreen.route) {
-                            SettingScreen(mainViewModel = mainViewModel, navController)
+                            SettingScreen(mainViewModel = mainViewModel, loginViewModel, navController)
                         }
                         composable(NavigationRoutes.WithdrawScreen.route) {
                             WithdrawScreen(userViewModel, mainViewModel, navController)

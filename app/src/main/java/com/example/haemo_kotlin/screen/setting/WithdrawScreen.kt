@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
@@ -45,6 +46,7 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.StartActivity
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 
@@ -67,7 +69,9 @@ fun WithdrawScreen(
                 modifier = Modifier
                     .padding(
                         top = innerPadding.calculateTopPadding()
-                    ).fillMaxSize().background(Color.White)
+                    )
+                    .fillMaxSize()
+                    .background(Color.White)
             ) {
                 WithdrawInfo(mainColor = mainColor, userViewModel)
             }
@@ -94,10 +98,19 @@ fun WithdrawInfo(mainColor: Int, userViewModel: UserViewModel) {
                 modifier = Modifier.padding(bottom = 20.dp)
             )
             WithdrawCheckNotification(mainColor)
-            Row(modifier= Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(checked = isChecked.value, onCheckedChange = {
-                    isChecked.value = !isChecked.value
-                })
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = isChecked.value, onCheckedChange = {
+                        isChecked.value = !isChecked.value
+                    },
+                    colors = CheckboxDefaults.colors(
+                        uncheckedColor = colorResource(id = mainColor).copy(alpha = 0.5f),
+                        checkedColor = colorResource(id = mainColor)
+                    )
+                )
                 Text(
                     "안내사항을 모두 확인했습니다.",
                     fontSize = 14.sp,
@@ -115,7 +128,11 @@ fun WithdrawCheckNotification(mainColor: Int) {
         modifier = Modifier
             .background(colorResource(id = mainColor).copy(alpha = 0.07f))
     ) {
-        Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(13.dp).fillMaxHeight(0.17f)) {
+        Column(
+            verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier
+                .padding(13.dp)
+                .fillMaxHeight(0.17f)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -162,6 +179,7 @@ fun WithdrawButton(viewModel: UserViewModel, mainColor: Int, isChecked: MutableS
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         }
     val isDeleted by viewModel.isDeleteSuccess.collectAsState()
+    val dialogOpen = remember { mutableStateOf(false) }
 
     LaunchedEffect(isDeleted) {
         if (isDeleted) {
@@ -172,7 +190,7 @@ fun WithdrawButton(viewModel: UserViewModel, mainColor: Int, isChecked: MutableS
 
     Button(
         onClick = {
-            viewModel.deleteUser()
+            dialogOpen.value = true
         },
         enabled = isChecked.value,
         colors = ButtonDefaults.buttonColors(
@@ -187,5 +205,14 @@ fun WithdrawButton(viewModel: UserViewModel, mainColor: Int, isChecked: MutableS
 
     ) {
         Text("회원 탈퇴", color = Color.White, fontWeight = FontWeight.SemiBold)
+    }
+
+    if (dialogOpen.value) {
+        YesOrNoDialog(
+            content = "탈퇴하시겠습니까?",
+            mainColor = mainColor,
+            onClickCancel = { dialogOpen.value = false }) {
+            viewModel.deleteUser()
+        }
     }
 }

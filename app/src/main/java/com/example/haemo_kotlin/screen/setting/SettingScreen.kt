@@ -38,10 +38,15 @@ import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.example.haemo_kotlin.viewModel.user.LoginViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun SettingScreen(mainViewModel: MainViewModel, navController: NavController) {
+fun SettingScreen(
+    mainViewModel: MainViewModel,
+    loginViewModel: LoginViewModel,
+    navController: NavController
+) {
     val context = LocalContext.current
     val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
 
@@ -63,11 +68,12 @@ fun SettingScreen(mainViewModel: MainViewModel, navController: NavController) {
                 Column(
                     //    modifier = Modifier.padding(horizontal = 20.dp)
                 ) {
-                    AccountSettingField(mainColor, mainViewModel, navController)
-                    AppSettingField(mainColor, mainViewModel, navController)
+                    AccountSettingField(mainColor, mainViewModel, loginViewModel, navController)
+                    AppSettingField(mainColor, mainViewModel, loginViewModel, navController)
                     AppInfoField(
                         mainColor = mainColor,
                         mainViewModel,
+                        loginViewModel,
                         navController = navController
                     )
                 }
@@ -80,6 +86,7 @@ fun SettingScreen(mainViewModel: MainViewModel, navController: NavController) {
 fun AccountSettingField(
     mainColor: Int,
     mainViewModel: MainViewModel,
+    loginViewModel: LoginViewModel,
     navController: NavController
 ) {
     val textList = listOf("로그아웃", "계정 탈퇴")
@@ -92,6 +99,7 @@ fun AccountSettingField(
                 mainColor = mainColor,
                 route = NavigationRoutes.WithdrawScreen.route,
                 mainViewModel,
+                loginViewModel,
                 navController = navController
             )
             if (textList.indexOf(text) < textList.size - 1)
@@ -104,7 +112,12 @@ fun AccountSettingField(
 }
 
 @Composable
-fun AppSettingField(mainColor: Int, mainViewModel: MainViewModel, navController: NavController) {
+fun AppSettingField(
+    mainColor: Int,
+    mainViewModel: MainViewModel,
+    loginViewModel: LoginViewModel,
+    navController: NavController
+) {
     val textList = listOf("알림 설정", "화면 설정")
     val navRoutes = listOf(
         NavigationRoutes.ThemeChangeScreen.route,
@@ -119,6 +132,7 @@ fun AppSettingField(mainColor: Int, mainViewModel: MainViewModel, navController:
                 mainColor = mainColor,
                 route = navRoutes[textList.indexOf(text)],
                 mainViewModel,
+                loginViewModel,
                 navController = navController
             )
             if (textList.indexOf(text) < textList.size - 1)
@@ -131,7 +145,12 @@ fun AppSettingField(mainColor: Int, mainViewModel: MainViewModel, navController:
 }
 
 @Composable
-fun AppInfoField(mainColor: Int, mainViewModel: MainViewModel, navController: NavController) {
+fun AppInfoField(
+    mainColor: Int,
+    mainViewModel: MainViewModel,
+    loginViewModel: LoginViewModel,
+    navController: NavController
+) {
     val textList = listOf("문의하기", "공지사항")
     val navRoutes = listOf(
         NavigationRoutes.ThemeChangeScreen.route,
@@ -151,6 +170,7 @@ fun AppInfoField(mainColor: Int, mainViewModel: MainViewModel, navController: Na
                 mainColor = mainColor,
                 route = navRoutes[textList.indexOf(text)],
                 mainViewModel,
+                loginViewModel = loginViewModel,
                 navController = navController
             )
             if (textList.indexOf(text) < textList.size - 1)
@@ -188,6 +208,7 @@ fun SettingContentField(
     mainColor: Int,
     route: String,
     mainViewModel: MainViewModel,
+    loginViewModel: LoginViewModel,
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -241,7 +262,7 @@ fun SettingContentField(
             content = "로그아웃 하시겠습니까?",
             mainColor = mainColor,
             onClickCancel = { dialogOpen.value = false }) {
-            SharedPreferenceUtil(context).removeAll()
+            loginViewModel.signOut(mainColor)
             mainViewModel.navigateToAnotherActivity(context, StartActivity::class.java)
         }
     }

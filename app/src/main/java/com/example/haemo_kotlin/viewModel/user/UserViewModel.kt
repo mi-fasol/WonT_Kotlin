@@ -94,8 +94,10 @@ class UserViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     val responseUser = response.body()
                     _user.value = responseUser
+                    SharedPreferenceUtil(context).setUser(responseUser!!)
                     _fetchUserState.value = Resource.success(response.body())
                     Log.d("유저", responseUser.toString())
+                    Log.d("유저", SharedPreferenceUtil(context).getString("nickname", "").toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "에러 응답: $errorBody")
