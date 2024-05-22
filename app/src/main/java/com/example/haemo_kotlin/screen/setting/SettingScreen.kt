@@ -120,7 +120,7 @@ fun AppSettingField(
 ) {
     val textList = listOf("알림 설정", "화면 설정")
     val navRoutes = listOf(
-        NavigationRoutes.ThemeChangeScreen.route,
+        NavigationRoutes.NotificationSettingScreen.route,
         NavigationRoutes.ThemeChangeScreen.route
     )
 

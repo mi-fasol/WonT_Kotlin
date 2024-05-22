@@ -55,4 +55,6 @@ sealed class NavigationRoutes(val route: String) {
     data object SettingScreen : NavigationRoutes("settingScreen")
 
     data object WithdrawScreen : NavigationRoutes("withdrawScreen")
+
+    data object NotificationSettingScreen : NavigationRoutes("notificationSettingScreen")
 }

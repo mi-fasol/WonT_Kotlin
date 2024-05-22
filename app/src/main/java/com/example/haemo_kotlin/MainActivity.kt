@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -50,6 +51,7 @@ import com.example.haemo_kotlin.screen.setting.detail.MyWishMeetingScreen
 import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.screen.setting.NotificationSettingScreen
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
@@ -137,9 +139,10 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         if (isGranted) {
-
+            mainViewModel.notificationState.value = true
         } else {
-            finish()
+            mainViewModel.notificationState.value = false
+            Toast.makeText(applicationContext, "알림 수신이 거부되었습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -294,8 +297,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(
                             NavigationRoutes.MyWishClubScreen.route, arguments = listOf(
-                            navArgument("uId") { type = NavType.IntType }
-                        )
+                                navArgument("uId") { type = NavType.IntType }
+                            )
                         ) { entry ->
                             MyWishClubScreen(
                                 wishViewModel = wishViewModel,
@@ -336,8 +339,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(
                             NavigationRoutes.ChatScreen.route, arguments = listOf(
-                            navArgument("receiverId") { type = NavType.IntType }
-                        )
+                                navArgument("receiverId") { type = NavType.IntType }
+                            )
                         ) { entry ->
                             ChatScreen(
                                 chatViewModel = chatViewModel,
@@ -353,10 +356,17 @@ class MainActivity : ComponentActivity() {
                             ThemeChangeScreen(viewModel = mainViewModel, navController)
                         }
                         composable(NavigationRoutes.SettingScreen.route) {
-                            SettingScreen(mainViewModel = mainViewModel, loginViewModel, navController)
+                            SettingScreen(
+                                mainViewModel = mainViewModel,
+                                loginViewModel,
+                                navController
+                            )
                         }
                         composable(NavigationRoutes.WithdrawScreen.route) {
                             WithdrawScreen(userViewModel, mainViewModel, navController)
+                        }
+                        composable(NavigationRoutes.NotificationSettingScreen.route) {
+                            NotificationSettingScreen(mainViewModel, navController)
                         }
                     }
                 }

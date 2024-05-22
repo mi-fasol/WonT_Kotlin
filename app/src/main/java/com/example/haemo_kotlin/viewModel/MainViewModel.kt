@@ -1,12 +1,16 @@
 package com.example.haemo_kotlin.viewModel
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,6 +32,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import okhttp3.internal.http2.Settings
 import javax.inject.Inject
 
 
@@ -43,6 +48,8 @@ class MainViewModel @Inject constructor(
     private val _colorState = MutableStateFlow(R.color.mainColor)
     val colorState: StateFlow<Int> = _colorState
 
+    var notificationState = MutableStateFlow(false)
+
     private val _navigateToAnotherActivity = MutableLiveData<Event<Intent>>()
     val navigateToAnotherActivity: LiveData<Event<Intent>> = _navigateToAnotherActivity
 
@@ -56,6 +63,21 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _mainColor.emit(colorOption)
             _colorState.emit(colorOption.colorResId)
+        }
+    }
+
+    fun changeNotificationAccess() {
+        viewModelScope.launch {
+            SharedPreferenceUtil(context).setBoolean("notification", !notificationState.value)
+            notificationState.value = !notificationState.value
+//            if (ContextCompat.checkSelfPermission(
+//                    context,
+//                    Manifest.permission.POST_NOTIFICATIONS
+//                ) !=
+//                PackageManager.PERMISSION_GRANTED
+//            ) {
+//                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+//            }
         }
     }
 

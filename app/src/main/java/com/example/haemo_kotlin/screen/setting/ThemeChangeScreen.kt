@@ -3,7 +3,6 @@ package com.example.haemo_kotlin.screen.setting
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,12 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
@@ -44,26 +41,8 @@ fun ThemeChangeScreen(viewModel: MainViewModel, navController: NavController) {
         modifier = Modifier.background(colorResource(id = R.color.settingScreenBackgroundColor))
     ) {
         Column() {
-            Box(
-                contentAlignment = Alignment.CenterStart,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height((screenHeight / 17).dp)
-                    .background(colorResource(id = R.color.settingScreenBackgroundColor))
-            ) {
-                Text(
-                    "컬러 모드",
-                    color = colorResource(id = R.color.settingScreenColorTextColor),
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(
-                        top = 10.dp,
-                        end = 10.dp,
-                        start = 15.dp,
-                        bottom = 10.dp
-                    )
-                )
-            }
-            ColorSwitch(
+            SettingTitleField(text = "컬러 모드")
+            SettingSwitch(
                 "블루",
                 isChecked = mainColor == R.color.mainColor,
                 onCheckedChange = { viewModel.updateColor(ColorOption.BLUE) },
@@ -74,7 +53,7 @@ fun ThemeChangeScreen(viewModel: MainViewModel, navController: NavController) {
                 thickness = 3.dp,
                 color = colorResource(id = R.color.settingScreenBackgroundColor)
             )
-            ColorSwitch(
+            SettingSwitch(
                 "베이지",
                 isChecked = mainColor == R.color.brownMainColor,
                 onCheckedChange = { viewModel.updateColor(ColorOption.BROWN) },
@@ -85,7 +64,7 @@ fun ThemeChangeScreen(viewModel: MainViewModel, navController: NavController) {
                 thickness = 3.dp,
                 color = colorResource(id = R.color.settingScreenBackgroundColor)
             )
-            ColorSwitch(
+            SettingSwitch(
                 "핑크",
                 isChecked = mainColor == R.color.pinkMainColor,
                 onCheckedChange = { viewModel.updateColor(ColorOption.PINK) },
@@ -96,7 +75,7 @@ fun ThemeChangeScreen(viewModel: MainViewModel, navController: NavController) {
                 color = colorResource(id = R.color.settingScreenBackgroundColor)
             )
 
-            ColorSwitch(
+            SettingSwitch(
                 "연두",
                 isChecked = mainColor == R.color.greenMainColor,
                 onCheckedChange = { viewModel.updateColor(ColorOption.GREEN) },
@@ -107,7 +86,7 @@ fun ThemeChangeScreen(viewModel: MainViewModel, navController: NavController) {
 }
 
 @Composable
-fun ColorSwitch(
+fun SettingSwitch(
     text: String,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
