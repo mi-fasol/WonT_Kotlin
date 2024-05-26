@@ -4,10 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haemo_kotlin.service.MyFirebaseMessagingService
-import com.example.haemo_kotlin.model.retrofit.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.retrofit.chat.ChatMessageModel
 import com.example.haemo_kotlin.model.retrofit.chat.ChatUserModel
+import com.example.haemo_kotlin.model.retrofit.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.repository.UserRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -28,7 +27,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val repository: UserRepository,
-    private val notification : MyFirebaseMessagingService,
     private val context: Context
 ) : ViewModel() {
 
@@ -39,13 +37,18 @@ class ChatViewModel @Inject constructor(
     private val _receiverInfo = MutableStateFlow<UserResponseModel?>(null)
     val receiverInfo: StateFlow<UserResponseModel?> = _receiverInfo
 
+    private val _chatId = MutableStateFlow("")
+    val chatId: StateFlow<String> = _chatId
+
     var chatMessages = MutableStateFlow<List<ChatMessageModel>>(emptyList())
     private var fireBaseChatModel = MutableStateFlow<FireBaseChatModel?>(null)
     private var userChatList = MutableStateFlow<List<String>>(emptyList())
     private var receiverChatList = MutableStateFlow<List<String>>(emptyList())
 
+    var uId = 0
+
     init {
-        val uId = SharedPreferenceUtil(context).getUser().uId
+        uId = SharedPreferenceUtil(context).getUser().uId
 
         userRef.child(uId.toString()).get()
             .addOnSuccessListener {
@@ -96,6 +99,7 @@ class ChatViewModel @Inject constructor(
                         ),
                         result["messages"] as List<ChatMessageModel>
                     )
+
                     fireBaseChatModel.value = chatModel
                 }
             }
@@ -108,19 +112,23 @@ class ChatViewModel @Inject constructor(
                 val chatMessage = arrayListOf<ChatMessageModel>()
                 val messageData = snapshot.value as ArrayList<HashMap<String, Any>>?
 
-                messageData?.forEach {
+                Log.d("미란 messageData", messageData.toString())
+
+                messageData?.forEachIndexed { _, message ->
                     chatMessage.add(
                         ChatMessageModel(
-                            it["content"] as String,
-                            it["createdAt"] as Long,
-                            (it["from"] as Long).toInt(),
-                            it["senderNickname"] as String,
-                            it["isRead"] as? Boolean ?: false
+                            content = message["content"] as String,
+                            createdAt = message["createdAt"] as Long,
+                            from = (message["from"] as Long).toInt(),
+                            senderNickname = message["senderNickname"] as String,
+                            isRead = message["read"] as? Boolean ?: false
                         )
                     )
                 }
                 chatMessages.value = arrayListOf()
                 chatMessages.value = chatMessage.toList()
+
+                readAllMessages(chatId)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -131,6 +139,46 @@ class ChatViewModel @Inject constructor(
         chatRef.child(chatId).child("messages")
             .addValueEventListener(chatListener)
     }
+
+    fun findChatRoom(receiverId: Int) {
+        chatRef.child("${receiverId}+${uId}").get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                _chatId.value = "${receiverId}+${uId}"
+            } else {
+                chatRef.child("${uId}+${receiverId}").get().addOnSuccessListener { snapshot ->
+                    if (snapshot.exists()) {
+                        _chatId.value = "${uId}+${receiverId}"
+                    }
+                }
+            }
+        }.addOnFailureListener { exception ->
+            Log.e("ChatViewModel", "Error finding chat room: ${exception.message}")
+        }
+
+        Log.d("미란 챗아이디: ", _chatId.value)
+    }
+
+    fun readAllMessages(chatId: String) {
+        Log.d("미란 채팅리스트", chatMessages.value.toString())
+        val updateMap = mutableMapOf<String, Any?>()
+        chatMessages.value.forEachIndexed { index, message ->
+            if (!message.isRead && message.from != uId) {
+                Log.d("미란 메시지", message.toString())
+                message.isRead = true
+                updateMap["$index/read"] = true
+            }
+        }
+        Log.d("미란 채팅 메시지", chatMessages.value.toString())
+
+        chatRef.child(chatId).child("messages").updateChildren(updateMap)
+            .addOnSuccessListener {
+                Log.d("미란 채팅 메시지", "메시지 읽음으로 표시 완료")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("미란 채팅 메시지", "메시지 읽음으로 표시 실패: ${exception.message}")
+            }
+    }
+
 
     fun sendMessage(
         chatId: String,

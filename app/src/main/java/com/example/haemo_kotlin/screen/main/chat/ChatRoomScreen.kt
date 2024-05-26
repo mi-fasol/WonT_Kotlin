@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.retrofit.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.retrofit.chat.ChatMessageModel
 import com.example.haemo_kotlin.util.ChatRoomAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -57,7 +56,8 @@ fun ChatScreen(
     val uId = SharedPreferenceUtil(context).getInt("uId", 0)
     val receiver = chatViewModel.receiverInfo.collectAsState().value
     val chatMessage = chatViewModel.chatMessages.collectAsState().value
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
+    val chatId by chatViewModel.chatId.collectAsState()
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -79,6 +79,7 @@ fun ChatScreen(
             ChatMessageField(
                 chatMessage,
                 uId,
+                mainColor,
                 chatViewModel
             )
             if (receiver != null) {
@@ -93,8 +94,12 @@ fun ChatScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        chatViewModel.getChatRoomInfo("${receiverId}+${uId}", receiverId)
+    LaunchedEffect(Unit, key2 = chatId) {
+        if (chatId.isNotBlank()) {
+            chatViewModel.getChatRoomInfo(chatId, receiverId)
+        } else {
+            chatViewModel.findChatRoom(receiverId)
+        }
     }
 }
 
@@ -102,6 +107,7 @@ fun ChatScreen(
 fun ChatMessageField(
     message: List<ChatMessageModel>?,
     uId: Int,
+    mainColor: Int,
     chatViewModel: ChatViewModel
 ) {
     LazyColumn(
@@ -111,25 +117,25 @@ fun ChatMessageField(
     ) {
         message?.let {
             items(it) { message ->
-                MessageItem(message, uId, chatViewModel)
+                MessageItem(message, uId, mainColor, chatViewModel)
             }
         }
     }
 }
 
 @Composable
-fun MessageItem(message: ChatMessageModel, uId: Int, chatViewModel: ChatViewModel) {
+fun MessageItem(message: ChatMessageModel, uId: Int, mainColor: Int, chatViewModel: ChatViewModel) {
     val messageFromMe = message.from == uId
 
     if (messageFromMe) {
-        MessageItemFromMe(message = message, chatViewModel)
+        MessageItemFromMe(message = message, mainColor, chatViewModel)
     } else {
         MessageItemFromOther(message = message, chatViewModel)
     }
 }
 
 @Composable
-fun MessageItemFromMe(message: ChatMessageModel, chatViewModel: ChatViewModel) {
+fun MessageItemFromMe(message: ChatMessageModel, mainColor: Int, chatViewModel: ChatViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -146,7 +152,7 @@ fun MessageItemFromMe(message: ChatMessageModel, chatViewModel: ChatViewModel) {
         Box(
             modifier = Modifier
                 .background(
-                    color = colorResource(id = R.color.chatFromMeColor),
+                    color = colorResource(id = mainColor).copy(alpha = 0.3f),
                     shape = RoundedCornerShape(10.dp, 0.dp, 10.dp, 10.dp)
                 )
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
