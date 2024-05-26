@@ -31,6 +31,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private val userRef = firebaseDB.getReference("user")
     private var userChatList = MutableStateFlow<List<String>>(emptyList())
     private val chatListeners = mutableMapOf<String, ChildEventListener>()
+    private val notificationPermission =
+        SharedPreferenceUtil(context).getBoolean("notification", false)
 
     override fun onCreate() {
         super.onCreate()
@@ -44,12 +46,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.data.isNotEmpty().let {
             val message = remoteMessage.data["message"]
             val sender = remoteMessage.data["sender"]
-            if (message != null && sender != null) {
+            if (message != null && sender != null && notificationPermission) {
                 val chatMessage = ChatMessageModel(
                     content = message,
                     createdAt = System.currentTimeMillis(),
                     from = 0,
-                    senderNickname = sender
+                    senderNickname = sender,
+                    isRead = false
                 )
                 sendNotification(chatMessage)
             }
@@ -111,7 +114,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val listener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessageModel::class.java)
-                if (chatMessage?.from != uId && chatMessage?.createdAt == System.currentTimeMillis()) {
+                if (chatMessage?.from != uId && chatMessage?.createdAt == System.currentTimeMillis() && !chatMessage.isRead && notificationPermission) {
                     sendNotification(chatMessage)
                 }
             }
