@@ -79,7 +79,7 @@ fun NotificationSettingScreen(viewModel: MainViewModel, navController: NavContro
                         }
                     }
                 },
-                colorResId = R.color.mainColor
+                colorResId = mainColor
             )
         }
     }
