@@ -31,12 +31,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private val userRef = firebaseDB.getReference("user")
     private var userChatList = MutableStateFlow<List<String>>(emptyList())
     private val chatListeners = mutableMapOf<String, ChildEventListener>()
-    private val notificationPermission =
-        SharedPreferenceUtil(context).getBoolean("notification", false)
+    private var notificationPermission = false
 
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
+        notificationPermission = SharedPreferenceUtil(context).getBoolean("notification", false)
         val uId = SharedPreferenceUtil(context).getInt("uId", 0)
         newChatRoomCreated(uId)
         Log.d("미란 파이어베이스 서비스", "onCreate")
