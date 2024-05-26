@@ -52,6 +52,7 @@ import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.screen.setting.NotificationSettingScreen
+import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
@@ -68,6 +69,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @HiltAndroidApp
 class MainApplication : Application() {
@@ -138,12 +140,7 @@ class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
-        if (isGranted) {
-            mainViewModel.notificationState.value = true
-        } else {
-            mainViewModel.notificationState.value = false
-            Toast.makeText(applicationContext, "알림 수신이 거부되었습니다.", Toast.LENGTH_SHORT).show()
-        }
+        SharedPreferenceUtil(this).setBoolean("notification", isGranted)
     }
 
     private fun logRegToken() {
@@ -167,7 +164,10 @@ class MainActivity : ComponentActivity() {
                 ) !=
                 PackageManager.PERMISSION_GRANTED
             ) {
+                SharedPreferenceUtil(this).setBoolean("notification", false)
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                SharedPreferenceUtil(this).setBoolean("notification", true)
             }
         }
     }
@@ -177,6 +177,10 @@ class MainActivity : ComponentActivity() {
 
         askNotificationPermission()
         logRegToken()
+        Log.d(
+            "미란 알림 설정 상황:",
+            SharedPreferenceUtil(this).getBoolean("notification", false).toString()
+        )
 
         mainViewModel.navigateToAnotherActivity.observe(this, Observer { event ->
             event.getContentIfNotHandled()?.let { intent ->

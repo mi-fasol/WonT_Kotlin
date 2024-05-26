@@ -48,7 +48,16 @@ class MainViewModel @Inject constructor(
     private val _colorState = MutableStateFlow(R.color.mainColor)
     val colorState: StateFlow<Int> = _colorState
 
-    var notificationState = MutableStateFlow(false)
+    private val _notificationState =
+        MutableStateFlow(SharedPreferenceUtil(context).getBoolean("notification", false))
+    val notificationState: StateFlow<Boolean> = _notificationState
+
+    fun changeNotificationAccess(enabled: Boolean) {
+        viewModelScope.launch {
+            _notificationState.value = enabled
+            SharedPreferenceUtil(context).setBoolean("notification", enabled)
+        }
+    }
 
     private val _navigateToAnotherActivity = MutableLiveData<Event<Intent>>()
     val navigateToAnotherActivity: LiveData<Event<Intent>> = _navigateToAnotherActivity
@@ -63,21 +72,6 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _mainColor.emit(colorOption)
             _colorState.emit(colorOption.colorResId)
-        }
-    }
-
-    fun changeNotificationAccess() {
-        viewModelScope.launch {
-            SharedPreferenceUtil(context).setBoolean("notification", !notificationState.value)
-            notificationState.value = !notificationState.value
-//            if (ContextCompat.checkSelfPermission(
-//                    context,
-//                    Manifest.permission.POST_NOTIFICATIONS
-//                ) !=
-//                PackageManager.PERMISSION_GRANTED
-//            ) {
-//                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-//            }
         }
     }
 
