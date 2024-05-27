@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.util
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
@@ -151,7 +153,9 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
                 ) {
                     Text(text = "${user.major} / ", fontSize = 8.5.sp, color = Color(0xff3f3f3f))
                     val iconColor =
-                        if (user.gender == "남자") colorResource(id =  R.color.mainColor) else colorResource(id = R.color.pinkMainColor)
+                        if (user.gender == "남자") colorResource(id = R.color.mainColor) else colorResource(
+                            id = R.color.pinkMainColor
+                        )
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = null,
@@ -186,7 +190,7 @@ fun SendReply(
     val screenWidth = config.screenWidthDp
     val cId = commentViewModel.commentId.collectAsState().value
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         launch {
             commentViewModel.getCommentListByPId(pId, postType)
             commentViewModel.getReplyListByCId(cId, postType)
@@ -248,12 +252,15 @@ fun CommentWidget(
     commentViewModel: CommentViewModel,
     navController: NavController
 ) {
-    val commentList = commentViewModel.commentList.collectAsState().value
-    val userList = commentViewModel.userList.collectAsState().value
+    val commentList by commentViewModel.commentList.collectAsState()
+    val userList by commentViewModel.userList.collectAsState()
+
     LaunchedEffect(commentList) {
         commentViewModel.getCommentListByPId(pId, type)
         commentViewModel.getCommentUser(pId, type)
+        Log.d("미란 댓글", commentList.toString())
     }
+
     Column(Modifier.padding(horizontal = 20.dp)) {
         Row(modifier = Modifier.padding(vertical = 15.dp)) {
             androidx.compose.material3.Text(
@@ -274,8 +281,16 @@ fun CommentWidget(
         }
         if (commentList.isNotEmpty()) {
             commentList.forEachIndexed { index, comment ->
-                userList.getOrNull(index)
-                    ?.let { CommentWidgetItem(comment, it, type, mainColor, commentViewModel, navController) }
+                if (userList.isNotEmpty()) {
+                    CommentWidgetItem(
+                        comment,
+                        userList[index],
+                        type,
+                        mainColor,
+                        commentViewModel,
+                        navController
+                    )
+                }
             }
         }
     }
@@ -284,14 +299,13 @@ fun CommentWidget(
 @Composable
 fun CommentWidgetItem(
     comment: CommentResponseModel,
-    user: UserResponseModel,
+    user: UserResponseModel?,
     type: Int,
     mainColor: Int,
     viewModel: CommentViewModel,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
-    val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
 
     val replyList by viewModel.replyList.collectAsState()
@@ -299,7 +313,6 @@ fun CommentWidgetItem(
 
     val userList by viewModel.replyUserList.collectAsState()
     val replyUsers = userList[comment.cId]
-
     var bottomSheetOpen by remember { mutableStateOf(false) }
     var dialogOpen by remember {
         mutableStateOf(false)
@@ -331,14 +344,23 @@ fun CommentWidgetItem(
             IconButton(
                 onClick = {
                     bottomSheetOpen = true
-                }
+                },
+                modifier = Modifier.padding(end = 5.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = userMyPageImageList[user.userImage]),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size((screenHeight / 18).dp)
-                )
+                if (user != null) {
+                    Icon(
+                        painter = painterResource(id = userMyPageImageList[user.userImage]),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size((screenHeight / 18).dp)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .background(Color.Black, CircleShape)
+                            .size((screenHeight / 18).dp)
+                    ) {}
+                }
             }
             Column(
             ) {
@@ -347,8 +369,8 @@ fun CommentWidgetItem(
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    androidx.compose.material3.Text(
-                        text = comment.nickname,
+                    Text(
+                        text = if (user != null) comment.nickname else "탈퇴한 사용자입니다.",
                         fontSize = 13.5.sp,
                         fontWeight = FontWeight.Bold,
                         color = colorResource(id = R.color.mainTextColor),
@@ -373,7 +395,7 @@ fun CommentWidgetItem(
                         )
                     }
                 }
-                androidx.compose.material3.Text(
+                Text(
                     comment.content, fontSize = 12.5.sp,
                     color = colorResource(id = R.color.mainTextColor),
                     maxLines = Int.MAX_VALUE
@@ -403,9 +425,10 @@ fun CommentWidgetItem(
     }
 
     if (bottomSheetOpen) {
-        UserBottomSheet(user = user, navController = navController) {
-            bottomSheetOpen = false
-        }
+        if (user != null)
+            UserBottomSheet(user = user, navController = navController) {
+                bottomSheetOpen = false
+            }
     }
 
     if (dialogOpen) {

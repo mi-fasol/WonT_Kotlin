@@ -74,7 +74,7 @@ class CommentViewModel @Inject constructor(
                     _commentList.value = commentList!!
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
-                    Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                    Log.e("API Error", "댓글 유저 에러 응답: $errorBody")
                 }
             } catch (e: Exception) {
                 Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
