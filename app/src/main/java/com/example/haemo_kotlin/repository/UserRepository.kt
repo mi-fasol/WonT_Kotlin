@@ -34,4 +34,8 @@ class UserRepository @Inject constructor(private val retrofitClient: RetrofitCli
     suspend fun deleteUser(uId: Int): Response<Boolean> {
         return retrofitClient.service.deleteUser(uId)
     }
+
+    suspend fun sendReport(content: String) : Response<Boolean>{
+        return retrofitClient.service.sendReport(content)
+    }
 }

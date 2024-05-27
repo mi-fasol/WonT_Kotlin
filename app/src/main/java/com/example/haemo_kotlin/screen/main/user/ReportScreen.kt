@@ -19,11 +19,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,12 +36,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.screen.setting.setting.WithdrawInfo
+import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ContentEnterField
 import com.example.haemo_kotlin.util.DropDownMenu
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.categoryList
 import com.example.haemo_kotlin.util.reportList
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.example.haemo_kotlin.viewModel.user.ReportState
 import com.example.haemo_kotlin.viewModel.user.ReportViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -73,7 +79,7 @@ fun ReportScreen(
             ) {
                 ReportTitle(nickname = nickname, mainColor = mainColor)
                 EnterReportInfo(mainColor, reportViewModel)
-                ReportButton(mainColor, reportViewModel)
+                ReportButton(mainColor, nickname, reportViewModel, navController)
             }
         }
     }
@@ -129,12 +135,30 @@ fun EnterReportInfo(mainColor: Int, reportViewModel: ReportViewModel) {
 }
 
 @Composable
-fun ReportButton(mainColor: Int, reportViewModel: ReportViewModel) {
+fun ReportButton(mainColor: Int, nickname: String, reportViewModel: ReportViewModel, navController: NavController) {
     val content by reportViewModel.content.collectAsState()
-    val reportReason by reportViewModel.reportReason.collectAsState()
     val isValid by reportViewModel.isValid.collectAsState()
+    val reportState by reportViewModel.reportState.collectAsState()
+    val failDialog = remember { mutableStateOf(false) }
+    val successDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(reportState){
+        when(reportState){
+            ReportState.SUCCESS -> {
+                successDialog.value = true
+            }
+            ReportState.FAIL -> {
+                failDialog.value = true
+            }
+            else -> {
+
+            }
+        }
+    }
+
     Button(
         onClick = {
+            reportViewModel.sendReport(nickname)
             Log.d("미란 신고", content)
         },
         enabled = isValid,
@@ -155,5 +179,17 @@ fun ReportButton(mainColor: Int, reportViewModel: ReportViewModel) {
             fontWeight = FontWeight.ExtraBold,
             modifier = Modifier.padding(vertical = 5.dp)
         )
+    }
+
+    if (failDialog.value) {
+        ConfirmDialog(content = "실패했습니다.\n다시 시도해 주세요.", mainColor = mainColor) {
+            failDialog.value = false
+        }
+    }
+    if (successDialog.value) {
+        ConfirmDialog(content = "신고가 완료되었습니다.", mainColor = mainColor) {
+            successDialog.value = false
+            navController.popBackStack()
+        }
     }
 }

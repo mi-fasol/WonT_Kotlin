@@ -63,6 +63,9 @@ interface ApiService {
     @DELETE("user/delete/{id}")
     suspend fun deleteUser(@Path("id") id: Int): Response<Boolean>
 
+    @POST("report")
+    suspend fun sendReport(@Body content: String): Response<Boolean>
+
     // 소모임
 
     @POST("club")
