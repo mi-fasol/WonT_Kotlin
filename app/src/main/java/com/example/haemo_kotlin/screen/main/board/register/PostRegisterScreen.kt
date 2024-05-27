@@ -22,11 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.*
@@ -131,7 +129,7 @@ fun PostInfo(viewModel: PostViewModel, mainColor: Int) {
             Modifier.width((screenWidth * 0.65).dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            PostSelectDropDownMenu(
+            DropDownMenu(
                 "0명",
                 list = personList,
                 modifier = Modifier
@@ -141,7 +139,7 @@ fun PostInfo(viewModel: PostViewModel, mainColor: Int) {
             ) {
                 viewModel.person.value = personList.indexOf(it) + 1
             }
-            PostSelectDropDownMenu(
+            DropDownMenu(
                 "모임 카테고리",
                 list = categoryList,
                 modifier = Modifier
@@ -158,7 +156,7 @@ fun PostInfo(viewModel: PostViewModel, mainColor: Int) {
                 .padding(vertical = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            PostSelectDropDownMenu(
+            DropDownMenu(
                 "2024년",
                 list = yearList,
                 modifier = Modifier
@@ -167,7 +165,7 @@ fun PostInfo(viewModel: PostViewModel, mainColor: Int) {
             ) {
                 viewModel.deadlineYear.value = it
             }
-            PostSelectDropDownMenu(
+            DropDownMenu(
                 "1월",
                 list = monthList,
                 modifier = Modifier.width((screenWidth / 8).dp),
@@ -176,7 +174,7 @@ fun PostInfo(viewModel: PostViewModel, mainColor: Int) {
                 viewModel.deadlineMonth.value = it
             }
 
-            PostSelectDropDownMenu(
+            DropDownMenu(
                 "1일",
                 list = dayList,
                 modifier = Modifier.width((screenWidth / 8).dp),
@@ -185,7 +183,7 @@ fun PostInfo(viewModel: PostViewModel, mainColor: Int) {
                 viewModel.deadlineDay.value = it
             }
 
-            PostSelectDropDownMenu(
+            DropDownMenu(
                 "01시",
                 list = hourList,
                 modifier = Modifier.width((screenWidth / 8).dp),

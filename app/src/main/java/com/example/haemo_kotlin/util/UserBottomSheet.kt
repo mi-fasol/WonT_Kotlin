@@ -108,7 +108,7 @@ fun UserBottomSheet(
                         )
                         .weight(1f)
                         .clickable {
-
+                            navController.navigate(NavigationRoutes.ReportScreen.createRoute(user.nickname))
                         }
                         .height((screenWidth / 9.5).dp)
                 ) {

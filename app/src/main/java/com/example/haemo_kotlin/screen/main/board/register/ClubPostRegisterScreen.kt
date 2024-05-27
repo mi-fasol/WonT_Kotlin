@@ -49,7 +49,7 @@ import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ContentEnterField
 import com.example.haemo_kotlin.util.PostRegisterAppBar
 import com.example.haemo_kotlin.util.PostRegisterButton
-import com.example.haemo_kotlin.util.PostSelectDropDownMenu
+import com.example.haemo_kotlin.util.DropDownMenu
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.TextEnterField
 import com.example.haemo_kotlin.util.YesOrNoDialog
@@ -73,8 +73,7 @@ fun ClubPostRegisterScreen(
     var dialogOpen by remember { mutableStateOf(false) }
     var confirmDialogOpen by remember { mutableStateOf(false) }
     var errorDialogOpen by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     LaunchedEffect(postRegisterState) {
         when (postRegisterState) {
@@ -173,7 +172,7 @@ fun ClubPostInfo(viewModel: ClubPostViewModel, mainColor: Int) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             ImagePickerBox(viewModel = viewModel, null, Modifier.weight(1f), 2)
-            PostSelectDropDownMenu(
+            DropDownMenu(
                 "0명",
                 list = personList,
                 mainColor = mainColor,

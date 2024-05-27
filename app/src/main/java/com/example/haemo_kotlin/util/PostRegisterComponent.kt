@@ -40,7 +40,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -85,7 +84,7 @@ fun TextEnterField(type: String, value: String, mainColor: Int, onValueChange: (
 }
 
 @Composable
-fun PostSelectDropDownMenu(
+fun DropDownMenu(
     text: String,
     list: List<String>,
     modifier: Modifier,
@@ -196,8 +195,6 @@ fun PostRegisterButton(
         else -> false
     }
 
-    val context = LocalContext.current
-
     Button(
         onClick = {
             onClicked()
@@ -214,7 +211,7 @@ fun PostRegisterButton(
             .fillMaxWidth()
             .fillMaxHeight(0.2f)
     ) {
-        androidx.compose.material3.Text(
+        Text(
             "등록하기",
             color = Color.White,
             fontWeight = FontWeight.ExtraBold

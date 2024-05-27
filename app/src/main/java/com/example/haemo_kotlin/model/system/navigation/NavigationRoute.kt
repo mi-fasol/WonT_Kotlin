@@ -57,4 +57,8 @@ sealed class NavigationRoutes(val route: String) {
     data object WithdrawScreen : NavigationRoutes("withdrawScreen")
 
     data object NotificationSettingScreen : NavigationRoutes("notificationSettingScreen")
+
+    data object ReportScreen : NavigationRoutes("reportScreen/{nickname}") {
+        fun createRoute(nickname: String) = "reportScreen/$nickname"
+    }
 }

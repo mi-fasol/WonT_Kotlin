@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -41,9 +40,9 @@ import com.example.haemo_kotlin.screen.main.board.register.PostRegisterScreen
 import com.example.haemo_kotlin.screen.main.chat.ChatListScreen
 import com.example.haemo_kotlin.screen.main.chat.ChatScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
-import com.example.haemo_kotlin.screen.setting.SettingScreen
-import com.example.haemo_kotlin.screen.setting.ThemeChangeScreen
-import com.example.haemo_kotlin.screen.setting.WithdrawScreen
+import com.example.haemo_kotlin.screen.setting.setting.SettingScreen
+import com.example.haemo_kotlin.screen.setting.setting.ThemeChangeScreen
+import com.example.haemo_kotlin.screen.setting.setting.WithdrawScreen
 import com.example.haemo_kotlin.screen.setting.detail.MyMeetingBoardScreen
 import com.example.haemo_kotlin.screen.setting.detail.MyWishClubScreen
 import com.example.haemo_kotlin.screen.setting.detail.MyWishHotPlaceScreen
@@ -51,7 +50,8 @@ import com.example.haemo_kotlin.screen.setting.detail.MyWishMeetingScreen
 import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
-import com.example.haemo_kotlin.screen.setting.NotificationSettingScreen
+import com.example.haemo_kotlin.screen.main.user.ReportScreen
+import com.example.haemo_kotlin.screen.setting.setting.NotificationSettingScreen
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
@@ -63,13 +63,13 @@ import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
 import com.example.haemo_kotlin.viewModel.chat.NotificationViewModel
 import com.example.haemo_kotlin.viewModel.user.LoginViewModel
+import com.example.haemo_kotlin.viewModel.user.ReportViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 @HiltAndroidApp
 class MainApplication : Application() {
@@ -129,7 +129,7 @@ class MainActivity : ComponentActivity() {
     private val wishViewModel by viewModels<WishViewModel>()
     private val chatViewModel by viewModels<ChatViewModel>()
     private val chatListViewModel by viewModels<ChatListViewModel>()
-    private val notificationViewModel by viewModels<NotificationViewModel>()
+    private val reportViewModel by viewModels<ReportViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -371,6 +371,18 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.NotificationSettingScreen.route) {
                             NotificationSettingScreen(mainViewModel, navController)
+                        }
+                        composable(
+                            NavigationRoutes.ReportScreen.route, arguments = listOf(
+                                navArgument("nickname") { type = NavType.StringType }
+                            )
+                        ) { entry ->
+                            ReportScreen(
+                                mainViewModel = mainViewModel,
+                                nickname = entry.arguments?.getString("nickname")!!,
+                                reportViewModel = reportViewModel,
+                                navController = navController
+                            )
                         }
                     }
                 }

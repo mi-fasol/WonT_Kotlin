@@ -1,4 +1,4 @@
-package com.example.haemo_kotlin.screen.setting
+package com.example.haemo_kotlin.screen.setting.setting
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
