@@ -153,7 +153,7 @@ fun SearchBarWidget(
                     .padding(16.dp)
                     .weight(5f),
                 singleLine = true,
-                textStyle = TextStyle(color = Color.Black) // Text color
+                textStyle = TextStyle(color = Color.Black)
             )
             Box(
                 contentAlignment = Alignment.Center,

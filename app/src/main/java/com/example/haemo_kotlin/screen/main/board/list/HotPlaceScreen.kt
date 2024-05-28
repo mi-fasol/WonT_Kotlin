@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
@@ -74,6 +75,7 @@ fun HotPlaceScreen(
     LaunchedEffect(Unit) {
         postViewModel.getHotPlacePost()
         postViewModel.getPopularHotPlace()
+        wishViewModel.getWishHotPlace()
     }
 
     Scaffold(
@@ -186,6 +188,10 @@ fun PopularPlaceItem(
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
     var isWished by remember { mutableStateOf(false) }
+    val painter =
+        if (post.imageList != null) rememberAsyncImagePainter(model = post.imageList[0]) else painterResource(
+            id = R.drawable.dummy_image
+        )
 
     LaunchedEffect(post) {
         isWished = wishViewModel.checkIsWishedPost(post.hpId, 3)
@@ -220,7 +226,7 @@ fun PopularPlaceItem(
                     elevation = 0.dp,
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.dummy_image),
+                        painter = painter,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -305,6 +311,10 @@ fun HotPlaceBoardItem(
     val screenHeight = config.screenHeightDp
     var isWished by remember { mutableStateOf(false) }
     val wishPlaces = wishViewModel.wishHotPlaceList.collectAsState().value
+    val painter =
+        if (post.imageList != null) rememberAsyncImagePainter(model = post.imageList[0]) else painterResource(
+            id = R.drawable.dummy_image
+        )
     LaunchedEffect(Unit) {
         isWished = false
         wishViewModel.getWishHotPlace()
@@ -330,7 +340,7 @@ fun HotPlaceBoardItem(
             elevation = 0.dp,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.dummy_image),
+                painter = painter,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
