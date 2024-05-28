@@ -3,11 +3,9 @@ package com.example.haemo_kotlin.screen.main.user
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,23 +25,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.screen.setting.setting.WithdrawInfo
+import com.example.haemo_kotlin.model.retrofit.user.MailState
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ContentEnterField
 import com.example.haemo_kotlin.util.DropDownMenu
 import com.example.haemo_kotlin.util.SettingScreenAppBar
-import com.example.haemo_kotlin.util.categoryList
 import com.example.haemo_kotlin.util.reportList
 import com.example.haemo_kotlin.viewModel.MainViewModel
-import com.example.haemo_kotlin.viewModel.user.ReportState
 import com.example.haemo_kotlin.viewModel.user.ReportViewModel
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -102,7 +96,7 @@ fun ReportTitle(nickname: String, mainColor: Int) {
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = colorResource(
-                id = R.color.reportScreenTitleTextColor
+                id = R.color.mainGreyColor
             ),
             modifier = Modifier.padding(bottom = 30.dp)
         )
@@ -144,10 +138,10 @@ fun ReportButton(mainColor: Int, nickname: String, reportViewModel: ReportViewMo
 
     LaunchedEffect(reportState){
         when(reportState){
-            ReportState.SUCCESS -> {
+            MailState.SUCCESS -> {
                 successDialog.value = true
             }
-            ReportState.FAIL -> {
+            MailState.FAIL -> {
                 failDialog.value = true
             }
             else -> {
@@ -191,7 +185,7 @@ fun ReportButton(mainColor: Int, nickname: String, reportViewModel: ReportViewMo
             successDialog.value = false
             reportViewModel.reportReason.value = ""
             reportViewModel.content.value = ""
-            reportViewModel.reportState.value = ReportState.NONE
+            reportViewModel.reportState.value = MailState.NONE
             navController.popBackStack()
         }
     }

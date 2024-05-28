@@ -2,6 +2,7 @@ package com.example.haemo_kotlin.repository
 
 import android.util.Log
 import com.example.haemo_kotlin.model.retrofit.user.LoginModel
+import com.example.haemo_kotlin.model.retrofit.user.MailModel
 import com.example.haemo_kotlin.model.retrofit.user.UserModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.RetrofitClient
@@ -35,7 +36,7 @@ class UserRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.deleteUser(uId)
     }
 
-    suspend fun sendReport(content: String) : Response<Boolean>{
-        return retrofitClient.service.sendReport(content)
+    suspend fun sendMail(mailModel: MailModel) : Response<Boolean>{
+        return retrofitClient.service.sendMail(mailModel)
     }
 }

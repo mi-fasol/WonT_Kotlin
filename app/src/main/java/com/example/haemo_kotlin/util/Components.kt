@@ -96,7 +96,7 @@ fun EnterInfo(type: String, mainColor: Int, value: String, onValueChange: (Strin
     ) {
         Column(
         ) {
-            androidx.compose.material3.Text(type, fontWeight = FontWeight.SemiBold)
+            Text(type, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
@@ -309,7 +309,7 @@ fun CommentWidgetItem(
     val screenHeight = config.screenHeightDp
 
     val replyList by viewModel.replyList.collectAsState()
-    val replys = replyList[comment.cId]
+    val replies = replyList[comment.cId]
 
     val userList by viewModel.replyUserList.collectAsState()
     val replyUsers = userList[comment.cId]
@@ -403,9 +403,9 @@ fun CommentWidgetItem(
             }
         }
 
-        if (replys != null) {
-            if (replys.isNotEmpty()) {
-                replys.forEachIndexed { index, reply ->
+        if (replies != null) {
+            if (replies.isNotEmpty()) {
+                replies.forEachIndexed { index, reply ->
                     if (replyUsers != null) {
                         replyUsers.getOrNull(index)
                             ?.let { ReplyWidgetItem(reply, it, navController) }

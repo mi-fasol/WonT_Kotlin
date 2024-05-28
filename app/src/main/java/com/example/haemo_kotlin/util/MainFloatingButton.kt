@@ -36,7 +36,7 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 
 @Composable
-fun PostRegisterFloatingButton(navController: NavController) {
+fun MainFloatingButton(navController: NavController) {
     var isExpanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)

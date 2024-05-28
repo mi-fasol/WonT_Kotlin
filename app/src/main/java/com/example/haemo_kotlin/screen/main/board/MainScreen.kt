@@ -7,7 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
@@ -16,7 +15,7 @@ import com.example.haemo_kotlin.screen.main.board.list.HotPlaceScreen
 import com.example.haemo_kotlin.screen.main.board.list.MeetingScreen
 import com.example.haemo_kotlin.screen.setting.MyPageScreen
 import com.example.haemo_kotlin.util.MainBottomNavigation
-import com.example.haemo_kotlin.util.PostRegisterFloatingButton
+import com.example.haemo_kotlin.util.MainFloatingButton
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
@@ -61,7 +60,7 @@ fun MainScreen(
         bottomBar = {
             MainBottomNavigation(navController = navController, onItemSelected = onItemSelected, mainViewModel)
         },
-        floatingActionButton = { PostRegisterFloatingButton(navController) }
+        floatingActionButton = { MainFloatingButton(navController) }
     ) { innerPadding ->
         Box(
             modifier = Modifier

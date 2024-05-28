@@ -12,10 +12,10 @@ import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.retrofit.post.PostModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.LoginModel
+import com.example.haemo_kotlin.model.retrofit.user.MailModel
 import com.example.haemo_kotlin.model.retrofit.user.UserModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.model.retrofit.wish.WishListModel
-import com.example.haemo_kotlin.model.retrofit.wish.WishListResponseModel
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -63,8 +63,8 @@ interface ApiService {
     @DELETE("user/delete/{id}")
     suspend fun deleteUser(@Path("id") id: Int): Response<Boolean>
 
-    @POST("report")
-    suspend fun sendReport(@Body content: String): Response<Boolean>
+    @POST("mail")
+    suspend fun sendMail(@Body mailModel: MailModel): Response<Boolean>
 
     // 소모임
 
