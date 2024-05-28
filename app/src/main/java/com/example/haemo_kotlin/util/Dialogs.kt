@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.util
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +33,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.viewModel.user.InquiryViewModel
 
 @Composable
 fun YesOrNoDialog(
@@ -150,6 +153,62 @@ fun ConfirmDialog(
                         .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                 ) {
                     Text("확인")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun InquiryTypeDialog(
+    inquiryViewModel: InquiryViewModel,
+    onClicked: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = { },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        )
+    ) {
+        Card(
+            shape = RoundedCornerShape(15.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+        ) {
+            Column {
+                Text(
+                    text = "문의 유형을 선택해 주세요.",
+                    color = colorResource(id = R.color.mainGreyColor).copy(0.5f),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(vertical = 10.dp, horizontal = 20.dp)
+                        .fillMaxWidth()
+                )
+                inquiryTypeList.forEach { type ->
+                    Box(
+                        Modifier
+                            .clickable {
+                                inquiryViewModel.inquiryType.value = type
+                                onClicked()
+                            }
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            type, color = colorResource(id = R.color.inquiryScreenTitleTextColor),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(vertical = 7.dp, horizontal = 20.dp)
+                        )
+                    }
+                    if(inquiryTypeList.indexOf(type) == 3){
+                        Spacer(Modifier.height(5.dp))
+                    }
                 }
             }
         }

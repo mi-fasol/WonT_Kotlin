@@ -101,7 +101,7 @@ fun PostRegisterScreen(
                 navController
             )
             Column(modifier = Modifier.padding(horizontal = 40.dp)) {
-                TextEnterField("모임", title, mainColor) {
+                TextEnterRowField("모임", title, mainColor) {
                     viewModel.title.value = it
                 }
                 PostInfo(viewModel, mainColor)

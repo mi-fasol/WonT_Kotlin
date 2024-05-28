@@ -36,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -50,8 +49,7 @@ import com.example.haemo_kotlin.util.ContentEnterField
 import com.example.haemo_kotlin.util.PostRegisterAppBar
 import com.example.haemo_kotlin.util.PostRegisterButton
 import com.example.haemo_kotlin.util.DropDownMenu
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
-import com.example.haemo_kotlin.util.TextEnterField
+import com.example.haemo_kotlin.util.TextEnterRowField
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.util.personList
 import com.example.haemo_kotlin.viewModel.MainViewModel
@@ -130,14 +128,14 @@ fun ClubPostRegisterScreen(
                 navController
             )
             Column(modifier = Modifier.padding(horizontal = 40.dp)) {
-                TextEnterField(
+                TextEnterRowField(
                     "소모임",
                     mainColor = mainColor,
                     value = title
                 ) {
                     viewModel.title.value = it
                 }
-                TextEnterField(
+                TextEnterRowField(
                     "설명",
                     mainColor = mainColor,
                     value = description

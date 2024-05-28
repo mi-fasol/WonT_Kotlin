@@ -23,6 +23,6 @@
     <color name="settingScreenBackgroundColor">#FFF4F4F4</color>
     <color name="settingScreenTitleTextColor">#FF969696</color>
     <color name="settingScreenColorTextColor">#FF7E7E7E</color>
-    <color name="settingScreenContentTextColor">#FF515151</color>
-    <color name="reportScreenTitleTextColor">#FF515151</color>
+    <color name="inquiryScreenTitleTextColor">#FF686868</color>
+    <color name="inquiryScreenContentTextColor">#FFBEBEBE</color>
 </resources>

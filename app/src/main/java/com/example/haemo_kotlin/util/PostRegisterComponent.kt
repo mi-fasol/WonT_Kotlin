@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.util
 
 import android.annotation.SuppressLint
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,6 +22,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -37,8 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,7 +51,12 @@ import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @Composable
-fun TextEnterField(type: String, value: String, mainColor: Int, onValueChange: (String) -> Unit) {
+fun TextEnterRowField(
+    type: String,
+    value: String,
+    mainColor: Int,
+    onValueChange: (String) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,6 +89,65 @@ fun TextEnterField(type: String, value: String, mainColor: Int, onValueChange: (
         }
     }
 }
+
+@Composable
+fun TextEnterColumnField(
+    title: String,
+    value: String,
+    hasButton: Boolean,
+    onValueChange: (String) -> Unit,
+    onClicked: () -> Unit
+) {
+    val pattern = Patterns.EMAIL_ADDRESS
+    val contentColor = if (!hasButton && !pattern.matcher(value).matches())
+        colorResource(id = R.color.pinkMainColor)
+    else colorResource(id = R.color.inquiryScreenContentTextColor)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 40.dp)
+    ) {
+        Text(
+            title,
+            fontSize = 17.5.sp,
+            fontWeight = FontWeight.Bold,
+            color = colorResource(id = R.color.inquiryScreenTitleTextColor),
+            modifier = Modifier.padding(bottom = 5.dp)
+        )
+        Column {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(bottom = 5.dp),
+                    textStyle = TextStyle(
+                        color = contentColor,
+                        fontSize = 17.5.sp,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    readOnly = hasButton
+                )
+                if (hasButton) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = colorResource(R.color.inquiryScreenContentTextColor),
+                        modifier = Modifier.clickable { onClicked() }
+                    )
+                }
+            }
+            Divider()
+        }
+    }
+}
+
 
 @Composable
 fun DropDownMenu(

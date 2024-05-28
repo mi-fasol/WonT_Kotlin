@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.*
@@ -98,10 +97,10 @@ fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, mainViewModel: 
         Column {
             PostRegisterAppBar("핫플 등록", mainColor, navController)
             Column(modifier = Modifier.padding(horizontal = 40.dp)) {
-                TextEnterField("장소", title, mainColor) {
+                TextEnterRowField("장소", title, mainColor) {
                     viewModel.title.value = it
                 }
-                TextEnterField("설명", description, mainColor) {
+                TextEnterRowField("설명", description, mainColor) {
                     viewModel.description.value = it
                 }
                 HotPlacePostInfo(viewModel)

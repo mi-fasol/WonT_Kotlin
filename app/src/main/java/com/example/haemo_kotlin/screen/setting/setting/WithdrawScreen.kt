@@ -113,7 +113,7 @@ fun WithdrawInfo(mainColor: Int, userViewModel: UserViewModel) {
                 Text(
                     "안내사항을 모두 확인했습니다.",
                     fontSize = 14.sp,
-                    color = colorResource(id = R.color.settingScreenContentTextColor)
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
             }
             WithdrawButton(userViewModel, mainColor, isChecked)
@@ -146,7 +146,7 @@ fun WithdrawCheckNotification(mainColor: Int) {
                 Text(
                     "지금 탈퇴하시면 서비스 악용 방지를 위해 재가입이 3일 간 제한됩니다.",
                     fontSize = 14.sp,
-                    color = colorResource(id = R.color.settingScreenContentTextColor)
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
             }
             Row(
@@ -163,7 +163,7 @@ fun WithdrawCheckNotification(mainColor: Int) {
                 Text(
                     "프로필, 작성글 등 모든 개인 정보가 삭제됩니다.",
                     fontSize = 14.sp,
-                    color = colorResource(id = R.color.settingScreenContentTextColor)
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
             }
         }
