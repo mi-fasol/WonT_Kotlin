@@ -197,8 +197,7 @@ fun MyPageListItem(
     val screenHeight = configuration.screenHeightDp
     val textList = listOf("내가 작성한 글", "찜한 장소", "가고 싶은 모임", "가고 싶은 소모임")
     val navigationRoutes = listOf(
-        NavigationRoutes.ThemeChangeScreen.route,
-//        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
+        NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
         NavigationRoutes.MyWishHotPlaceScreen.createRoute(uId),
         NavigationRoutes.MyWishMeetingScreen.createRoute(uId),
         NavigationRoutes.MyWishClubScreen.createRoute(uId)

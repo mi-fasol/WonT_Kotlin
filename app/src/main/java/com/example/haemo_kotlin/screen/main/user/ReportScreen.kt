@@ -189,6 +189,9 @@ fun ReportButton(mainColor: Int, nickname: String, reportViewModel: ReportViewMo
     if (successDialog.value) {
         ConfirmDialog(content = "신고가 완료되었습니다.", mainColor = mainColor) {
             successDialog.value = false
+            reportViewModel.reportReason.value = ""
+            reportViewModel.content.value = ""
+            reportViewModel.reportState.value = ReportState.NONE
             navController.popBackStack()
         }
     }
