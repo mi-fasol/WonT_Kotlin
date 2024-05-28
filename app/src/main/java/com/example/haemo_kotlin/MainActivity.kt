@@ -50,6 +50,7 @@ import com.example.haemo_kotlin.screen.setting.detail.MyWishMeetingScreen
 import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.screen.main.user.InquiryScreen
 import com.example.haemo_kotlin.screen.main.user.ReportScreen
 import com.example.haemo_kotlin.screen.setting.setting.NotificationSettingScreen
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -62,6 +63,7 @@ import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatViewModel
 import com.example.haemo_kotlin.viewModel.chat.NotificationViewModel
+import com.example.haemo_kotlin.viewModel.user.InquiryViewModel
 import com.example.haemo_kotlin.viewModel.user.LoginViewModel
 import com.example.haemo_kotlin.viewModel.user.ReportViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
@@ -130,6 +132,7 @@ class MainActivity : ComponentActivity() {
     private val chatViewModel by viewModels<ChatViewModel>()
     private val chatListViewModel by viewModels<ChatListViewModel>()
     private val reportViewModel by viewModels<ReportViewModel>()
+    private val inquiryViewModel by viewModels<InquiryViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -383,6 +386,9 @@ class MainActivity : ComponentActivity() {
                                 reportViewModel = reportViewModel,
                                 navController = navController
                             )
+                        }
+                        composable(NavigationRoutes.InquiryScreen.route) {
+                            InquiryScreen(mainViewModel, inquiryViewModel, navController)
                         }
                     }
                 }

@@ -61,4 +61,6 @@ sealed class NavigationRoutes(val route: String) {
     data object ReportScreen : NavigationRoutes("reportScreen/{nickname}") {
         fun createRoute(nickname: String) = "reportScreen/$nickname"
     }
+
+    data object InquiryScreen : NavigationRoutes("inquiryScreen")
 }

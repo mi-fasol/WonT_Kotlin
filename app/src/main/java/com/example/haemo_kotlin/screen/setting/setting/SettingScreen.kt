@@ -153,7 +153,7 @@ fun AppInfoField(
 ) {
     val textList = listOf("문의하기", "공지사항")
     val navRoutes = listOf(
-        NavigationRoutes.ThemeChangeScreen.route,
+        NavigationRoutes.InquiryScreen.route,
         NavigationRoutes.ThemeChangeScreen.route
     )
 
@@ -236,7 +236,7 @@ fun SettingContentField(
         ) {
             Text(
                 text,
-                color = colorResource(id = R.color.settingScreenContentTextColor),
+                color = colorResource(id = R.color.mainGreyColor),
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .weight(12f),
@@ -289,7 +289,7 @@ fun AppVersionField(mainColor: Int, mainViewModel: MainViewModel) {
         ) {
             Text(
                 "앱 버전",
-                color = colorResource(id = R.color.settingScreenContentTextColor),
+                color = colorResource(id = R.color.mainGreyColor),
                 modifier = Modifier
                     .padding(start = 10.dp),
                 fontSize = 16.sp
