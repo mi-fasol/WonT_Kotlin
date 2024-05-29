@@ -63,4 +63,6 @@ sealed class NavigationRoutes(val route: String) {
     }
 
     data object InquiryScreen : NavigationRoutes("inquiryScreen")
+
+    data object NoticeRegisterScreen : NavigationRoutes("noticeRegisterScreen")
 }

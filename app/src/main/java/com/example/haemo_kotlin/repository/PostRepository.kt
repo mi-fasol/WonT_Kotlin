@@ -6,6 +6,8 @@ import com.example.haemo_kotlin.model.retrofit.post.ClubPostModel
 import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.retrofit.post.NoticeModel
+import com.example.haemo_kotlin.model.retrofit.post.NoticeResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.PostModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
@@ -78,5 +80,23 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
 
     suspend fun getCommentListByPId(pId: Int): Response<List<CommentResponseModel>> {
         return retrofitClient.service.getCommentListByPId(pId)
+    }
+
+    // notice
+
+    suspend fun registerNotice(notice: NoticeModel): Response<NoticeResponseModel> {
+        return retrofitClient.service.registerNotice(notice)
+    }
+
+    suspend fun getNotice(): Response<List<NoticeResponseModel>> {
+        return retrofitClient.service.getNotice()
+    }
+
+    suspend fun getNoticeById(id: Int): Response<NoticeResponseModel> {
+        return retrofitClient.service.getNoticeById(id)
+    }
+
+    suspend fun changeNoticeVisibility(id: Int): Response<Boolean> {
+        return retrofitClient.service.changeNoticeVisibility(id)
     }
 }
