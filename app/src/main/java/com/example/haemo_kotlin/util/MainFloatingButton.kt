@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.model.retrofit.user.Role
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 
 @Composable
@@ -40,6 +41,13 @@ fun MainFloatingButton(navController: NavController) {
     var isExpanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val user = SharedPreferenceUtil(context).getUser()
+    val userFloatList = listOf("모임 등록", "소모임 등록", "핫플 등록")
+    val userNavFloatList = listOf(
+        NavigationRoutes.PostRegisterScreen.route,
+        NavigationRoutes.ClubPostRegisterScreen.route,
+        NavigationRoutes.HotPlacePostRegisterScreen.route
+    )
 
     Column(horizontalAlignment = Alignment.End) {
         if (isExpanded) {
@@ -48,29 +56,23 @@ fun MainFloatingButton(navController: NavController) {
                     .wrapContentSize()
                     .padding(vertical = 10.dp)
             ) {
-                FabItem(
-                    title = "모임 등록",
-                    mainColor,
-                    onClicked = {
-                        navController.navigate(NavigationRoutes.PostRegisterScreen.route)
+                if (user.role != Role.ADMIN) {
+                    userFloatList.forEach {
+                        FabItem(
+                            title = it,
+                            mainColor = mainColor,
+                            onClicked = {
+                                navController.navigate(userNavFloatList[userFloatList.indexOf(it)])
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                FabItem(
-                    title = "소모임 등록",
-                    mainColor,
-                    onClicked = {
-                        navController.navigate(NavigationRoutes.ClubPostRegisterScreen.route)
+                } else {
+                    FabItem(title = "공지 작성", mainColor = mainColor) {
+                        navController.navigate(NavigationRoutes.NoticeRegisterScreen.route)
                     }
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                FabItem(
-                    title = "핫플 등록",
-                    mainColor,
-                    onClicked = {
-                        navController.navigate(NavigationRoutes.HotPlacePostRegisterScreen.route)
-                    }
-                )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
             }
         }
         FloatingActionButton(
@@ -87,12 +89,10 @@ fun MainFloatingButton(navController: NavController) {
     }
 }
 
-
 @Composable
 fun FabItem(title: String, mainColor: Int, onClicked: () -> Unit) {
     val conf = LocalConfiguration.current
     val screenWidth = conf.screenWidthDp
-    val screenHeight = conf.screenHeightDp
 
     Box(
         contentAlignment = Alignment.Center,
