@@ -50,6 +50,7 @@ import com.example.haemo_kotlin.screen.setting.detail.MyWishMeetingScreen
 import com.example.haemo_kotlin.service.MyFirebaseMessagingService
 import com.example.haemo_kotlin.ui.theme.Haemo_kotlinTheme
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.screen.main.board.detail.NoticeDetailScreen
 import com.example.haemo_kotlin.screen.main.board.list.NoticeScreen
 import com.example.haemo_kotlin.screen.main.board.register.NoticeRegisterScreen
 import com.example.haemo_kotlin.screen.main.user.InquiryScreen
@@ -399,6 +400,19 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.NoticeScreen.route) {
                             NoticeScreen(noticeViewModel, mainViewModel, navController)
+                        }
+                        composable(
+                            NavigationRoutes.NoticeDetailScreen.route,
+                            arguments = listOf(
+                                navArgument("nId") { type = NavType.IntType }
+                            )
+                        ) { entry ->
+                            NoticeDetailScreen(
+                                noticeViewModel = noticeViewModel,
+                                mainViewModel = mainViewModel,
+                                navController = navController,
+                                nId = entry.arguments?.getInt("nId")!!
+                            )
                         }
                     }
                 }

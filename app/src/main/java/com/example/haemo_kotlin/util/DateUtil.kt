@@ -9,7 +9,12 @@ import java.util.Locale
 fun convertDate(input: String): String {
     val parsedDate = parseDateString(input, "yyyy년 MM월 dd일 hh시")
     val formattedDate = formatDate(parsedDate, "yyyy.MM.dd hh시")
+    return formattedDate
+}
 
+fun convertDateWithoutHour(input: String): String {
+    val parsedDate = parseDateString(input, "yyyy년 MM월 dd일 hh시")
+    val formattedDate = formatDate(parsedDate, "yyyy.MM.dd")
     return formattedDate
 }
 

@@ -153,10 +153,12 @@ fun NoticeListItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .fillMaxWidth().fillMaxWidth().background(Color.White)
+                .fillMaxWidth()
+                .fillMaxWidth()
+                .background(Color.White)
                 .height((screenHeight / 10).dp)
                 .clickable {
-//                navController.navigate(NavigationRoutes.MeetingPostDetailScreen.createRoute(post.pId))
+                    navController.navigate(NavigationRoutes.NoticeDetailScreen.createRoute(notice.nId))
                 }
         ) {
             Column(

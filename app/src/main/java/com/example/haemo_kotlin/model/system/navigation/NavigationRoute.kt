@@ -67,4 +67,8 @@ sealed class NavigationRoutes(val route: String) {
     data object NoticeRegisterScreen : NavigationRoutes("noticeRegisterScreen")
 
     data object NoticeScreen : NavigationRoutes("noticeScreen")
+
+    data object NoticeDetailScreen : NavigationRoutes("noticeDetailScreen/{nId}") {
+        fun createRoute(nId: Int) = "noticeDetailScreen/$nId"
+    }
 }
