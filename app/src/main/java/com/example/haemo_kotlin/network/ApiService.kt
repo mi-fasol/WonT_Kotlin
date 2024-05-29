@@ -9,6 +9,8 @@ import com.example.haemo_kotlin.model.retrofit.post.ClubPostModel
 import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.HotPlacePostModel
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.retrofit.post.NoticeModel
+import com.example.haemo_kotlin.model.retrofit.post.NoticeResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.PostModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.LoginModel
@@ -228,4 +230,18 @@ interface ApiService {
     @Multipart
     @POST("image/list")
     suspend fun uploadImageList(@Part files: List<MultipartBody.Part>): Response<List<String>>
+
+    // 공지사항
+    @POST("notice")
+    suspend fun registerNotice(@Body notice: NoticeModel): Response<NoticeResponseModel>
+
+    @GET("notice")
+    suspend fun getNotice(): Response<List<NoticeResponseModel>>
+
+    @GET("notice/{id}")
+    suspend fun getNoticeById(@Path("id") id: Int): Response<NoticeResponseModel>
+
+    @GET("notice/visible/{id}")
+    suspend fun changeNoticeVisibility(@Path("id") id: Int): Response<Boolean>
+
 }
