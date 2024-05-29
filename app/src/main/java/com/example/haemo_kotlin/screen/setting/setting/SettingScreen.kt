@@ -154,7 +154,7 @@ fun AppInfoField(
     val textList = listOf("문의하기", "공지사항")
     val navRoutes = listOf(
         NavigationRoutes.InquiryScreen.route,
-        NavigationRoutes.ThemeChangeScreen.route
+        NavigationRoutes.NoticeScreen.route
     )
 
     Column() {

@@ -69,7 +69,7 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
 @Composable
 fun SettingScreenAppBar(text: String, mainColor: Int, navController: NavController) {
     CenterAlignedTopAppBar(
-        title = { Text(text = text, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = Color.White) },
+        title = { Text(text = text, fontSize = 19.sp, fontWeight = FontWeight.ExtraBold, color = Color.White) },
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
