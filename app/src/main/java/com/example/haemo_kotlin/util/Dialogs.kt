@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.util
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -162,10 +163,11 @@ fun ConfirmDialog(
 @Composable
 fun InquiryTypeDialog(
     inquiryViewModel: InquiryViewModel,
+    onClickCancel: () -> Unit,
     onClicked: () -> Unit
 ) {
     Dialog(
-        onDismissRequest = { },
+        onDismissRequest = { onClickCancel() },
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = true,
@@ -206,8 +208,62 @@ fun InquiryTypeDialog(
                             modifier = Modifier.padding(vertical = 7.dp, horizontal = 20.dp)
                         )
                     }
-                    if(inquiryTypeList.indexOf(type) == 3){
+                    if (inquiryTypeList.indexOf(type) == 3) {
                         Spacer(Modifier.height(5.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PostManagementDialog(
+    onClickCancel: () -> Unit,
+    onClicked: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = { onClickCancel() },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        )
+    ) {
+        Card(
+            shape = RoundedCornerShape(15.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(horizontal = 10.dp)
+        ) {
+            Column(
+
+                Modifier.padding(vertical = 15.dp)
+            ) {
+                postManagementList.forEach { type ->
+                    Box(
+                        Modifier
+                            .clickable {
+                                when (type) {
+                                    "임시 마감" -> {
+                                        Log.d("미란", "임시 마감")
+                                    }
+
+                                    "수정하기" -> Log.d("미란", "수정하기")
+                                    else -> onClicked()
+                                }
+                            }
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            type, color = colorResource(id = R.color.inquiryScreenTitleTextColor),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+                        )
                     }
                 }
             }

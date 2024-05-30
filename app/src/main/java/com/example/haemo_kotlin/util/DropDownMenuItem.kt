@@ -22,3 +22,5 @@ val reportList = listOf("부적절한 말(욕설/혐오/음란)", "허위 사실
 val inquiryTypeList = listOf("이용 문의", "버그 신고", "기능 추가 요청", "기타 문의")
 
 val noticeTypeList = listOf("안내", "공지", "업데이트")
+
+val postManagementList = listOf("임시 마감", "수정하기", "삭제하기")

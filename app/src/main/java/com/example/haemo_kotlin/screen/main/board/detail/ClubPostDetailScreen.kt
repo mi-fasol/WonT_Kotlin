@@ -45,6 +45,7 @@ import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
+import com.example.haemo_kotlin.util.PostManagementDialog
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -77,6 +78,7 @@ fun ClubPostDetailScreen(
     val context = LocalContext.current
     var openDialog by remember { mutableStateOf(false) }
     val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    var menuDialog by remember { mutableStateOf(false) }
     var askToDeleteDialog by remember { mutableStateOf(false) }
     var deleteCompleteDialog by remember { mutableStateOf(false) }
     var deleteFailDialog by remember { mutableStateOf(false) }
@@ -89,12 +91,18 @@ fun ClubPostDetailScreen(
         }
     }
 
+    if(menuDialog){
+        PostManagementDialog({ menuDialog = false }) {
+            askToDeleteDialog = true
+        }
+
+    }
+
     if (askToDeleteDialog) {
         YesOrNoDialog(content = "게시물을 삭제하시겠습니까?", mainColor, onClickCancel = {
             askToDeleteDialog = false
         }) {
             postViewModel.deletePost(pId)
-            askToDeleteDialog = false
         }
     }
 
@@ -106,16 +114,16 @@ fun ClubPostDetailScreen(
         }
     }
 
-    if (deleteCompleteDialog) {
-        ConfirmDialog(content = "삭제가 완료되었습니다.", mainColor = mainColor) {
-            navController.popBackStack()
+    if (deleteFailDialog) {
+        ConfirmDialog(content = "실패했습니다.\n다시 시도해 주세요.", mainColor = mainColor) {
             mainViewModel.beforeStack.value = "clubScreen"
+            deleteFailDialog = false
         }
     }
 
     LaunchedEffect(deleteState) {
-        if(deleteState == true) deleteCompleteDialog = true
-        else if(deleteState == false) deleteFailDialog = true
+        if (deleteState == true) deleteCompleteDialog = true
+        else if (deleteState == false) deleteFailDialog = true
     }
 
 
@@ -147,7 +155,7 @@ fun ClubPostDetailScreen(
                     user,
                     navController
                 ) {
-                    askToDeleteDialog = true
+                    menuDialog = true
                 }
             }
         },

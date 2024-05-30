@@ -120,7 +120,9 @@ fun EnterInquiryInfo(inquiryViewModel: InquiryViewModel) {
     }
 
     if (openInquiryDialog.value) {
-        InquiryTypeDialog(inquiryViewModel) {
+        InquiryTypeDialog(inquiryViewModel, {
+            openInquiryDialog.value = false
+        }) {
             openInquiryDialog.value = false
         }
     }

@@ -49,6 +49,7 @@ import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
+import com.example.haemo_kotlin.util.PostManagementDialog
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -91,6 +92,7 @@ fun MeetingPostDetailScreen(
     val deleteState by postViewModel.postDeleteState.collectAsState()
     var askToDeleteDialog by remember { mutableStateOf(false) }
     var deleteCompleteDialog by remember { mutableStateOf(false) }
+    var menuDialog by remember { mutableStateOf(false) }
     var deleteFailDialog by remember { mutableStateOf(false) }
 
     if (openDialog) {
@@ -101,12 +103,17 @@ fun MeetingPostDetailScreen(
         }
     }
 
+    if(menuDialog){
+        PostManagementDialog({ menuDialog = false }) {
+            askToDeleteDialog = true
+        }
+    }
+
     if (askToDeleteDialog) {
         YesOrNoDialog(content = "게시물을 삭제하시겠습니까?", mainColor, onClickCancel = {
             askToDeleteDialog = false
         }) {
             postViewModel.deletePost(pId)
-            askToDeleteDialog = false
         }
     }
 
@@ -118,10 +125,10 @@ fun MeetingPostDetailScreen(
         }
     }
 
-    if (deleteCompleteDialog) {
-        ConfirmDialog(content = "삭제가 완료되었습니다.", mainColor = mainColor) {
-            navController.popBackStack()
+    if (deleteFailDialog) {
+        ConfirmDialog(content = "실패했습니다.\n다시 시도해 주세요.", mainColor = mainColor) {
             mainViewModel.beforeStack.value = "clubScreen"
+            deleteFailDialog = false
         }
     }
 
@@ -172,7 +179,7 @@ fun MeetingPostDetailScreen(
                     user,
                     navController
                 ) {
-                    askToDeleteDialog = true
+                    menuDialog = true
                 }
             }
         },
