@@ -265,4 +265,12 @@ class WishViewModel @Inject constructor(
             }
         }
     }
+
+    fun changeWish(pId : Int, type: Int, wished: Boolean){
+        if(wished){
+            deleteWishList(pId, type)
+        } else{
+            addWishList(pId, type)
+        }
+    }
 }
