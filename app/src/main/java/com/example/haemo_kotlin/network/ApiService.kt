@@ -45,6 +45,9 @@ interface ApiService {
     @GET("post/24hours")
     suspend fun getTodayPost(): Response<List<PostResponseModel>>
 
+    @DELETE("post/delete/{id}")
+    suspend fun deletePost(@Path("id") id: Int): Response<Boolean>
+
     // 유저
 
     @POST("login")
@@ -82,11 +85,13 @@ interface ApiService {
     @GET("club/clubPostUser/{id}")
     suspend fun getClubPostingUser(@Path("id") idx: Int): Response<UserResponseModel>
 
+    @DELETE("club/delete/{id}")
+    suspend fun deleteClubPost(@Path("id") id: Int): Response<Boolean>
+
     // 핫플레이스
 
     @POST("hot")
     suspend fun registerHotPlacePost(@Body post: HotPlacePostModel): Response<HotPlaceResponsePostModel>
-
 
     @GET("hot")
     suspend fun getHotPlacePost(): Response<List<HotPlaceResponsePostModel>>
@@ -99,6 +104,9 @@ interface ApiService {
 
     @GET("hot/hotPlaceUser/{id}")
     suspend fun getHotPlacePostingUser(@Path("id") idx: Int): Response<UserResponseModel>
+
+    @DELETE("hot/delete/{id}")
+    suspend fun deleteHotPlacePost(@Path("id") id: Int): Response<Boolean>
 
     // 모임 참여
 

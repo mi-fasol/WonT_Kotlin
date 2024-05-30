@@ -45,6 +45,10 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.getPostingUser(pId)
     }
 
+    suspend fun deletePost(id: Int): Response<Boolean> {
+        return retrofitClient.service.deletePost(id)
+    }
+
 
     suspend fun getClubPost(): Response<List<ClubPostResponseModel>> {
         return retrofitClient.service.getClubPost()
@@ -56,6 +60,10 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
 
     suspend fun getClubPostingUser(pId: Int): Response<UserResponseModel> {
         return retrofitClient.service.getClubPostingUser(pId)
+    }
+
+    suspend fun deleteClubPost(id: Int): Response<Boolean> {
+        return retrofitClient.service.deleteClubPost(id)
     }
 
     suspend fun getHotPlacePost(): Response<List<HotPlaceResponsePostModel>> {
@@ -72,6 +80,10 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
 
     suspend fun getHotPlacePostingUser(pId: Int): Response<UserResponseModel> {
         return retrofitClient.service.getHotPlacePostingUser(pId)
+    }
+
+    suspend fun deleteHotPlacePost(id: Int): Response<Boolean> {
+        return retrofitClient.service.deleteHotPlacePost(id)
     }
 
     suspend fun getJoinUserByPId(pId: Int): Response<List<AcceptationResponseModel>> {
