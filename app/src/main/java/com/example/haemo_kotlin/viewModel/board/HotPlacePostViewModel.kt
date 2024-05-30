@@ -47,7 +47,6 @@ class HotPlacePostViewModel @Inject constructor(
     private val _user = MutableStateFlow<UserResponseModel?>(null)
     val user: StateFlow<UserResponseModel?> = _user.asStateFlow()
 
-
     // State
 
     private val _hotPlacePostState =
@@ -70,6 +69,10 @@ class HotPlacePostViewModel @Inject constructor(
     val hotPlacePostRegisterState: StateFlow<Resource<HotPlaceResponsePostModel>> =
         _hotPlacePostRegisterState.asStateFlow()
 
+    private val _hotPlacePostDeleteState =
+        MutableStateFlow<Boolean?>(null)
+    val hotPlacePostDeleteState: StateFlow<Boolean?> =
+        _hotPlacePostDeleteState.asStateFlow()
 
     val title = MutableStateFlow("")
     val description = MutableStateFlow("")
@@ -210,6 +213,24 @@ class HotPlacePostViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
 //                    _registerState.value = Resource.success(response.body())
                     _hotPlacePostRegisterState.value = Resource.success(response.body())
+                    Log.d("게시물 전송", response.body().toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    fun deletePost(pId: Int) {
+        viewModelScope.launch {
+            _hotPlacePostDeleteState.value = null
+            try {
+                val response = repository.deleteClubPost(pId)
+                if (response.isSuccessful && response.body() != null) {
+                    _hotPlacePostDeleteState.value = response.body()!!
                     Log.d("게시물 전송", response.body().toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"

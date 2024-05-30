@@ -55,6 +55,11 @@ class ClubPostViewModel @Inject constructor(
     val clubPostRegisterState: StateFlow<Resource<ClubPostResponseModel>> =
         _clubPostRegisterState.asStateFlow()
 
+    private val _clubPostDeleteState =
+        MutableStateFlow<Boolean?>(null)
+    val clubPostDeleteState: StateFlow<Boolean?> =
+        _clubPostDeleteState.asStateFlow()
+
     // 유효성 검사
 
     val title = MutableStateFlow("")
@@ -262,7 +267,7 @@ class ClubPostViewModel @Inject constructor(
     fun registerPost() {
         val today = getCurrentDateTime()
 
-        val _image = if(image.value == "") null else image.value
+        val _image = if (image.value == "") null else image.value
 
         val post = ClubPostModel(
             title.value,
@@ -282,6 +287,24 @@ class ClubPostViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
 //                    _registerState.value = Resource.success(response.body())
                     _clubPostRegisterState.value = Resource.success(response.body())
+                    Log.d("게시물 전송", response.body().toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    fun deletePost(pId: Int) {
+        viewModelScope.launch {
+            _clubPostDeleteState.value = null
+            try {
+                val response = repository.deleteClubPost(pId)
+                if (response.isSuccessful && response.body() != null) {
+                    _clubPostDeleteState.value = response.body()
                     Log.d("게시물 전송", response.body().toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"

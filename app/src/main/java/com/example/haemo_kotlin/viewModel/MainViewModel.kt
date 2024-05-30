@@ -49,6 +49,7 @@ class MainViewModel @Inject constructor(
     val colorState: StateFlow<Int> = _colorState
 
     val role = SharedPreferenceUtil(context).getString("role", "USER")
+    val nickname = SharedPreferenceUtil(context).getString("nickname", "")
 
     private val _notificationState =
         MutableStateFlow(SharedPreferenceUtil(context).getBoolean("notification", false))

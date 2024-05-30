@@ -79,6 +79,29 @@ class PostViewModel @Inject constructor(
     val postModelListState: StateFlow<Resource<List<PostResponseModel>>> =
         _postModelListState.asStateFlow()
 
+    private val _postDeleteState =
+        MutableStateFlow<Boolean?>(null)
+    val postDeleteState: StateFlow<Boolean?> =
+        _postDeleteState.asStateFlow()
+
+    fun deletePost(pId: Int) {
+        viewModelScope.launch {
+            _postDeleteState.value = null
+            try {
+                val response = repository.deleteClubPost(pId)
+                if (response.isSuccessful && response.body() != null) {
+                    _postDeleteState.value = response.body()!!
+                    Log.d("게시물 전송", response.body().toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
     // 필드 유효성 검사
     var isValid: StateFlow<Boolean> =
         combine(
@@ -213,7 +236,8 @@ class PostViewModel @Inject constructor(
 
     fun registerPost() {
         val today = getCurrentDateTime()
-        deadline.value = "${deadlineYear.value} ${deadlineMonth.value} ${deadlineDay.value} ${deadlineTime.value}"
+        deadline.value =
+            "${deadlineYear.value} ${deadlineMonth.value} ${deadlineDay.value} ${deadlineTime.value}"
         val post = PostModel(
             title.value,
             content.value,

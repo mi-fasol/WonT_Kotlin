@@ -49,6 +49,7 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.CommentWidget
+import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
@@ -85,9 +86,49 @@ fun HotPlacePostDetailScreen(
     val wished = remember { mutableStateOf(isWished) }
     val context = LocalContext.current
     val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
-
     var openDialog by remember {
         mutableStateOf(false)
+    }
+    val deleteState by postViewModel.hotPlacePostDeleteState.collectAsState()
+    var askToDeleteDialog by remember { mutableStateOf(false) }
+    var deleteCompleteDialog by remember { mutableStateOf(false) }
+    var deleteFailDialog by remember { mutableStateOf(false) }
+
+    if (openDialog) {
+        YesOrNoDialog(content = "답글 작성을 취소하시겠습니까?", mainColor, onClickCancel = {
+            openDialog = false
+        }) {
+            commentViewModel.isReply.value = false
+        }
+    }
+
+    if (askToDeleteDialog) {
+        YesOrNoDialog(content = "게시물을 삭제하시겠습니까?", mainColor, onClickCancel = {
+            askToDeleteDialog = false
+        }) {
+            postViewModel.deletePost(pId)
+            askToDeleteDialog = false
+        }
+    }
+
+    if (deleteCompleteDialog) {
+        ConfirmDialog(content = "삭제가 완료되었습니다.", mainColor = mainColor) {
+            navController.popBackStack()
+            mainViewModel.beforeStack.value = "clubScreen"
+            deleteCompleteDialog = false
+        }
+    }
+
+    if (deleteCompleteDialog) {
+        ConfirmDialog(content = "삭제가 완료되었습니다.", mainColor = mainColor) {
+            navController.popBackStack()
+            mainViewModel.beforeStack.value = "clubScreen"
+        }
+    }
+
+    LaunchedEffect(deleteState) {
+        if(deleteState == true) deleteCompleteDialog = true
+        else if(deleteState == false) deleteFailDialog = true
     }
 
     if (openDialog) {
@@ -114,7 +155,7 @@ fun HotPlacePostDetailScreen(
 
     Scaffold(
         topBar = {
-            if (post != null) {
+            if (post != null && user != null) {
                 PostDetailAppBar(
                     commentViewModel,
                     wishViewModel,
@@ -122,8 +163,11 @@ fun HotPlacePostDetailScreen(
                     mainColor,
                     post.hpId,
                     3,
+                    user,
                     navController
-                )
+                ){
+                    askToDeleteDialog = true
+                }
             }
         },
         bottomBar = {

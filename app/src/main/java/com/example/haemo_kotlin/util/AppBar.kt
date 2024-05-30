@@ -11,7 +11,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarColors
@@ -33,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
@@ -70,7 +74,14 @@ fun BackArrowAppBar(appBarText: String, navController: NavController) {
 @Composable
 fun SettingScreenAppBar(text: String, mainColor: Int, navController: NavController) {
     CenterAlignedTopAppBar(
-        title = { Text(text = text, fontSize = 19.sp, fontWeight = FontWeight.ExtraBold, color = Color.White) },
+        title = {
+            Text(
+                text = text,
+                fontSize = 19.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White
+            )
+        },
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
@@ -157,13 +168,16 @@ fun PostDetailAppBar(
     mainColor: Int,
     pId: Int,
     type: Int,
-    navController: NavController
+    user: UserResponseModel,
+    navController: NavController,
+    onClicked: () -> Unit
 ) {
     val isWished by wishViewModel.isWished.collectAsState()
     val postId by wishViewModel.pId.collectAsState()
     var wished by remember { mutableStateOf(false) }
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
+    val role = mainViewModel.role
 
     LaunchedEffect(Unit, key2 = isWished) {
         wishViewModel.pId.value = pId
@@ -204,27 +218,41 @@ fun PostDetailAppBar(
             )
         },
         actions = {
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        if (!wished) {
-                            wishViewModel.addWishList(pId, type)
-                        } else {
-                            wishViewModel.deleteWishList(pId, type)
+            if (role == "USER" && user.nickname != mainViewModel.nickname)
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            wishViewModel.changeWish(pId, type, wished)
+                            wished = !wished
                         }
-                        wished = !wished
-                    }
-                },
-            ) {
-                Icon(
-                    icon,
-                    contentDescription = null,
-                    tint = iconColor,
-                    modifier = Modifier
-                        .size((screenWidth / 20).dp)
+                    },
+                ) {
+                    Icon(
+                        icon,
+                        contentDescription = null,
+                        tint = iconColor,
+                        modifier = Modifier
+                            .size((screenWidth / 20).dp)
 
-                )
-            }
+                    )
+                }
+            else
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            onClicked()
+                        }
+                    },
+                ) {
+                    Icon(
+                        Icons.Default.Menu,
+                        contentDescription = null,
+                        tint = colorResource(id = R.color.mainGreyColor),
+                        modifier = Modifier
+                            .size((screenWidth / 18).dp)
+
+                    )
+                }
         },
         elevation = 0.dp,
         backgroundColor = Color.White,
@@ -341,9 +369,21 @@ fun ChatRoomAppBar(nickname: String, mainColor: Int, navController: NavControlle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoticeScreenAppBar(text: String, mainColor: Int, navController: NavController, onClicked : () -> Unit) {
+fun NoticeScreenAppBar(
+    text: String,
+    mainColor: Int,
+    navController: NavController,
+    onClicked: () -> Unit
+) {
     CenterAlignedTopAppBar(
-        title = { Text(text = text, fontSize = 19.sp, fontWeight = FontWeight.ExtraBold, color = Color.White) },
+        title = {
+            Text(
+                text = text,
+                fontSize = 19.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White
+            )
+        },
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()

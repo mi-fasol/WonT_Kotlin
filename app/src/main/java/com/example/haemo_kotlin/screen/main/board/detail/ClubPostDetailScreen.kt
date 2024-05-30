@@ -42,6 +42,7 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.CommentWidget
+import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostUserInfo
@@ -52,6 +53,7 @@ import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ClubPostDetailScreen(
@@ -71,13 +73,13 @@ fun ClubPostDetailScreen(
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
     val isWished = wishViewModel.isWished.collectAsState().value
-    val wished = remember { mutableStateOf(isWished) }
+    val deleteState by postViewModel.clubPostDeleteState.collectAsState()
     val context = LocalContext.current
+    var openDialog by remember { mutableStateOf(false) }
     val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
-
-    var openDialog by remember {
-        mutableStateOf(false)
-    }
+    var askToDeleteDialog by remember { mutableStateOf(false) }
+    var deleteCompleteDialog by remember { mutableStateOf(false) }
+    var deleteFailDialog by remember { mutableStateOf(false) }
 
     if (openDialog) {
         YesOrNoDialog(content = "답글 작성을 취소하시겠습니까?", mainColor, onClickCancel = {
@@ -86,6 +88,36 @@ fun ClubPostDetailScreen(
             commentViewModel.isReply.value = false
         }
     }
+
+    if (askToDeleteDialog) {
+        YesOrNoDialog(content = "게시물을 삭제하시겠습니까?", mainColor, onClickCancel = {
+            askToDeleteDialog = false
+        }) {
+            postViewModel.deletePost(pId)
+            askToDeleteDialog = false
+        }
+    }
+
+    if (deleteCompleteDialog) {
+        ConfirmDialog(content = "삭제가 완료되었습니다.", mainColor = mainColor) {
+            navController.popBackStack()
+            mainViewModel.beforeStack.value = "clubScreen"
+            deleteCompleteDialog = false
+        }
+    }
+
+    if (deleteCompleteDialog) {
+        ConfirmDialog(content = "삭제가 완료되었습니다.", mainColor = mainColor) {
+            navController.popBackStack()
+            mainViewModel.beforeStack.value = "clubScreen"
+        }
+    }
+
+    LaunchedEffect(deleteState) {
+        if(deleteState == true) deleteCompleteDialog = true
+        else if(deleteState == false) deleteFailDialog = true
+    }
+
 
     LaunchedEffect(isWished) {
         wishViewModel.checkIsWishedPost(pId, 2)
@@ -101,9 +133,10 @@ fun ClubPostDetailScreen(
         commentViewModel.getReplyUser(repliedCId, 2)
     }
 
+
     Scaffold(
         topBar = {
-            if (post != null) {
+            if (post != null && user != null) {
                 PostDetailAppBar(
                     commentViewModel,
                     wishViewModel,
@@ -111,8 +144,11 @@ fun ClubPostDetailScreen(
                     mainColor,
                     pId,
                     2,
+                    user,
                     navController
-                )
+                ) {
+                    askToDeleteDialog = true
+                }
             }
         },
         bottomBar = {
