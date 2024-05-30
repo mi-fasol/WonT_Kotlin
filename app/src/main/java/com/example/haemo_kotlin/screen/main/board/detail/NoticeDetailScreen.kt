@@ -1,7 +1,6 @@
 package com.example.haemo_kotlin.screen.main.board.detail
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,12 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -29,20 +24,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
-import com.example.haemo_kotlin.model.retrofit.comment.reply.ReplyResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.NoticeResponseModel
-import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
-import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.util.PostDetailAppBar
-import com.example.haemo_kotlin.util.SendReply
+import com.example.haemo_kotlin.util.NoticeScreenAppBar
 import com.example.haemo_kotlin.util.SettingScreenAppBar
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
-import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.util.convertDateWithoutHour
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.NoticeViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @SuppressLint("MutableCollectionMutableState")
@@ -53,26 +44,37 @@ fun NoticeDetailScreen(
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
-    val notice = noticeViewModel.noticeModel.collectAsState().value
+    val notice by noticeViewModel.noticeModel.collectAsState()
+    val visibility by noticeViewModel.visibility.collectAsState()
     val postState = noticeViewModel.noticeModelState.collectAsState().value
     val mainColor by mainViewModel.colorState.collectAsState()
+    val role = mainViewModel.role
+    val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    LaunchedEffect(notice, true) {
+    LaunchedEffect(notice, Unit, key3 = visibility) {
         launch {
             noticeViewModel.getNoticeById(nId)
         }
     }
     Scaffold(
         topBar = {
-            SettingScreenAppBar(text = "공지사항", mainColor = mainColor, navController = navController)
+            if (role == "USER")
+                SettingScreenAppBar(
+                    text = "공지사항",
+                    mainColor = mainColor,
+                    navController = navController
+                )
+            else
+                NoticeScreenAppBar(
+                    text = "공지사항",
+                    mainColor = mainColor,
+                    navController = navController
+                ) {
+                    coroutineScope.launch {
+                        noticeViewModel.changeVisibility(nId)
+                    }
+                }
         }
-//        modifier = Modifier.pointerInput(Unit) {
-//            awaitEachGesture {
-//                if (isReply) {
-//                    openDialog = true
-//                }
-//            }
-//        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -96,9 +98,12 @@ fun NoticeDetailScreen(
                 }
 
                 else -> {
-                    Column(modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
-                        if (notice != null)
-                            NoticeInfo(notice, mainColor)
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 20.dp)
+                    ) {
+                        notice?.let { NoticeInfo(it, mainColor) }
                     }
                 }
             }
@@ -110,7 +115,7 @@ fun NoticeDetailScreen(
 fun NoticeInfo(notice: NoticeResponseModel, mainColor: Int) {
     val type = if (notice.category != "공지") "${notice.category} 공지" else "일반 공지"
     val convertedDate = convertDateWithoutHour(notice.date)
-    Column() {
+    Column {
         Text(
             notice.title,
             color = colorResource(id = mainColor),

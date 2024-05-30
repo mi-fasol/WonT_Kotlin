@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarColors
@@ -335,5 +336,44 @@ fun ChatRoomAppBar(nickname: String, mainColor: Int, navController: NavControlle
         },
         backgroundColor = Color.Transparent,
         elevation = 0.dp
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NoticeScreenAppBar(text: String, mainColor: Int, navController: NavController, onClicked : () -> Unit) {
+    CenterAlignedTopAppBar(
+        title = { Text(text = text, fontSize = 19.sp, fontWeight = FontWeight.ExtraBold, color = Color.White) },
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(35.dp)
+                )
+            }
+        },
+        colors = TopAppBarColors(
+            containerColor = colorResource(id = mainColor),
+            scrolledContainerColor = Color.Transparent,
+            navigationIconContentColor = Color.White,
+            titleContentColor = Color.White,
+            actionIconContentColor = Color.Transparent
+        ),
+        actions = {
+            IconButton(onClick = {
+                onClicked()
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(35.dp)
+                )
+            }
+        }
     )
 }

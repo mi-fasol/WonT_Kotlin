@@ -34,6 +34,9 @@ class NoticeViewModel @Inject constructor(
     private val _noticeModel = MutableStateFlow<NoticeResponseModel?>(null)
     val noticeModel: StateFlow<NoticeResponseModel?> = _noticeModel
 
+    private val _visibility = MutableStateFlow<Boolean?>(null)
+    val visibility: StateFlow<Boolean?> = _visibility
+
     private val _noticeModelState =
         MutableStateFlow<Resource<NoticeResponseModel>>(Resource.loading(null))
     val noticeModelState: StateFlow<Resource<NoticeResponseModel>> = _noticeModelState.asStateFlow()
@@ -60,7 +63,8 @@ class NoticeViewModel @Inject constructor(
 
     private val _noticeRegisterState =
         MutableStateFlow<Resource<NoticeResponseModel>>(Resource.loading(null))
-    val noticeRegisterState: StateFlow<Resource<NoticeResponseModel>> = _noticeRegisterState.asStateFlow()
+    val noticeRegisterState: StateFlow<Resource<NoticeResponseModel>> =
+        _noticeRegisterState.asStateFlow()
 
     suspend fun getAllNotice() {
         viewModelScope.launch {
@@ -105,9 +109,27 @@ class NoticeViewModel @Inject constructor(
         }
     }
 
+    suspend fun changeVisibility(id: Int) {
+        viewModelScope.launch {
+            _noticeModelState.value = Resource.loading(null)
+            try {
+                val response = repository.changeNoticeVisibility(id)
+                if (response.isSuccessful && response.body() != null) {
+                    val post = response.body()
+                    _visibility.value = post!!
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
     fun registerNotice() {
         val today = getCurrentDateTime()
-        
+
         val notice = NoticeModel(
             title = title.value,
             content = content.value,
@@ -115,7 +137,7 @@ class NoticeViewModel @Inject constructor(
             visibility = true,
             date = today
         )
-        
+
         viewModelScope.launch {
             _noticeRegisterState.value = Resource.loading(null)
             try {
