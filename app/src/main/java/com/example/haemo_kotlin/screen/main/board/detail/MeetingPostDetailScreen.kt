@@ -278,6 +278,7 @@ fun PostInfo(
     val screenHeight = config.screenHeightDp
     val screenWidth = config.screenWidthDp
     val acceptState by postViewModel.myAcceptState.collectAsState()
+    val deleteAcceptState by postViewModel.acceptDeleteState.collectAsState()
     val registerState by postViewModel.acceptRegisterState.collectAsState()
     val requestDialog = remember { mutableStateOf(false) }
     val deleteRequestDialog = remember { mutableStateOf(false) }
@@ -286,7 +287,7 @@ fun PostInfo(
     val notMyPost = (nickname != mainViewModel.nickname)
     // val notMyPost = (nickname != mainViewModel.nickname || mainViewModel.role == "ADMIN")
 
-    LaunchedEffect(registerState){
+    LaunchedEffect(registerState, deleteAcceptState){
         postViewModel.getAcceptationByPId(post.pId)
     }
 
@@ -360,6 +361,16 @@ fun PostInfo(
         }) {
             postViewModel.sendAcceptationRequest(post.pId)
             requestDialog.value = false
+            completeWorkDialog.value = true
+        }
+    }
+
+        if (deleteRequestDialog.value) {
+        YesOrNoDialog(content = "참여를 취소하시겠습니까?", mainColor = mainColor, onClickCancel = {
+            deleteRequestDialog.value = false
+        }) {
+            postViewModel.deleteAcceptationRequest(post.pId)
+            deleteRequestDialog.value = false
             completeWorkDialog.value = true
         }
     }

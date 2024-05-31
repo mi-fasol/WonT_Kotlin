@@ -20,4 +20,8 @@ class AcceptationRepository @Inject constructor(private val retrofitClient: Retr
     suspend fun registerAcceptRequest(accept: AcceptationModel): Response<AcceptationResponseModel> {
         return retrofitClient.service.registerAcceptRequest(accept)
     }
+
+    suspend fun deleteAcceptRequest(uId: Int, pId: Int): Response<Boolean> {
+        return retrofitClient.service.deleteAcceptRequest(uId, pId)
+    }
 }

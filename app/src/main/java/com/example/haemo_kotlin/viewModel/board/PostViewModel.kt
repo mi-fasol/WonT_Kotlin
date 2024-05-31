@@ -128,7 +128,12 @@ class PostViewModel @Inject constructor(
 
     private val _acceptRegisterState =
         MutableStateFlow<Resource<AcceptationResponseModel>>(Resource.loading(null))
-    val acceptRegisterState: StateFlow<Resource<AcceptationResponseModel>> = _acceptRegisterState.asStateFlow()
+    val acceptRegisterState: StateFlow<Resource<AcceptationResponseModel>> =
+        _acceptRegisterState.asStateFlow()
+
+    private val _acceptDeleteState =
+        MutableStateFlow<Resource<Boolean?>>(Resource.loading(null))
+    val acceptDeleteState: StateFlow<Resource<Boolean?>> = _acceptDeleteState.asStateFlow()
 
     suspend fun getPost() {
         viewModelScope.launch {
@@ -300,11 +305,30 @@ class PostViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            _postRegisterState.value = Resource.loading(null)
+            _acceptRegisterState.value = Resource.loading(null)
             try {
                 val response = acceptationRepository.registerAcceptRequest(accept)
                 if (response.isSuccessful && response.body() != null) {
                     _acceptRegisterState.value = Resource.success(response.body())
+                    Log.d("참여 요청 완료", response.body().toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteAcceptationRequest(pId: Int) {
+        val uId = SharedPreferenceUtil(context).getInt("uId", 0)
+        viewModelScope.launch {
+            _acceptDeleteState.value = Resource.loading(null)
+            try {
+                val response = acceptationRepository.deleteAcceptRequest(uId, pId)
+                if (response.isSuccessful && response.body() != null) {
+                    _acceptDeleteState.value = Resource.success(response.body())
                     Log.d("참여 요청 완료", response.body().toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"

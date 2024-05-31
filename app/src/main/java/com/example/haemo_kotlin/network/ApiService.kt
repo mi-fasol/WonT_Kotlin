@@ -255,4 +255,10 @@ interface ApiService {
 
     @POST("accept")
     suspend fun registerAcceptRequest(@Body accept: AcceptationModel): Response<AcceptationResponseModel>
+
+    @DELETE("accept/delete/{uId}/{pId}")
+    suspend fun deleteAcceptRequest(
+        @Path("uId") uId: Int,
+        @Path("pId") pId: Int
+    ): Response<Boolean>
 }
