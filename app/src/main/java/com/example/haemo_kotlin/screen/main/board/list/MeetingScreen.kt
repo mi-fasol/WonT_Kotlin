@@ -239,7 +239,7 @@ fun MeetingBoardItem(
     val accept = postViewModel.acceptationList.collectAsState().value
 
     LaunchedEffect(true) {
-        postViewModel.getAcceptationUserByPId(post.pId)
+        postViewModel.getAcceptationByPId(post.pId)
     }
 
     Box(

@@ -86,10 +86,6 @@ class PostRepository @Inject constructor(private val retrofitClient: RetrofitCli
         return retrofitClient.service.deleteHotPlacePost(id)
     }
 
-    suspend fun getJoinUserByPId(pId: Int): Response<List<AcceptationResponseModel>> {
-        return retrofitClient.service.getJoinUserByPId(pId)
-    }
-
     suspend fun getCommentListByPId(pId: Int): Response<List<CommentResponseModel>> {
         return retrofitClient.service.getCommentListByPId(pId)
     }

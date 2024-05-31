@@ -21,13 +21,11 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,9 +50,9 @@ import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostManagementDialog
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.example.haemo_kotlin.viewModel.board.AcceptState
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
@@ -70,18 +68,18 @@ fun MeetingPostDetailScreen(
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
-    val post = postViewModel.postModel.collectAsState().value
-    val user = postViewModel.user.collectAsState().value
-    val postState = postViewModel.postModelState.collectAsState().value
-    val accept = postViewModel.acceptationList.collectAsState().value
-    val commentList = commentViewModel.commentList.collectAsState().value
-    val content = commentViewModel.content.collectAsState().value
-    val isReply = commentViewModel.isReply.collectAsState().value
-    val replyList = commentViewModel.replyList.collectAsState().value
-    val repliedCId = commentViewModel.commentId.collectAsState().value
+    val post by postViewModel.postModel.collectAsState()
+    val user by postViewModel.user.collectAsState()
+    val postState by postViewModel.postModelState.collectAsState()
+    val accept by postViewModel.acceptationList.collectAsState()
+    val commentList by commentViewModel.commentList.collectAsState()
+    val content by commentViewModel.content.collectAsState()
+    val isReply by commentViewModel.isReply.collectAsState()
+    val replyList by commentViewModel.replyList.collectAsState()
+    val repliedCId by commentViewModel.commentId.collectAsState()
     val isWished by wishViewModel.isWished.collectAsState()
     val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     var replies by remember { mutableStateOf<List<ReplyResponseModel>>(emptyList()) }
     var replyUserList by remember { mutableStateOf<List<UserResponseModel>>(emptyList()) }
@@ -103,7 +101,7 @@ fun MeetingPostDetailScreen(
         }
     }
 
-    if(menuDialog){
+    if (menuDialog) {
         PostManagementDialog({ menuDialog = false }) {
             askToDeleteDialog = true
         }
@@ -132,6 +130,10 @@ fun MeetingPostDetailScreen(
         }
     }
 
+    LaunchedEffect(accept) {
+        postViewModel.getAcceptationByPId(pId)
+    }
+
     LaunchedEffect(deleteState) {
         if (deleteState == true) deleteCompleteDialog = true
         else if (deleteState == false) deleteFailDialog = true
@@ -142,12 +144,13 @@ fun MeetingPostDetailScreen(
             wishViewModel.checkIsWishedPost(pId, 1)
             postViewModel.getOnePost(pId)
             postViewModel.getPostingUser(pId)
-            postViewModel.getAcceptationUserByPId(pId)
+            postViewModel.getAcceptationByPId(pId)
             commentViewModel.getCommentListByPId(pId, 1)
             commentViewModel.getReplyListByCId(repliedCId, 1)
             commentViewModel.getReplyUser(repliedCId, 1)
         }
         Log.d("미란 라리루루루", replies.toString())
+        Log.d("미란 라라라참여", accept.toString())
     }
 
     LaunchedEffect(isWished) {
@@ -174,9 +177,9 @@ fun MeetingPostDetailScreen(
                     wishViewModel,
                     mainViewModel,
                     mainColor,
-                    post.pId,
+                    post!!.pId,
                     1,
-                    user,
+                    user!!,
                     navController
                 ) {
                     menuDialog = true
@@ -229,8 +232,15 @@ fun MeetingPostDetailScreen(
                 else -> {
                     if (user != null && post != null) {
                         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                            PostUserInfo(user, post.date, navController)
-                            PostInfo(post, mainColor, accept)
+                            PostUserInfo(user!!, post!!.date, navController)
+                            PostInfo(
+                                post!!,
+                                mainColor,
+                                accept,
+                                user!!.nickname,
+                                postViewModel,
+                                mainViewModel
+                            )
                             Spacer(modifier = Modifier.height(15.dp))
                             Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
                             CommentWidget(
@@ -256,10 +266,37 @@ fun MeetingPostDetailScreen(
 }
 
 @Composable
-fun PostInfo(post: PostResponseModel, mainColor: Int, accept: List<AcceptationResponseModel>) {
+fun PostInfo(
+    post: PostResponseModel,
+    mainColor: Int,
+    accept: List<AcceptationResponseModel>,
+    nickname: String,
+    postViewModel: PostViewModel,
+    mainViewModel: MainViewModel
+) {
     val config = LocalConfiguration.current
     val screenHeight = config.screenHeightDp
     val screenWidth = config.screenWidthDp
+    val acceptState by postViewModel.myAcceptState.collectAsState()
+    val registerState by postViewModel.acceptRegisterState.collectAsState()
+    val requestDialog = remember { mutableStateOf(false) }
+    val deleteRequestDialog = remember { mutableStateOf(false) }
+    val acceptUserDialog = remember { mutableStateOf(false) }
+    val completeWorkDialog = remember { mutableStateOf(false) }
+    val notMyPost = (nickname != mainViewModel.nickname)
+    // val notMyPost = (nickname != mainViewModel.nickname || mainViewModel.role == "ADMIN")
+
+    LaunchedEffect(registerState){
+        postViewModel.getAcceptationByPId(post.pId)
+    }
+
+    val text = if (notMyPost) {
+        when (acceptState) {
+            AcceptState.NONE -> "참여하기"
+            AcceptState.REQUEST -> "참여대기"
+            else -> "참여완료"
+        }
+    } else "명단확인"
 
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Text(
@@ -280,7 +317,7 @@ fun PostInfo(post: PostResponseModel, mainColor: Int, accept: List<AcceptationRe
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                "${accept.size}/${post.person}",
+                "${accept.filter { it.acceptation }.size}/${post.person}",
                 color = colorResource(mainColor),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(4.dp)
@@ -294,16 +331,42 @@ fun PostInfo(post: PostResponseModel, mainColor: Int, accept: List<AcceptationRe
                         colorResource(mainColor),
                         RoundedCornerShape(23.dp)
                     )
-                    .clickable { },
+                    .clickable {
+                        if (notMyPost) {
+                            if (text == "참여하기") {
+                                requestDialog.value = true
+                            } else {
+                                deleteRequestDialog.value = true
+                            }
+                        } else {
+                            acceptUserDialog.value = true
+                        }
+                    },
             ) {
                 Text(
-                    "참여완료",
+                    text,
                     fontSize = 9.sp,
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center
                 )
             }
+        }
+    }
+
+    if (requestDialog.value) {
+        YesOrNoDialog(content = "모임에 참여하시겠습니까?", mainColor = mainColor, onClickCancel = {
+            requestDialog.value = false
+        }) {
+            postViewModel.sendAcceptationRequest(post.pId)
+            requestDialog.value = false
+            completeWorkDialog.value = true
+        }
+    }
+
+    if (completeWorkDialog.value) {
+        ConfirmDialog(content = "완료되었습니다.", mainColor = mainColor) {
+            completeWorkDialog.value = false
         }
     }
 }

@@ -4,12 +4,14 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haemo_kotlin.model.retrofit.acceptation.AcceptationModel
 import com.example.haemo_kotlin.model.retrofit.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.retrofit.comment.comment.CommentResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.PostModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.repository.AcceptationRepository
 import com.example.haemo_kotlin.repository.PostRepository
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.getCurrentDateTime
@@ -24,10 +26,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+enum class AcceptState {
+    NONE, REQUEST, JOIN
+}
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val repository: PostRepository,
+    private val acceptationRepository: AcceptationRepository,
     private val context: Context
 ) : ViewModel() {
 
@@ -50,6 +56,9 @@ class PostViewModel @Inject constructor(
 
     private val _acceptationList = MutableStateFlow<List<AcceptationResponseModel>>(emptyList())
     val acceptationList: StateFlow<List<AcceptationResponseModel>> = _acceptationList
+
+    private val _myAcceptState = MutableStateFlow(AcceptState.NONE)
+    val myAcceptState: StateFlow<AcceptState> = _myAcceptState
 
     private val _commentList = MutableStateFlow<List<CommentResponseModel>>(emptyList())
     val commentList: StateFlow<List<CommentResponseModel>> = _commentList
@@ -116,6 +125,10 @@ class PostViewModel @Inject constructor(
     private val _postRegisterState =
         MutableStateFlow<Resource<PostResponseModel>>(Resource.loading(null))
     val postRegisterState: StateFlow<Resource<PostResponseModel>> = _postRegisterState.asStateFlow()
+
+    private val _acceptRegisterState =
+        MutableStateFlow<Resource<AcceptationResponseModel>>(Resource.loading(null))
+    val acceptRegisterState: StateFlow<Resource<AcceptationResponseModel>> = _acceptRegisterState.asStateFlow()
 
     suspend fun getPost() {
         viewModelScope.launch {
@@ -200,13 +213,25 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    suspend fun getAcceptationUserByPId(pId: Int) {
+    suspend fun getAcceptationByPId(pId: Int) {
+        _myAcceptState.value = AcceptState.NONE
         viewModelScope.launch {
             try {
-                val response = repository.getJoinUserByPId(pId)
+                val response = acceptationRepository.getJoinUserByPId(pId)
                 if (response.isSuccessful && response.body() != null) {
                     val acceptList = response.body()
                     _acceptationList.value = acceptList!!
+                    _acceptationList.value.forEach {
+                        if (
+                            it.uId == SharedPreferenceUtil(context).getInt("uId", 0)) {
+                            if (it.acceptation) {
+                                _myAcceptState.value = AcceptState.JOIN
+                            } else {
+                                _myAcceptState.value = AcceptState.REQUEST
+                            }
+                        }
+                    }
+                    Log.d("미란 참여 테이블", acceptationList.value.toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
@@ -257,6 +282,30 @@ class PostViewModel @Inject constructor(
 //                    _registerState.value = Resource.success(response.body())
                     _postRegisterState.value = Resource.success(response.body())
                     Log.d("게시물 전송", response.body().toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
+
+    fun sendAcceptationRequest(pId: Int) {
+        val accept = AcceptationModel(
+            pId = pId,
+            uId = SharedPreferenceUtil(context).getInt("uId", 0),
+            acceptation = false
+        )
+
+        viewModelScope.launch {
+            _postRegisterState.value = Resource.loading(null)
+            try {
+                val response = acceptationRepository.registerAcceptRequest(accept)
+                if (response.isSuccessful && response.body() != null) {
+                    _acceptRegisterState.value = Resource.success(response.body())
+                    Log.d("참여 요청 완료", response.body().toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "에러 응답: $errorBody")

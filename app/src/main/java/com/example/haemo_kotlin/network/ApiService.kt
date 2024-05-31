@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.network
 
+import com.example.haemo_kotlin.model.retrofit.acceptation.AcceptationModel
 import com.example.haemo_kotlin.model.retrofit.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.retrofit.comment.comment.CommentModel
 import com.example.haemo_kotlin.model.retrofit.comment.comment.CommentResponseModel
@@ -252,4 +253,6 @@ interface ApiService {
     @GET("notice/visible/{id}")
     suspend fun changeNoticeVisibility(@Path("id") id: Int): Response<Boolean>
 
+    @POST("accept")
+    suspend fun registerAcceptRequest(@Body accept: AcceptationModel): Response<AcceptationResponseModel>
 }
