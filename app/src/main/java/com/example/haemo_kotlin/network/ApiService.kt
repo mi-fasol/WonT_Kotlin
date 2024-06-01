@@ -264,4 +264,10 @@ interface ApiService {
         @Path("uId") uId: Int,
         @Path("pId") pId: Int
     ): Response<Boolean>
+
+    @GET("accept/accept/{uId}/{pId}")
+    suspend fun allowUserToJoin(
+        @Path("uId") uId: Int,
+        @Path("pId") pId: Int
+    ): Response<Boolean>
 }

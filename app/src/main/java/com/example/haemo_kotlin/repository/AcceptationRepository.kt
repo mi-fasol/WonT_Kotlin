@@ -28,4 +28,8 @@ class AcceptationRepository @Inject constructor(private val retrofitClient: Retr
     suspend fun deleteAcceptRequest(uId: Int, pId: Int): Response<Boolean> {
         return retrofitClient.service.deleteAcceptRequest(uId, pId)
     }
+
+    suspend fun allowUserToJoin(uId: Int, pId: Int): Response<Boolean> {
+        return retrofitClient.service.allowUserToJoin(uId, pId)
+    }
 }

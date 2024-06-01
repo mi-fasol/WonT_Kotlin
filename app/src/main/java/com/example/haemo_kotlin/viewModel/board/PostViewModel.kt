@@ -354,4 +354,22 @@ class PostViewModel @Inject constructor(
             }
         }
     }
+
+    fun allowUserToJoin(pId: Int, uId: Int) {
+        viewModelScope.launch {
+            _allowUserState.value = Resource.loading(null)
+            try {
+                val response = acceptationRepository.allowUserToJoin(uId, pId)
+                if (response.isSuccessful && response.body() != null) {
+                    _allowUserState.value = Resource.success(response.body())
+                    Log.d("참여 요청 완료", response.body().toString())
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API Error", "에러 응답: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "요청 중 예외 발생: ${e.message}")
+            }
+        }
+    }
 }
