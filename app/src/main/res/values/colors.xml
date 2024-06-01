@@ -26,4 +26,5 @@
     <color name="inquiryScreenTitleTextColor">#FF686868</color>
     <color name="inquiryScreenContentTextColor">#FFBEBEBE</color>
     <color name="noticeListScreenTextColor">#FFC0C0C0</color>
+    <color name="attendFalseColor">#FFB3B3B3</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.haemo_kotlin.screen.main.board.list
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -150,7 +152,12 @@ fun Today24HoursBoard(
 }
 
 @Composable
-fun TodayNotice(post: PostResponseModel, viewModel: MainViewModel, mainColor: Int, navController: NavController) {
+fun TodayNotice(
+    post: PostResponseModel,
+    viewModel: MainViewModel,
+    mainColor: Int,
+    navController: NavController
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -208,6 +215,15 @@ fun MeetingBoard(
     mainColor: Int,
     navController: NavController
 ) {
+    val accept by viewModel.attendeeModelList.collectAsState()
+
+    LaunchedEffect(true, Unit) {
+        postList.forEach { post ->
+            viewModel.getAcceptationByPId(post.pId)
+            viewModel.getAttendeeByPId(post.pId)
+        }
+    }
+
     when (postList.size) {
         0 -> {
             ErrorScreen("등록된 글이 아직 없어요!")
@@ -216,7 +232,16 @@ fun MeetingBoard(
         else -> {
             LazyColumn {
                 items(postList.size) { idx ->
-                    MeetingBoardItem(postList[idx], viewModel, mainViewModel, mainColor, navController)
+                    val post = postList[idx]
+                    val acceptedUser = accept[post.pId]?.filter { it.acceptation }?.size ?: 0
+                    MeetingBoardItem(
+                        postList[idx],
+                        acceptedUser,
+                        viewModel,
+                        mainViewModel,
+                        mainColor,
+                        navController
+                    )
                     Divider()
                 }
             }
@@ -227,20 +252,15 @@ fun MeetingBoard(
 @Composable
 fun MeetingBoardItem(
     post: PostResponseModel,
+    acceptedUser: Int,
     postViewModel: PostViewModel,
     viewModel: MainViewModel,
     mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
-    val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
     val date = convertDate(post.date)
-    val accept = postViewModel.acceptationList.collectAsState().value
-
-    LaunchedEffect(true) {
-        postViewModel.getAcceptationByPId(post.pId)
-    }
 
     Box(
         modifier = Modifier
@@ -271,7 +291,7 @@ fun MeetingBoardItem(
                         .fillMaxWidth()
                 )
                 Text(
-                    "${accept.size}/${post.person}", fontSize = 12.5.sp,
+                    "$acceptedUser/${post.person}", fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(id = mainColor),
                     modifier = Modifier

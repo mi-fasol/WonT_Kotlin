@@ -43,6 +43,7 @@ import com.example.haemo_kotlin.model.retrofit.comment.reply.ReplyResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.util.AttendUserDialog
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ErrorScreen
@@ -71,7 +72,7 @@ fun MeetingPostDetailScreen(
     val post by postViewModel.postModel.collectAsState()
     val user by postViewModel.user.collectAsState()
     val postState by postViewModel.postModelState.collectAsState()
-    val accept by postViewModel.acceptationList.collectAsState()
+    val accept by postViewModel.attendeeModelList.collectAsState()
     val commentList by commentViewModel.commentList.collectAsState()
     val content by commentViewModel.content.collectAsState()
     val isReply by commentViewModel.isReply.collectAsState()
@@ -132,6 +133,7 @@ fun MeetingPostDetailScreen(
 
     LaunchedEffect(accept) {
         postViewModel.getAcceptationByPId(pId)
+        postViewModel.getAttendeeByPId(pId)
     }
 
     LaunchedEffect(deleteState) {
@@ -145,6 +147,7 @@ fun MeetingPostDetailScreen(
             postViewModel.getOnePost(pId)
             postViewModel.getPostingUser(pId)
             postViewModel.getAcceptationByPId(pId)
+            postViewModel.getAttendeeByPId(pId)
             commentViewModel.getCommentListByPId(pId, 1)
             commentViewModel.getReplyListByCId(repliedCId, 1)
             commentViewModel.getReplyUser(repliedCId, 1)
@@ -236,7 +239,7 @@ fun MeetingPostDetailScreen(
                             PostInfo(
                                 post!!,
                                 mainColor,
-                                accept,
+                                accept[pId],
                                 user!!.nickname,
                                 postViewModel,
                                 mainViewModel
@@ -269,7 +272,7 @@ fun MeetingPostDetailScreen(
 fun PostInfo(
     post: PostResponseModel,
     mainColor: Int,
-    accept: List<AcceptationResponseModel>,
+    accept: List<AcceptationResponseModel>?,
     nickname: String,
     postViewModel: PostViewModel,
     mainViewModel: MainViewModel
@@ -280,15 +283,18 @@ fun PostInfo(
     val acceptState by postViewModel.myAcceptState.collectAsState()
     val deleteAcceptState by postViewModel.acceptDeleteState.collectAsState()
     val registerState by postViewModel.acceptRegisterState.collectAsState()
+    val attendees by postViewModel.attendeeList.collectAsState()
     val requestDialog = remember { mutableStateOf(false) }
     val deleteRequestDialog = remember { mutableStateOf(false) }
     val acceptUserDialog = remember { mutableStateOf(false) }
     val completeWorkDialog = remember { mutableStateOf(false) }
     val notMyPost = (nickname != mainViewModel.nickname)
     // val notMyPost = (nickname != mainViewModel.nickname || mainViewModel.role == "ADMIN")
+    val allowedUser = accept?.filter { it.acceptation }?.size ?: 0
 
-    LaunchedEffect(registerState, deleteAcceptState){
+    LaunchedEffect(registerState, deleteAcceptState) {
         postViewModel.getAcceptationByPId(post.pId)
+        postViewModel.getAttendeeByPId(post.pId)
     }
 
     val text = if (notMyPost) {
@@ -318,7 +324,7 @@ fun PostInfo(
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                "${accept.filter { it.acceptation }.size}/${post.person}",
+                "$allowedUser/${post.person}",
                 color = colorResource(mainColor),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(4.dp)
@@ -333,15 +339,15 @@ fun PostInfo(
                         RoundedCornerShape(23.dp)
                     )
                     .clickable {
-                        if (notMyPost) {
-                            if (text == "참여하기") {
-                                requestDialog.value = true
-                            } else {
-                                deleteRequestDialog.value = true
-                            }
-                        } else {
-                            acceptUserDialog.value = true
-                        }
+//                        if (notMyPost) {
+//                            if (text == "참여하기") {
+//                                requestDialog.value = true
+//                            } else {
+//                                deleteRequestDialog.value = true
+//                            }
+//                        } else {
+                        acceptUserDialog.value = true
+//                        }
                     },
             ) {
                 Text(
@@ -365,7 +371,7 @@ fun PostInfo(
         }
     }
 
-        if (deleteRequestDialog.value) {
+    if (deleteRequestDialog.value) {
         YesOrNoDialog(content = "참여를 취소하시겠습니까?", mainColor = mainColor, onClickCancel = {
             deleteRequestDialog.value = false
         }) {
@@ -378,6 +384,18 @@ fun PostInfo(
     if (completeWorkDialog.value) {
         ConfirmDialog(content = "완료되었습니다.", mainColor = mainColor) {
             completeWorkDialog.value = false
+        }
+    }
+
+    if (acceptUserDialog.value) {
+        if(accept!!.isNotEmpty()) {
+            Log.d("미란 유저 리스트", attendees[post.pId]!!.toString())
+            AttendUserDialog(
+                attendList = accept,
+                attendees = attendees[post.pId]!!,
+                mainColor = mainColor,
+                postViewModel,
+                onClickCancel = { acceptUserDialog.value = false })
         }
     }
 }
