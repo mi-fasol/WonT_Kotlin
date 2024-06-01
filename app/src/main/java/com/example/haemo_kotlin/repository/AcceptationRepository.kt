@@ -17,6 +17,10 @@ class AcceptationRepository @Inject constructor(private val retrofitClient: Retr
         return retrofitClient.service.getJoinUserByPId(pId)
     }
 
+    suspend fun getAttendeeListByPId(pId: Int): Response<List<UserResponseModel>> {
+        return retrofitClient.service.getAttendeeListByPId(pId)
+    }
+
     suspend fun registerAcceptRequest(accept: AcceptationModel): Response<AcceptationResponseModel> {
         return retrofitClient.service.registerAcceptRequest(accept)
     }

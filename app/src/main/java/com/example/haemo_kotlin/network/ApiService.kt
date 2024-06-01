@@ -114,6 +114,9 @@ interface ApiService {
     @GET("accept/{id}")
     suspend fun getJoinUserByPId(@Path("id") pId: Int): Response<List<AcceptationResponseModel>>
 
+    @GET("accept/userList/{id}")
+    suspend fun getAttendeeListByPId(@Path("id") pId: Int): Response<List<UserResponseModel>>
+
     // 댓글 가져오기
     @GET("postComment/commentPost/{id}")
     suspend fun getCommentListByPId(@Path("id") pId: Int): Response<List<CommentResponseModel>>

@@ -63,6 +63,15 @@ class PostViewModel @Inject constructor(
     private val _commentList = MutableStateFlow<List<CommentResponseModel>>(emptyList())
     val commentList: StateFlow<List<CommentResponseModel>> = _commentList
 
+    private val _attendeeList =
+        MutableStateFlow<MutableMap<Int, List<UserResponseModel>>>(HashMap())
+    val attendeeList: StateFlow<MutableMap<Int, List<UserResponseModel>>> = _attendeeList
+
+    private val _attendeeModelList =
+        MutableStateFlow<MutableMap<Int, List<AcceptationResponseModel>>>(HashMap())
+    val attendeeModelList: StateFlow<MutableMap<Int, List<AcceptationResponseModel>>> =
+        _attendeeModelList
+
     // post 변수
     val title = MutableStateFlow("")
     val person = MutableStateFlow(0)
@@ -134,6 +143,10 @@ class PostViewModel @Inject constructor(
     private val _acceptDeleteState =
         MutableStateFlow<Resource<Boolean?>>(Resource.loading(null))
     val acceptDeleteState: StateFlow<Resource<Boolean?>> = _acceptDeleteState.asStateFlow()
+
+    private val _allowUserState =
+        MutableStateFlow<Resource<Boolean?>>(Resource.loading(null))
+    val allowUserState: StateFlow<Resource<Boolean?>> = _allowUserState.asStateFlow()
 
     suspend fun getPost() {
         viewModelScope.launch {
@@ -225,8 +238,8 @@ class PostViewModel @Inject constructor(
                 val response = acceptationRepository.getJoinUserByPId(pId)
                 if (response.isSuccessful && response.body() != null) {
                     val acceptList = response.body()
-                    _acceptationList.value = acceptList!!
-                    _acceptationList.value.forEach {
+                    _attendeeModelList.value[pId] = acceptList!!
+                    _attendeeModelList.value[pId]!!.forEach {
                         if (
                             it.uId == SharedPreferenceUtil(context).getInt("uId", 0)) {
                             if (it.acceptation) {
@@ -236,7 +249,7 @@ class PostViewModel @Inject constructor(
                             }
                         }
                     }
-                    Log.d("미란 참여 테이블", acceptationList.value.toString())
+                    Log.d("미란 참여 테이블", acceptationList.value[pId].toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
@@ -247,13 +260,15 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    suspend fun getCommentListByPId(pId: Int) {
+    suspend fun getAttendeeByPId(pId: Int) {
+        _myAcceptState.value = AcceptState.NONE
         viewModelScope.launch {
             try {
-                val response = repository.getCommentListByPId(pId)
+                val response = acceptationRepository.getAttendeeListByPId(pId)
                 if (response.isSuccessful && response.body() != null) {
-                    val commentList = response.body()
-                    _commentList.value = commentList!!
+                    val acceptList = response.body()
+                    _attendeeList.value[pId] = acceptList!!
+                    Log.d("미란 참여 유저", _attendeeList.value[pId].toString())
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "포스트 하나 에러 응답: $errorBody")
