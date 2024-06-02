@@ -23,9 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,8 +54,8 @@ import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.AcceptState
-import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import kotlinx.coroutines.launch
 
@@ -152,7 +152,7 @@ fun MeetingPostDetailScreen(
             commentViewModel.getReplyListByCId(repliedCId, 1)
             commentViewModel.getReplyUser(repliedCId, 1)
         }
-        Log.d("미란 라리루루루", replies.toString())
+        Log.d("미란 라리루루루", replyList.toString())
         Log.d("미란 라라라참여", accept.toString())
     }
 
@@ -166,7 +166,7 @@ fun MeetingPostDetailScreen(
         commentViewModel.getCommentListByPId(pId, 1)
     }
 
-    LaunchedEffect(replies) {
+    LaunchedEffect(repliedCId) {
         commentViewModel.getReplyListByCId(repliedCId, 1)
         commentViewModel.getReplyUser(repliedCId, 1)
 //        replies = commentViewModel.replyList.value
@@ -288,8 +288,7 @@ fun PostInfo(
     val deleteRequestDialog = remember { mutableStateOf(false) }
     val acceptUserDialog = remember { mutableStateOf(false) }
     val completeWorkDialog = remember { mutableStateOf(false) }
-    val notMyPost = (nickname != mainViewModel.nickname)
-    // val notMyPost = (nickname != mainViewModel.nickname || mainViewModel.role == "ADMIN")
+    val notMyPost = (nickname != mainViewModel.nickname || mainViewModel.role == "ADMIN")
     val allowedUser = accept?.filter { it.acceptation }?.size ?: 0
 
     LaunchedEffect(registerState, deleteAcceptState) {
@@ -339,15 +338,15 @@ fun PostInfo(
                         RoundedCornerShape(23.dp)
                     )
                     .clickable {
-//                        if (notMyPost) {
-//                            if (text == "참여하기") {
-//                                requestDialog.value = true
-//                            } else {
-//                                deleteRequestDialog.value = true
-//                            }
-//                        } else {
-                        acceptUserDialog.value = true
-//                        }
+                        if (notMyPost) {
+                            if (text == "참여하기") {
+                                requestDialog.value = true
+                            } else {
+                                deleteRequestDialog.value = true
+                            }
+                        } else {
+                            acceptUserDialog.value = true
+                        }
                     },
             ) {
                 Text(
@@ -388,7 +387,7 @@ fun PostInfo(
     }
 
     if (acceptUserDialog.value) {
-        if(accept!!.isNotEmpty()) {
+        if (accept!!.isNotEmpty()) {
             Log.d("미란 유저 리스트", attendees[post.pId]!!.toString())
             AttendUserDialog(
                 attendList = accept,

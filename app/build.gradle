@@ -99,6 +99,8 @@ dependencies {
     // 알림
     implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
     implementation 'com.google.firebase:firebase-messaging-ktx'
+
+    implementation "com.squareup.okhttp3:okhttp:4.9.3"
 }
 
 kapt {

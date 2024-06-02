@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -104,6 +105,7 @@ fun NoticeScreen(
                     Column {
                         NoticeListField(
                             noticeList = noticeList,
+                            mainViewModel.role!!,
                             navController = navController
                         )
                     }
@@ -116,6 +118,7 @@ fun NoticeScreen(
 @Composable
 fun NoticeListField(
     noticeList: List<NoticeResponseModel>,
+    role: String,
     navController: NavController
 ) {
     when (noticeList.size) {
@@ -126,10 +129,11 @@ fun NoticeListField(
         else -> {
             LazyColumn {
                 items(noticeList.size) { idx ->
-                    NoticeListItem(
-                        noticeList[idx],
-                        navController
-                    )
+                    if ((role == "USER" && noticeList[idx].visibility) || role == "ADMIN")
+                        NoticeListItem(
+                            noticeList[idx],
+                            navController
+                        )
                 }
             }
         }
@@ -144,10 +148,10 @@ fun NoticeListItem(
     val config = LocalConfiguration.current
     val screenHeight = config.screenHeightDp
     val date = convertDate(notice.date)
+    val backgroundColor = if(notice.visibility) Color.White else Color.Black.copy(0.2f)
 
     Box(
         modifier = Modifier.padding(top = 10.dp)
-
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -155,7 +159,7 @@ fun NoticeListItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(backgroundColor)
                 .height((screenHeight / 10).dp)
                 .clickable {
                     navController.navigate(NavigationRoutes.NoticeDetailScreen.createRoute(notice.nId))

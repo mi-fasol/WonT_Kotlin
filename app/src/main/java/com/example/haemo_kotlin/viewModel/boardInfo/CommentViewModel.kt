@@ -153,6 +153,8 @@ class CommentViewModel @Inject constructor(
                     _commentRegisterState.value = Resource.success(savedComment)
                     _commentList.value += savedComment!!
                     Log.d("미란 SaveComment", savedComment.toString())
+                    commentId.value = 0
+                    isReply.value = false
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "에러 응답: $errorBody")
