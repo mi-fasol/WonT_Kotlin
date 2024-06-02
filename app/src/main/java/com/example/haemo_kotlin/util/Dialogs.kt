@@ -41,6 +41,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
+import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.user.InquiryViewModel
 
@@ -284,7 +285,7 @@ fun AttendUserDialog(
     attendList: List<AcceptationResponseModel>,
     attendees: List<UserResponseModel>,
     mainColor: Int,
-    postViewModel: PostViewModel,
+    acceptationViewModel: AcceptationViewModel,
     onClickCancel: () -> Unit
 ) {
     val conf = LocalConfiguration.current
@@ -314,7 +315,7 @@ fun AttendUserDialog(
                         modifier = Modifier
                             .background(Color.White, RoundedCornerShape(30.dp))
                             .clickable {
-                                postViewModel.allowUserToJoin(
+                                acceptationViewModel.allowUserToJoin(
                                     attendList[it].pId,
                                     attendList[it].uId
                                 )

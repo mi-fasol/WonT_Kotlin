@@ -54,6 +54,7 @@ import com.example.haemo_kotlin.util.SendReply
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.AcceptState
+import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
@@ -65,6 +66,7 @@ fun MeetingPostDetailScreen(
     pId: Int,
     postViewModel: PostViewModel,
     commentViewModel: CommentViewModel,
+    acceptationViewModel: AcceptationViewModel,
     wishViewModel: WishViewModel,
     mainViewModel: MainViewModel,
     navController: NavController
@@ -72,7 +74,7 @@ fun MeetingPostDetailScreen(
     val post by postViewModel.postModel.collectAsState()
     val user by postViewModel.user.collectAsState()
     val postState by postViewModel.postModelState.collectAsState()
-    val accept by postViewModel.attendeeModelList.collectAsState()
+    val accept by acceptationViewModel.attendeeModelList.collectAsState()
     val commentList by commentViewModel.commentList.collectAsState()
     val content by commentViewModel.content.collectAsState()
     val isReply by commentViewModel.isReply.collectAsState()
@@ -132,8 +134,8 @@ fun MeetingPostDetailScreen(
     }
 
     LaunchedEffect(accept) {
-        postViewModel.getAcceptationByPId(pId)
-        postViewModel.getAttendeeByPId(pId)
+        acceptationViewModel.getAcceptationByPId(pId)
+        acceptationViewModel.getAttendeeByPId(pId)
     }
 
     LaunchedEffect(deleteState) {
@@ -146,8 +148,8 @@ fun MeetingPostDetailScreen(
             wishViewModel.checkIsWishedPost(pId, 1)
             postViewModel.getOnePost(pId)
             postViewModel.getPostingUser(pId)
-            postViewModel.getAcceptationByPId(pId)
-            postViewModel.getAttendeeByPId(pId)
+            acceptationViewModel.getAcceptationByPId(pId)
+            acceptationViewModel.getAttendeeByPId(pId)
             commentViewModel.getCommentListByPId(pId, 1)
             commentViewModel.getReplyListByCId(repliedCId, 1)
             commentViewModel.getReplyUser(repliedCId, 1)
@@ -241,7 +243,7 @@ fun MeetingPostDetailScreen(
                                 mainColor,
                                 accept[pId],
                                 user!!.nickname,
-                                postViewModel,
+                                acceptationViewModel,
                                 mainViewModel
                             )
                             Spacer(modifier = Modifier.height(15.dp))
@@ -274,16 +276,16 @@ fun PostInfo(
     mainColor: Int,
     accept: List<AcceptationResponseModel>?,
     nickname: String,
-    postViewModel: PostViewModel,
+    acceptationViewModel: AcceptationViewModel,
     mainViewModel: MainViewModel
 ) {
     val config = LocalConfiguration.current
     val screenHeight = config.screenHeightDp
     val screenWidth = config.screenWidthDp
-    val acceptState by postViewModel.myAcceptState.collectAsState()
-    val deleteAcceptState by postViewModel.acceptDeleteState.collectAsState()
-    val registerState by postViewModel.acceptRegisterState.collectAsState()
-    val attendees by postViewModel.attendeeList.collectAsState()
+    val acceptState by acceptationViewModel.myAcceptState.collectAsState()
+    val deleteAcceptState by acceptationViewModel.acceptDeleteState.collectAsState()
+    val registerState by acceptationViewModel.acceptRegisterState.collectAsState()
+    val attendees by acceptationViewModel.attendeeList.collectAsState()
     val requestDialog = remember { mutableStateOf(false) }
     val deleteRequestDialog = remember { mutableStateOf(false) }
     val acceptUserDialog = remember { mutableStateOf(false) }
@@ -292,8 +294,8 @@ fun PostInfo(
     val allowedUser = accept?.filter { it.acceptation }?.size ?: 0
 
     LaunchedEffect(registerState, deleteAcceptState) {
-        postViewModel.getAcceptationByPId(post.pId)
-        postViewModel.getAttendeeByPId(post.pId)
+        acceptationViewModel.getAcceptationByPId(post.pId)
+        acceptationViewModel.getAttendeeByPId(post.pId)
     }
 
     val text = if (notMyPost) {
@@ -364,7 +366,7 @@ fun PostInfo(
         YesOrNoDialog(content = "모임에 참여하시겠습니까?", mainColor = mainColor, onClickCancel = {
             requestDialog.value = false
         }) {
-            postViewModel.sendAcceptationRequest(post.pId)
+            acceptationViewModel.sendAcceptationRequest(post.pId)
             requestDialog.value = false
             completeWorkDialog.value = true
         }
@@ -374,7 +376,7 @@ fun PostInfo(
         YesOrNoDialog(content = "참여를 취소하시겠습니까?", mainColor = mainColor, onClickCancel = {
             deleteRequestDialog.value = false
         }) {
-            postViewModel.deleteAcceptationRequest(post.pId)
+            acceptationViewModel.deleteAcceptationRequest(post.pId)
             deleteRequestDialog.value = false
             completeWorkDialog.value = true
         }
@@ -393,7 +395,7 @@ fun PostInfo(
                 attendList = accept,
                 attendees = attendees[post.pId]!!,
                 mainColor = mainColor,
-                postViewModel,
+                acceptationViewModel,
                 onClickCancel = { acceptUserDialog.value = false })
         }
     }

@@ -18,6 +18,7 @@ import com.example.haemo_kotlin.util.MainBottomNavigation
 import com.example.haemo_kotlin.util.MainFloatingButton
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
@@ -30,6 +31,7 @@ fun MainScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
     postViewModel: PostViewModel,
+    acceptationViewModel: AcceptationViewModel,
     wishViewModel : WishViewModel,
     clubPostViewModel: ClubPostViewModel,
     hotPostViewModel: HotPlacePostViewModel,
@@ -71,6 +73,7 @@ fun MainScreen(
                 "mainScreen" -> {
                     MeetingScreen(
                         postViewModel = postViewModel,
+                        acceptationViewModel = acceptationViewModel,
                         mainViewModel,
                         navController = navController
                     )
@@ -103,6 +106,7 @@ fun MainScreen(
                 else -> {
                     MeetingScreen(
                         postViewModel = postViewModel,
+                        acceptationViewModel,
                         mainViewModel,
                         navController = navController
                     )

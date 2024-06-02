@@ -51,12 +51,14 @@ import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MeetingScreen(
     postViewModel: PostViewModel,
+    acceptationViewModel: AcceptationViewModel,
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
@@ -104,7 +106,6 @@ fun MeetingScreen(
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                         Today24HoursBoard(
                             todayPostList,
-                            postViewModel,
                             mainColor,
                             mainViewModel,
                             navController
@@ -112,6 +113,7 @@ fun MeetingScreen(
                         MeetingBoard(
                             postList = postList,
                             viewModel = postViewModel,
+                            acceptationViewModel,
                             mainViewModel,
                             mainColor,
                             navController = navController
@@ -126,7 +128,6 @@ fun MeetingScreen(
 @Composable
 fun Today24HoursBoard(
     postList: List<PostResponseModel>,
-    viewModel: PostViewModel,
     mainColor: Int,
     mainViewModel: MainViewModel,
     navController: NavController
@@ -211,16 +212,17 @@ fun TodayNotice(
 fun MeetingBoard(
     postList: List<PostResponseModel>,
     viewModel: PostViewModel,
+    acceptationViewModel: AcceptationViewModel,
     mainViewModel: MainViewModel,
     mainColor: Int,
     navController: NavController
 ) {
-    val accept by viewModel.attendeeModelList.collectAsState()
+    val accept by acceptationViewModel.attendeeModelList.collectAsState()
 
     LaunchedEffect(true, Unit) {
         postList.forEach { post ->
-            viewModel.getAcceptationByPId(post.pId)
-            viewModel.getAttendeeByPId(post.pId)
+            acceptationViewModel.getAcceptationByPId(post.pId)
+            acceptationViewModel.getAttendeeByPId(post.pId)
         }
     }
 
@@ -237,7 +239,6 @@ fun MeetingBoard(
                     MeetingBoardItem(
                         postList[idx],
                         acceptedUser,
-                        viewModel,
                         mainViewModel,
                         mainColor,
                         navController
@@ -253,7 +254,6 @@ fun MeetingBoard(
 fun MeetingBoardItem(
     post: PostResponseModel,
     acceptedUser: Int,
-    postViewModel: PostViewModel,
     viewModel: MainViewModel,
     mainColor: Int,
     navController: NavController

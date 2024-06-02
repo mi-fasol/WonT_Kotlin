@@ -58,6 +58,7 @@ import com.example.haemo_kotlin.screen.main.user.ReportScreen
 import com.example.haemo_kotlin.screen.setting.setting.NotificationSettingScreen
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.NoticeViewModel
@@ -138,6 +139,7 @@ class MainActivity : ComponentActivity() {
     private val reportViewModel by viewModels<ReportViewModel>()
     private val inquiryViewModel by viewModels<InquiryViewModel>()
     private val noticeViewModel by viewModels<NoticeViewModel>()
+    private val acceptationViewModel by viewModels<AcceptationViewModel>()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -213,6 +215,7 @@ class MainActivity : ComponentActivity() {
                                 navController,
                                 mainViewModel,
                                 viewModel,
+                                acceptationViewModel,
                                 wishViewModel,
                                 clubPostViewModel,
                                 hotPlacePostViewModel,
@@ -220,7 +223,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(NavigationRoutes.MeetingScreen.route) {
-                            MeetingScreen(viewModel, mainViewModel, navController)
+                            MeetingScreen(viewModel, acceptationViewModel, mainViewModel, navController)
                         }
                         composable(NavigationRoutes.ClubScreen.route) {
                             ClubScreen(clubPostViewModel, mainViewModel, navController)
@@ -245,6 +248,7 @@ class MainActivity : ComponentActivity() {
                             MeetingPostDetailScreen(
                                 postViewModel = viewModel,
                                 commentViewModel = commentViewModel,
+                                acceptationViewModel = acceptationViewModel,
                                 wishViewModel = wishViewModel,
                                 mainViewModel = mainViewModel,
                                 navController = navController,
