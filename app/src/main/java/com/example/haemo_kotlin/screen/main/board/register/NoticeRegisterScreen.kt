@@ -47,7 +47,6 @@ fun NoticeRegisterScreen(
     val postRegisterState = viewModel.noticeRegisterState.collectAsState().value
     val conf = LocalConfiguration.current
     val screenWidth = conf.screenWidthDp
-
     var dialogOpen by remember { mutableStateOf(false) }
     var confirmDialogOpen by remember { mutableStateOf(false) }
     var errorDialogOpen by remember { mutableStateOf(false) }

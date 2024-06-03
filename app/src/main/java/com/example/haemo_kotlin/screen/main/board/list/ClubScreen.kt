@@ -39,7 +39,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -50,11 +49,10 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
-import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 
@@ -70,8 +68,7 @@ fun ClubScreen(
     var filteredPosts by remember { mutableStateOf(postList) }
     val postListState = postViewModel.clubPostListState.collectAsState().value
     val list = if (searchText.isNotBlank()) filteredPosts else postList
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     LaunchedEffect(Unit) {
         postViewModel.getClubPostList()
@@ -99,7 +96,9 @@ fun ClubScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = colorResource(id = mainColor)
+                        )
                     }
                 }
 
@@ -116,7 +115,12 @@ fun ClubScreen(
                             }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        ClubBoard(postList = list, viewModel = mainViewModel, mainColor, navController)
+                        ClubBoard(
+                            postList = list,
+                            viewModel = mainViewModel,
+                            mainColor,
+                            navController
+                        )
                     }
                 }
             }

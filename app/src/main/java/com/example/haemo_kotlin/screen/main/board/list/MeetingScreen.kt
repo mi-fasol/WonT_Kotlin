@@ -1,7 +1,6 @@
 package com.example.haemo_kotlin.screen.main.board.list
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,20 +34,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
-import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
@@ -65,8 +61,7 @@ fun MeetingScreen(
     val postList = postViewModel.postModelList.collectAsState().value
     val todayPostList = postViewModel.todayPostList.collectAsState().value
     val postListState = postViewModel.postModelListState.collectAsState().value
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     LaunchedEffect(postList) {
         postViewModel.getPost()
@@ -98,7 +93,9 @@ fun MeetingScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = colorResource(id = mainColor)
+                        )
                     }
                 }
 
@@ -112,7 +109,6 @@ fun MeetingScreen(
                         )
                         MeetingBoard(
                             postList = postList,
-                            viewModel = postViewModel,
                             acceptationViewModel,
                             mainViewModel,
                             mainColor,
@@ -211,7 +207,6 @@ fun TodayNotice(
 @Composable
 fun MeetingBoard(
     postList: List<PostResponseModel>,
-    viewModel: PostViewModel,
     acceptationViewModel: AcceptationViewModel,
     mainViewModel: MainViewModel,
     mainColor: Int,

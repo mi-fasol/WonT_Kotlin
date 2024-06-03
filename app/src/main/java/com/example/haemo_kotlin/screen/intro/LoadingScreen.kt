@@ -42,7 +42,7 @@ fun LoadingScreen(loginViewModel: LoginViewModel, mainViewModel: MainViewModel, 
         }
 
     val loginUser by loginViewModel.loginUser.collectAsState()
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     Box(
         contentAlignment = Alignment.Center,

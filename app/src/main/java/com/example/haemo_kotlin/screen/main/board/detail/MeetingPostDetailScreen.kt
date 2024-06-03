@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -81,7 +80,6 @@ fun MeetingPostDetailScreen(
     val replyList by commentViewModel.replyList.collectAsState()
     val repliedCId by commentViewModel.commentId.collectAsState()
     val isWished by wishViewModel.isWished.collectAsState()
-    val context = LocalContext.current
     val mainColor by mainViewModel.colorState.collectAsState()
 
     var replies by remember { mutableStateOf<List<ReplyResponseModel>>(emptyList()) }
@@ -230,7 +228,9 @@ fun MeetingPostDetailScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = colorResource(id = mainColor)
+                        )
                     }
                 }
 

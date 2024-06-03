@@ -38,7 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,12 +48,11 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.util.WishButton
 import com.example.haemo_kotlin.util.MainPageAppBar
-import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
+import com.example.haemo_kotlin.util.WishButton
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
@@ -69,10 +68,9 @@ fun HotPlaceScreen(
     val postList = postViewModel.hotPlacePostList.collectAsState().value
     val popularPostList = postViewModel.popularHotPlace.collectAsState().value
     val postListState = postViewModel.hotPlacePostListState.collectAsState().value
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit, postList, postListState) {
         postViewModel.getHotPlacePost()
         postViewModel.getPopularHotPlace()
         wishViewModel.getWishHotPlace()
@@ -101,7 +99,9 @@ fun HotPlaceScreen(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator()
+                            CircularProgressIndicator(
+                                color = colorResource(id = mainColor)
+                            )
                         }
                     }
 

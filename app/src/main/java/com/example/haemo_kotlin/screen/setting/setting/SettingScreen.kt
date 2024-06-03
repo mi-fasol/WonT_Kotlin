@@ -19,6 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,7 +37,6 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.StartActivity
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.util.SettingScreenAppBar
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.user.LoginViewModel
@@ -47,8 +48,7 @@ fun SettingScreen(
     loginViewModel: LoginViewModel,
     navController: NavController
 ) {
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     Scaffold(
         topBar = {

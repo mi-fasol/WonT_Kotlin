@@ -81,7 +81,7 @@ fun EnterInquiryInfo(inquiryViewModel: InquiryViewModel) {
     val content by inquiryViewModel.content.collectAsState()
     val inquiryType by inquiryViewModel.inquiryType.collectAsState()
     val email by inquiryViewModel.email.collectAsState()
-    var openInquiryDialog = remember {
+    val openInquiryDialog = remember {
         mutableStateOf(false)
     }
 

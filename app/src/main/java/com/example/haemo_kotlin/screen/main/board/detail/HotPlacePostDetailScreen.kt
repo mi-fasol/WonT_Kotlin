@@ -36,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,11 +54,10 @@ import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostManagementDialog
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
-import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -84,9 +82,7 @@ fun HotPlacePostDetailScreen(
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
     val isWished = wishViewModel.isWished.collectAsState().value
-    val wished = remember { mutableStateOf(isWished) }
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
     var openDialog by remember {
         mutableStateOf(false)
     }
@@ -104,11 +100,10 @@ fun HotPlacePostDetailScreen(
         }
     }
 
-    if(menuDialog){
+    if (menuDialog) {
         PostManagementDialog({ menuDialog = false }) {
             askToDeleteDialog = true
         }
-
     }
 
     if (askToDeleteDialog) {
@@ -135,8 +130,8 @@ fun HotPlacePostDetailScreen(
     }
 
     LaunchedEffect(deleteState) {
-        if(deleteState == true) deleteCompleteDialog = true
-        else if(deleteState == false) deleteFailDialog = true
+        if (deleteState == true) deleteCompleteDialog = true
+        else if (deleteState == false) deleteFailDialog = true
     }
 
     if (openDialog) {
@@ -173,7 +168,7 @@ fun HotPlacePostDetailScreen(
                     3,
                     user,
                     navController
-                ){
+                ) {
                     menuDialog = true
                 }
             }
@@ -210,7 +205,9 @@ fun HotPlacePostDetailScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = colorResource(id = mainColor)
+                        )
                     }
                 }
 

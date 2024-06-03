@@ -65,8 +65,7 @@ fun UserRegisterScreen(viewModel: UserViewModel, mainViewModel: MainViewModel, n
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     Scaffold(
         topBar = {

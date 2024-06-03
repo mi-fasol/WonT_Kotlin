@@ -21,13 +21,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.network.Resource
-import com.example.haemo_kotlin.util.*
+import com.example.haemo_kotlin.util.ConfirmDialog
+import com.example.haemo_kotlin.util.ContentEnterField
+import com.example.haemo_kotlin.util.DropDownMenu
+import com.example.haemo_kotlin.util.PostRegisterAppBar
+import com.example.haemo_kotlin.util.PostRegisterButton
+import com.example.haemo_kotlin.util.TextEnterRowField
+import com.example.haemo_kotlin.util.YesOrNoDialog
+import com.example.haemo_kotlin.util.categoryList
+import com.example.haemo_kotlin.util.dayList
+import com.example.haemo_kotlin.util.hourList
+import com.example.haemo_kotlin.util.monthList
+import com.example.haemo_kotlin.util.personList
+import com.example.haemo_kotlin.util.yearList
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
@@ -38,12 +48,10 @@ fun PostRegisterScreen(
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
     val title = viewModel.title.collectAsState().value
     val content = viewModel.content.collectAsState().value
     val postRegisterState = viewModel.postRegisterState.collectAsState().value
-
     var dialogOpen by remember { mutableStateOf(false) }
     var confirmDialogOpen by remember { mutableStateOf(false) }
     var errorDialogOpen by remember { mutableStateOf(false) }

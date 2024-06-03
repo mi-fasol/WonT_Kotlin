@@ -31,8 +31,6 @@ import com.example.haemo_kotlin.viewModel.MainViewModel
 @Composable
 fun ThemeChangeScreen(viewModel: MainViewModel, navController: NavController) {
     val mainColor by viewModel.colorState.collectAsState()
-    val config = LocalConfiguration.current
-    val screenHeight = config.screenHeightDp
 
     Scaffold(
         topBar = {
@@ -40,7 +38,7 @@ fun ThemeChangeScreen(viewModel: MainViewModel, navController: NavController) {
         },
         modifier = Modifier.background(colorResource(id = R.color.settingScreenBackgroundColor))
     ) {
-        Column() {
+        Column {
             SettingTitleField(text = "컬러 모드")
             SettingSwitch(
                 "블루",

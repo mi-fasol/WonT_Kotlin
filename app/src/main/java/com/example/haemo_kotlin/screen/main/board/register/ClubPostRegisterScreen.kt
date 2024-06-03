@@ -46,9 +46,9 @@ import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ContentEnterField
+import com.example.haemo_kotlin.util.DropDownMenu
 import com.example.haemo_kotlin.util.PostRegisterAppBar
 import com.example.haemo_kotlin.util.PostRegisterButton
-import com.example.haemo_kotlin.util.DropDownMenu
 import com.example.haemo_kotlin.util.TextEnterRowField
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.util.personList

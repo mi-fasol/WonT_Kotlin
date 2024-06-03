@@ -223,7 +223,12 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(NavigationRoutes.MeetingScreen.route) {
-                            MeetingScreen(viewModel, acceptationViewModel, mainViewModel, navController)
+                            MeetingScreen(
+                                viewModel,
+                                acceptationViewModel,
+                                mainViewModel,
+                                navController
+                            )
                         }
                         composable(NavigationRoutes.ClubScreen.route) {
                             ClubScreen(clubPostViewModel, mainViewModel, navController)
@@ -293,47 +298,37 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             MyMeetingBoardScreen(
                                 postViewModel = viewModel,
+                                acceptationViewModel,
                                 mainViewModel = mainViewModel,
                                 navController = navController,
                                 nickname = entry.arguments?.getString("nickname")!!
                             )
                         }
                         composable(
-                            NavigationRoutes.MyWishMeetingScreen.route,
-                            arguments = listOf(
-                                navArgument("uId") { type = NavType.IntType }
-                            )
-                        ) { entry ->
+                            NavigationRoutes.MyWishMeetingScreen.route
+                        ) {
                             MyWishMeetingScreen(
                                 wishViewModel = wishViewModel,
                                 mainViewModel = mainViewModel,
-                                navController = navController,
-                                uId = entry.arguments?.getInt("uId")!!
+                                navController = navController
                             )
                         }
                         composable(
-                            NavigationRoutes.MyWishClubScreen.route, arguments = listOf(
-                                navArgument("uId") { type = NavType.IntType }
-                            )
-                        ) { entry ->
+                            NavigationRoutes.MyWishClubScreen.route
+                        ) {
                             MyWishClubScreen(
                                 wishViewModel = wishViewModel,
                                 mainViewModel = mainViewModel,
-                                navController = navController,
-                                uId = entry.arguments?.getInt("uId")!!
+                                navController = navController
                             )
                         }
                         composable(
-                            NavigationRoutes.MyWishHotPlaceScreen.route,
-                            arguments = listOf(
-                                navArgument("uId") { type = NavType.IntType }
-                            )
-                        ) { entry ->
+                            NavigationRoutes.MyWishHotPlaceScreen.route
+                        ) {
                             MyWishHotPlaceScreen(
                                 wishViewModel = wishViewModel,
                                 mainViewModel = mainViewModel,
-                                navController = navController,
-                                uId = entry.arguments?.getInt("uId")!!
+                                navController = navController
                             )
                         }
                         composable(NavigationRoutes.PostRegisterScreen.route) {

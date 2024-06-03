@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.example.haemo_kotlin.screen.main.chat
 
 import android.util.Log
@@ -31,11 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -43,12 +41,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.chat.FireBaseChatModel
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.util.BackArrowAppBar
 import com.example.haemo_kotlin.util.ErrorScreen
-import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.userMyPageImageList
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.chat.ChatListViewModel
@@ -61,8 +57,7 @@ fun ChatListScreen(
     navController: NavController
 ) {
     val chatList = chatListViewModel.fireBaseChatModel.collectAsState().value
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
     LaunchedEffect(Unit) {
         chatListViewModel.getChatList()
         Log.d("미란 새로 되나? Screen 호출", "호출됨.")

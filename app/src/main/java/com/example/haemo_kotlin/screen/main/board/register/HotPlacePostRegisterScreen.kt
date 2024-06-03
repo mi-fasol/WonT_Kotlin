@@ -32,58 +32,69 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
-import com.example.haemo_kotlin.util.*
+import com.example.haemo_kotlin.util.ConfirmDialog
+import com.example.haemo_kotlin.util.ContentEnterField
+import com.example.haemo_kotlin.util.PostRegisterAppBar
+import com.example.haemo_kotlin.util.PostRegisterButton
+import com.example.haemo_kotlin.util.TextEnterRowField
+import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
 @Composable
-fun HotPlacePostRegisterScreen(viewModel: HotPlacePostViewModel, mainViewModel: MainViewModel, navController: NavController) {
+fun HotPlacePostRegisterScreen(
+    viewModel: HotPlacePostViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
 
     val title = viewModel.title.collectAsState().value
     val description = viewModel.description.collectAsState().value
     val content = viewModel.content.collectAsState().value
     val postRegisterState = viewModel.hotPlacePostRegisterState.collectAsState().value
-    var dialogOpen by remember{ mutableStateOf(false) }
-    var confirmDialogOpen by remember{ mutableStateOf(false) }
-    var errorDialogOpen by remember{ mutableStateOf(false) }
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    var dialogOpen by remember { mutableStateOf(false) }
+    var confirmDialogOpen by remember { mutableStateOf(false) }
+    var errorDialogOpen by remember { mutableStateOf(false) }
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     LaunchedEffect(postRegisterState) {
         when (postRegisterState) {
             is Resource.Success<HotPlaceResponsePostModel> -> {
                 confirmDialogOpen = true
             }
+
             is Resource.Error<HotPlaceResponsePostModel> -> {
                 errorDialogOpen = true
             }
+
             else -> {
             }
         }
     }
 
-    if(dialogOpen){
-        YesOrNoDialog(content = "등록하시겠습니까?", mainColor, onClickCancel = { navController.popBackStack() }) {
+    if (dialogOpen) {
+        YesOrNoDialog(
+            content = "등록하시겠습니까?",
+            mainColor,
+            onClickCancel = { navController.popBackStack() }) {
             viewModel.registerPost()
             dialogOpen = false
             confirmDialogOpen = true
         }
     }
-    if(confirmDialogOpen){
+    if (confirmDialogOpen) {
         ConfirmDialog(content = "등록이 완료되었습니다.", mainColor) {
             confirmDialogOpen = false
             navController.popBackStack()
         }
     }
-    if(errorDialogOpen){
+    if (errorDialogOpen) {
         ConfirmDialog(content = "오류가 발생했습니다.\n다시 시도해 주세요.", mainColor) {
             errorDialogOpen = false
         }
@@ -150,7 +161,7 @@ fun HotPlacePostInfo(viewModel: HotPlacePostViewModel) {
                             .clip(RoundedCornerShape(15.dp)),
                         contentScale = ContentScale.FillBounds
                     )
-                        Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                 }
             }
         }

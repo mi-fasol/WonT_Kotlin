@@ -19,11 +19,11 @@ import com.example.haemo_kotlin.util.MainFloatingButton
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
-import com.example.haemo_kotlin.viewModel.user.UserViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
+import com.example.haemo_kotlin.viewModel.user.UserViewModel
 
 
 @Composable
@@ -32,7 +32,7 @@ fun MainScreen(
     mainViewModel: MainViewModel,
     postViewModel: PostViewModel,
     acceptationViewModel: AcceptationViewModel,
-    wishViewModel : WishViewModel,
+    wishViewModel: WishViewModel,
     clubPostViewModel: ClubPostViewModel,
     hotPostViewModel: HotPlacePostViewModel,
     userViewModel: UserViewModel
@@ -45,14 +45,6 @@ fun MainScreen(
 
     val context = LocalContext.current
     val uId = SharedPreferenceUtil(context).getInt("uId", 0)
-    val nickname = SharedPreferenceUtil(context).getString("nickname", "")
-
-    if(nickname.isNullOrBlank()){
-        LaunchedEffect(true){
-
-        }
-    }
-
 
     LaunchedEffect(true) {
         userViewModel.fetchUserInfoById(uId)
@@ -60,7 +52,11 @@ fun MainScreen(
 
     Scaffold(
         bottomBar = {
-            MainBottomNavigation(navController = navController, onItemSelected = onItemSelected, mainViewModel)
+            MainBottomNavigation(
+                navController = navController,
+                onItemSelected = onItemSelected,
+                mainViewModel
+            )
         },
         floatingActionButton = { MainFloatingButton(navController) }
     ) { innerPadding ->
@@ -78,6 +74,7 @@ fun MainScreen(
                         navController = navController
                     )
                 }
+
                 "clubScreen" -> {
                     ClubScreen(
                         postViewModel = clubPostViewModel,

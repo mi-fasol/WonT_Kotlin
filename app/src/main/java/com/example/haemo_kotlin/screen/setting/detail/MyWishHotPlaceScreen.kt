@@ -22,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -29,7 +30,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,11 +38,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
-import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.WishButton
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
@@ -51,13 +50,11 @@ import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 fun MyWishHotPlaceScreen(
     wishViewModel: WishViewModel,
     mainViewModel: MainViewModel,
-    navController: NavController,
-    uId: Int,
+    navController: NavController
 ) {
     val post = wishViewModel.wishHotPlaceList.collectAsState().value
     val postState = wishViewModel.hotPlaceModelListState.collectAsState().value
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     LaunchedEffect(post) {
         wishViewModel.getWishHotPlace()
@@ -85,7 +82,7 @@ fun MyWishHotPlaceScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(color = colorResource(id = mainColor))
                     }
                 }
 

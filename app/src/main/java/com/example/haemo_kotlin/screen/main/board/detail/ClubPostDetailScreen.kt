@@ -30,7 +30,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,13 +47,11 @@ import com.example.haemo_kotlin.util.PostDetailAppBar
 import com.example.haemo_kotlin.util.PostManagementDialog
 import com.example.haemo_kotlin.util.PostUserInfo
 import com.example.haemo_kotlin.util.SendReply
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
-import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
+import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun ClubPostDetailScreen(
@@ -75,9 +72,8 @@ fun ClubPostDetailScreen(
     val repliedCId = commentViewModel.commentId.collectAsState().value
     val isWished = wishViewModel.isWished.collectAsState().value
     val deleteState by postViewModel.clubPostDeleteState.collectAsState()
-    val context = LocalContext.current
     var openDialog by remember { mutableStateOf(false) }
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
     var menuDialog by remember { mutableStateOf(false) }
     var askToDeleteDialog by remember { mutableStateOf(false) }
     var deleteCompleteDialog by remember { mutableStateOf(false) }
@@ -91,7 +87,7 @@ fun ClubPostDetailScreen(
         }
     }
 
-    if(menuDialog){
+    if (menuDialog) {
         PostManagementDialog({ menuDialog = false }) {
             askToDeleteDialog = true
         }
@@ -191,7 +187,9 @@ fun ClubPostDetailScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = colorResource(id = mainColor)
+                        )
                     }
                 }
 

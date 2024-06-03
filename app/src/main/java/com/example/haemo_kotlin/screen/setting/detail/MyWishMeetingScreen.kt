@@ -21,11 +21,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,11 +33,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
-import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.WishButton
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.MainViewModel
@@ -47,13 +46,11 @@ import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 fun MyWishMeetingScreen(
     wishViewModel: WishViewModel,
     mainViewModel: MainViewModel,
-    navController: NavController,
-    uId: Int,
+    navController: NavController
 ) {
     val post = wishViewModel.wishMeetingList.collectAsState().value
     val postState = wishViewModel.postModelListState.collectAsState().value
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     LaunchedEffect(post) {
         wishViewModel.getWishMeeting()
@@ -81,7 +78,7 @@ fun MyWishMeetingScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(color = colorResource(id = mainColor))
                     }
                 }
 
@@ -111,7 +108,7 @@ fun MyWishMeetingScreen(
                                     modifier = Modifier.padding(vertical = 15.dp)
                                 )
                                 Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                                MyWishMeetingList(post, uId, wishViewModel, navController)
+                                MyWishMeetingList(post, mainColor, wishViewModel, navController)
                             }
                     }
                 }
@@ -145,7 +142,7 @@ fun MyWishMeetingItem(
     val date = convertDate(post.date)
     Box(
         modifier = Modifier
-            .height((screenHeight / 9).dp)
+//            .height((screenHeight / 9).dp)
             .clickable {
                 navController.navigate(NavigationRoutes.MeetingPostDetailScreen.createRoute(post.pId))
             }
@@ -167,10 +164,7 @@ fun MyWishMeetingItem(
                     text = post.title,
                     fontSize = 13.5.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xff595959),
-                    modifier = Modifier
-                        .weight(10f)
-                        .fillMaxWidth()
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
                 WishButton(
                     post = post,
@@ -194,7 +188,7 @@ fun MyWishMeetingItem(
                 Text(
                     date, fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xff595959)
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
             }
         }

@@ -38,10 +38,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageAppBar
-import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.userProfileList
 import com.example.haemo_kotlin.viewModel.MainViewModel
@@ -103,9 +103,15 @@ fun MyPageScreen(
                                 UserProfile(user = user)
                                 Divider(
                                     thickness = 1.dp,
-                                    color = colorResource(mainColor,)
+                                    color = colorResource(mainColor)
                                 )
-                                MyPageList(user.uId, mainColor, user.nickname, mainViewModel, navController)
+                                MyPageList(
+                                    user.uId,
+                                    mainColor,
+                                    user.nickname,
+                                    mainViewModel,
+                                    navController
+                                )
                             }
                         }
                     }
@@ -198,9 +204,9 @@ fun MyPageListItem(
     val textList = listOf("내가 작성한 글", "찜한 장소", "가고 싶은 모임", "가고 싶은 소모임")
     val navigationRoutes = listOf(
         NavigationRoutes.MyMeetingBoardScreen.createRoute(nickname),
-        NavigationRoutes.MyWishHotPlaceScreen.createRoute(uId),
-        NavigationRoutes.MyWishMeetingScreen.createRoute(uId),
-        NavigationRoutes.MyWishClubScreen.createRoute(uId)
+        NavigationRoutes.MyWishHotPlaceScreen.route,
+        NavigationRoutes.MyWishMeetingScreen.route,
+        NavigationRoutes.MyWishClubScreen.route
     )
     Box(
         contentAlignment = Alignment.Center,
