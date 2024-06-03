@@ -47,6 +47,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,6 +104,8 @@ fun EnterInfo(type: String, mainColor: Int, value: String, onValueChange: (Strin
                 modifier = Modifier.fillMaxWidth(),
                 value = value,
                 onValueChange = onValueChange,
+                visualTransformation = if(type != "P/W") VisualTransformation.None
+                else PasswordVisualTransformation(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = colorResource(id = mainColor),
                     unfocusedBorderColor = Color.LightGray,
