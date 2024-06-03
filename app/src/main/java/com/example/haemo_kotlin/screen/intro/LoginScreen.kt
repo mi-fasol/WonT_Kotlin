@@ -35,91 +35,95 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.EnterInfo
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.user.LoginViewModel
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel, mainViewModel: MainViewModel, navController: NavController) {
-    val context = LocalContext.current
-
+fun LoginScreen(
+    loginViewModel: LoginViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
-    val screenHeight = configuration.screenHeightDp
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
-
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.size((screenWidth / 2).dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.size((screenWidth / 2).dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.wont_icon),
-                    contentDescription = "",
-                    tint = colorResource(id = mainColor),
-                    modifier = Modifier
-                        .weight(2f)
-                        .fillMaxSize()
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.wont),
-                    contentDescription = "",
-                    tint = colorResource(id = mainColor),
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize()
-                )
-            }
-            Spacer(modifier = Modifier.height(30.dp))
-            EnterInfo(
-                type = "ID",
-                value = loginViewModel.id.collectAsState().value,
-                mainColor = mainColor,
-                onValueChange = { newValue ->
-                    loginViewModel.id.value = newValue
-                })
-            Spacer(modifier = Modifier.height(10.dp))
-            EnterInfo(
-                type = "P/W",
-                value = loginViewModel.pwd.collectAsState().value,
-                mainColor = mainColor,
-                onValueChange = { newValue ->
-                    loginViewModel.pwd.value = newValue
-                })
-            Spacer(modifier = Modifier.height(30.dp))
-            loginButton(loginViewModel, mainColor, navController)
+            Icon(
+                painter = painterResource(id = R.drawable.wont_icon),
+                contentDescription = "",
+                tint = colorResource(id = mainColor),
+                modifier = Modifier
+                    .weight(2f)
+                    .fillMaxSize()
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.wont),
+                contentDescription = "",
+                tint = colorResource(id = mainColor),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize()
+            )
         }
+        Spacer(modifier = Modifier.height(30.dp))
+        EnterInfo(
+            type = "ID",
+            value = loginViewModel.id.collectAsState().value,
+            mainColor = mainColor,
+            onValueChange = { newValue ->
+                loginViewModel.id.value = newValue
+            })
+        Spacer(modifier = Modifier.height(10.dp))
+        EnterInfo(
+            type = "P/W",
+            value = loginViewModel.pwd.collectAsState().value,
+            mainColor = mainColor,
+            onValueChange = { newValue ->
+                loginViewModel.pwd.value = newValue
+            })
+        Spacer(modifier = Modifier.height(30.dp))
+        LoginButton(
+            loginViewModel = loginViewModel,
+            mainColor = mainColor,
+            navController = navController
+        )
     }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun loginButton(loginViewModel: LoginViewModel, mainColor: Int, navController:NavController) {
+fun LoginButton(loginViewModel: LoginViewModel, mainColor: Int, navController: NavController) {
     val id by loginViewModel.id.collectAsState()
     val pwd by loginViewModel.pwd.collectAsState()
     val isValid = loginViewModel.isValid.collectAsState().value
     val haveId by loginViewModel.loginUser.collectAsState()
     val loginResult by loginViewModel.isLoginSuccess.collectAsState()
-    val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         }
@@ -131,32 +135,26 @@ fun loginButton(loginViewModel: LoginViewModel, mainColor: Int, navController:Na
         }
     }
 
-    LaunchedEffect(haveId){
-        when(haveId){
+    LaunchedEffect(haveId) {
+        when (haveId) {
             LoginViewModel.LoginUserState.LOGIN -> {
                 navController.navigate(NavigationRoutes.RegisterScreen.route)
             }
+
             LoginViewModel.LoginUserState.SUCCESS -> {
                 launcher.launch(Intent(context, MainActivity::class.java))
                 (context as? ComponentActivity)?.finish()
             }
-            else -> {
 
+            else -> {
+                // Handle other states if needed
             }
         }
     }
 
-    Scaffold(
-        scaffoldState = scaffoldState,
-        snackbarHost = {
-            SnackbarHost(
-                hostState = scaffoldState.snackbarHostState
-            ) { snackbarData ->
-                Snackbar(
-                    snackbarData = snackbarData,
-                )
-            }
-        }
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.padding(top = 10.dp)
     ) {
         Button(
             onClick = {
@@ -172,7 +170,7 @@ fun loginButton(loginViewModel: LoginViewModel, mainColor: Int, navController:Na
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.2f)
+                .height((screenWidth / 7.5).dp)
         ) {
             Text("로그인", color = Color.White, fontWeight = FontWeight.SemiBold)
         }

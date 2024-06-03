@@ -104,6 +104,6 @@ class LoginViewModel @Inject constructor(
 
     fun signOut(mainColor: Int) {
         SharedPreferenceUtil(context).removeAll()
-        SharedPreferenceUtil(context).setInt("mainColor", mainColor)
+        SharedPreferenceUtil(context).setInt("themeColor", mainColor)
     }
 }
