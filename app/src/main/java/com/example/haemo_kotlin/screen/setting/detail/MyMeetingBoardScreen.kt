@@ -1,5 +1,7 @@
 package com.example.haemo_kotlin.screen.setting.detail
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,11 +23,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,26 +35,26 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
+import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
-import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
-import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.convertDate
 import com.example.haemo_kotlin.viewModel.MainViewModel
+import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 
 @Composable
 fun MyMeetingBoardScreen(
     postViewModel: PostViewModel,
+    acceptationViewModel: AcceptationViewModel,
     mainViewModel: MainViewModel,
     navController: NavController,
     nickname: String,
 ) {
     val post = postViewModel.postModelList.collectAsState().value
     val postState = postViewModel.postModelListState.collectAsState().value
-    val context = LocalContext.current
-    val mainColor = SharedPreferenceUtil(context).getInt("themeColor", R.color.mainColor)
+    val mainColor by mainViewModel.colorState.collectAsState()
 
     LaunchedEffect(post) {
         postViewModel.getPost()
@@ -80,7 +82,7 @@ fun MyMeetingBoardScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(color = colorResource(id = mainColor))
                     }
                 }
 
@@ -91,29 +93,13 @@ fun MyMeetingBoardScreen(
                         }
 
                         else -> {
-                            Column(
-                                modifier = Modifier
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(horizontal = 10.dp)
-                            ) {
-                                Text(
-                                    "내가 작성한 글",
-                                    fontSize = 17.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = colorResource(
-                                        id = R.color.myBoardColor
-                                    ),
-                                    modifier = Modifier.padding(vertical = 15.dp)
-                                )
-                                Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
-                                MyMeetingBoardList(
-                                    post,
-                                    nickname,
-                                    mainColor,
-                                    postViewModel,
-                                    navController
-                                )
-                            }
+                            MyMeetingBoardList(
+                                post,
+                                nickname,
+                                mainColor,
+                                acceptationViewModel,
+                                navController
+                            )
                         }
                     }
                 }
@@ -127,30 +113,57 @@ fun MyMeetingBoardList(
     postList: List<PostResponseModel>,
     nickname: String,
     mainColor: Int,
-    postViewModel: PostViewModel,
+    viewModel: AcceptationViewModel,
     navController: NavController
 ) {
-    val context = LocalContext.current
     val list = postList.filter {
         it.nickname == nickname
     }
-    Column {
-        list.forEachIndexed { _, post ->
-            MyMeetingBoardItem(post, postViewModel, mainColor, navController)
+    if (list.isEmpty()) {
+        Box(Modifier.background(Color.White), contentAlignment = Alignment.Center) {
+            ErrorScreen(text = "작성한 글이 없어요!")
         }
-    }
+    } else
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 10.dp)
+        ) {
+            Text(
+                "내가 작성한 글",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(
+                    id = R.color.myBoardColor
+                ),
+                modifier = Modifier.padding(vertical = 15.dp)
+            )
+            Divider(thickness = 0.7.dp, color = Color(0xffbbbbbb))
+            list.forEachIndexed { _, post ->
+                MyMeetingBoardItem(post, viewModel, mainColor, navController)
+            }
+        }
 }
 
 @Composable
 fun MyMeetingBoardItem(
     post: PostResponseModel,
-    viewModel: PostViewModel,
+    viewModel: AcceptationViewModel,
     mainColor: Int,
     navController: NavController
 ) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
+    val attendees by viewModel.attendeeList.collectAsState()
+    val acceptationList by viewModel.attendeeModelList.collectAsState()
+    val allowedUser = acceptationList[post.pId]?.filter { it.acceptation }?.size ?: 0
+
+    LaunchedEffect(Unit){
+        viewModel.getAcceptationByPId(post.pId)
+        viewModel.getAttendeeByPId(post.pId)
+    }
+
     Box(
         modifier = Modifier
             .height((screenHeight / 9).dp)
@@ -181,7 +194,7 @@ fun MyMeetingBoardItem(
                         .fillMaxWidth()
                 )
                 Text(
-                    "3/${post.person}", fontSize = 12.5.sp,
+                    "$allowedUser/${post.person}", fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(id = mainColor),
                     modifier = Modifier
