@@ -1,5 +1,6 @@
 package com.example.haemo_kotlin.screen.main.board.detail
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -131,6 +132,7 @@ fun ClubPostDetailScreen(
         postViewModel.getOneClubPost(pId)
         postViewModel.getClubPostingUser(pId)
         commentViewModel.getCommentListByPId(pId, 2)
+        Log.d("미란 컴포지션", "여기서 일어났다. 디테일 페이지")
     }
     LaunchedEffect(replyList) {
         commentViewModel.getReplyListByCId(repliedCId, 2)

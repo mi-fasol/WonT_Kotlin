@@ -242,7 +242,7 @@ fun ClubBoardItem(
             ) {
                 Column() {
                     Text(
-                        text = post.title,
+                        text = "상시 모집",
                         fontSize = 8.5.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = colorResource(mainColor)

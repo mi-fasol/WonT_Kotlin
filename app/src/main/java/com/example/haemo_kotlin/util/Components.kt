@@ -285,7 +285,10 @@ fun CommentWidget(
         }
         if (commentList.isNotEmpty()) {
             commentList.forEachIndexed { index, comment ->
-                if (userList.isNotEmpty()) {
+                LaunchedEffect(commentList){
+                    commentViewModel.getCommentUser(pId, type)
+                }
+                if (userList.size == commentList.size) {
                     CommentWidgetItem(
                         comment,
                         userList[index],
