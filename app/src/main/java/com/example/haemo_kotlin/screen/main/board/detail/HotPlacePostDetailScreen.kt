@@ -79,6 +79,7 @@ fun HotPlacePostDetailScreen(
     val content = commentViewModel.content.collectAsState().value
     val isReply = commentViewModel.isReply.collectAsState().value
     val commentList = commentViewModel.commentList.collectAsState().value
+    val beforeCId = commentViewModel.beforeCId.collectAsState().value
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
     val isWished = wishViewModel.isWished.collectAsState().value
@@ -154,6 +155,20 @@ fun HotPlacePostDetailScreen(
     LaunchedEffect(replyList) {
         commentViewModel.getReplyListByCId(repliedCId, 3)
         commentViewModel.getReplyUser(repliedCId, 3)
+    }
+
+    LaunchedEffect(isReply) {
+        if (beforeCId != 0) {
+            commentViewModel.getReplyUser(beforeCId, 3)
+            commentViewModel.getReplyListByCId(beforeCId, 3)
+        }
+    }
+
+    if (beforeCId != 0) {
+        LaunchedEffect(replyList[beforeCId]) {
+            commentViewModel.getReplyUser(beforeCId, 3)
+            commentViewModel.getReplyListByCId(beforeCId, 3)
+        }
     }
 
     Scaffold(

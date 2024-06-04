@@ -71,6 +71,7 @@ fun ClubPostDetailScreen(
     val isReply = commentViewModel.isReply.collectAsState().value
     val replyList = commentViewModel.replyList.collectAsState().value
     val repliedCId = commentViewModel.commentId.collectAsState().value
+    val beforeCId = commentViewModel.beforeCId.collectAsState().value
     val isWished = wishViewModel.isWished.collectAsState().value
     val deleteState by postViewModel.clubPostDeleteState.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
@@ -137,6 +138,20 @@ fun ClubPostDetailScreen(
     LaunchedEffect(replyList) {
         commentViewModel.getReplyListByCId(repliedCId, 2)
         commentViewModel.getReplyUser(repliedCId, 2)
+    }
+
+    LaunchedEffect(isReply) {
+        if (beforeCId != 0) {
+            commentViewModel.getReplyUser(beforeCId, 2)
+            commentViewModel.getReplyListByCId(beforeCId, 2)
+        }
+    }
+
+    if (beforeCId != 0) {
+        LaunchedEffect(replyList[beforeCId]) {
+            commentViewModel.getReplyUser(beforeCId, 2)
+            commentViewModel.getReplyListByCId(beforeCId, 2)
+        }
     }
 
 
