@@ -38,15 +38,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.boardDetailContent
+import com.example.haemo_kotlin.ui.theme.boardDetailTitle
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ErrorScreen
@@ -257,14 +257,12 @@ fun HotPlacePostInfo(post: HotPlaceResponsePostModel) {
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Text(
             post.title,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = boardDetailTitle,
             color = colorResource(
                 id = R.color.mainTextColor
             )
         )
         Spacer(Modifier.height(5.dp))
-
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -294,7 +292,7 @@ fun HotPlacePostInfo(post: HotPlaceResponsePostModel) {
         ) {
             Text(
                 post.content,
-                fontSize = 13.sp,
+                style = boardDetailContent,
                 color = colorResource(id = R.color.mainTextColor),
                 maxLines = Int.MAX_VALUE
             )

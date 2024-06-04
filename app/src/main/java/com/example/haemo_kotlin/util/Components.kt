@@ -60,6 +60,12 @@ import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
+import com.example.haemo_kotlin.ui.theme.commentContent
+import com.example.haemo_kotlin.ui.theme.commentInfo
+import com.example.haemo_kotlin.ui.theme.commentUserNickname
+import com.example.haemo_kotlin.ui.theme.postUserInfo
+import com.example.haemo_kotlin.ui.theme.postUserNickname
+import com.example.haemo_kotlin.ui.theme.replyButtonText
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
 import kotlinx.coroutines.launch
@@ -127,7 +133,7 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
     Box(
         Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp, horizontal = 20.dp)
+            .padding(vertical = 10.dp, horizontal = 18.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -136,7 +142,8 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
                     bottomSheetOpen = true
-                }
+                },
+                modifier = Modifier.padding(end = 5.dp)
             ) {
                 Icon(
                     painter = painterResource(id = userMyPageImageList[user.userImage]),
@@ -149,13 +156,12 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
                 Text(
                     text = user.nickname,
                     color = Color(0xff3f3f3f),
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 12.5.sp
+                    style = postUserNickname
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "${user.major} / ", fontSize = 8.5.sp, color = Color(0xff3f3f3f))
+                    Text(text = "${user.major} / ", style = postUserInfo, color = Color(0xff3f3f3f))
                     val iconColor =
                         if (user.gender == "남자") colorResource(id = R.color.mainColor) else colorResource(
                             id = R.color.pinkMainColor
@@ -166,7 +172,7 @@ fun PostUserInfo(user: UserResponseModel, date: String, navController: NavContro
                         tint = iconColor,
                         modifier = Modifier.size(8.5.dp)
                     )
-                    Text(text = " / $date", fontSize = 8.5.sp, color = Color(0xff3f3f3f))
+                    Text(text = " / $date", style = postUserInfo, color = Color(0xff3f3f3f))
                 }
             }
         }
@@ -267,17 +273,15 @@ fun CommentWidget(
 
     Column(Modifier.padding(horizontal = 20.dp)) {
         Row(modifier = Modifier.padding(vertical = 15.dp)) {
-            androidx.compose.material3.Text(
+            Text(
                 "댓글",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+                style = commentInfo,
                 color = Color(0xff040404),
             )
             Spacer(Modifier.width(5.dp))
-            androidx.compose.material3.Text(
+            Text(
                 commentList.size.toString(),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+                style = commentInfo,
                 color = colorResource(
                     id = mainColor
                 )
@@ -329,12 +333,12 @@ fun ReplyWidget(
 
     Column {
         replyList?.forEachIndexed { index, reply ->
-            LaunchedEffect(replies[cId]){
+            LaunchedEffect(replies[cId]) {
                 viewModel.getReplyListByCId(cId, type)
                 viewModel.getReplyUser(cId, type)
                 Log.d("미란 대댓글", "리플라이 리스트가 바뀌어서 실행이 됐어요")
             }
-            LaunchedEffect(replyState){
+            LaunchedEffect(replyState) {
                 viewModel.getReplyListByCId(cId, type)
                 viewModel.getReplyUser(cId, type)
                 Log.d("미란 대댓글", "리플라이 스테이트가 바뀌어서 실행이 됐어요")
@@ -343,13 +347,13 @@ fun ReplyWidget(
                 if (users.size == replyList.size) {
                     users.getOrNull(index)
                         ?.let { ReplyWidgetItem(reply, it, navController) }
-                } else{
-                    LaunchedEffect(replies[cId]){
+                } else {
+                    LaunchedEffect(replies[cId]) {
                         viewModel.getReplyListByCId(cId, type)
                         viewModel.getReplyUser(cId, type)
                         Log.d("미란 대댓글", "리플라이 리스트가 바뀌어서 실행이 됐어요")
                     }
-                    LaunchedEffect(replyState){
+                    LaunchedEffect(replyState) {
                         viewModel.getReplyListByCId(cId, type)
                         viewModel.getReplyUser(cId, type)
                         Log.d("미란 대댓글", "리플라이 스테이트가 바뀌어서 실행이 됐어요")
@@ -384,18 +388,10 @@ fun CommentWidgetItem(
     }
 
     LaunchedEffect(true, key2 = Unit) {
-//        replies = emptyList()
         launch {
             viewModel.getReplyListByCId(comment.cId, type)
             viewModel.getReplyUser(comment.cId, type)
         }
-//        if (viewModel.replyList.value[comment.cId] != null) {
-//            replies = viewModel.replyList.value[comment.cId]!!
-//        }
-//        if (viewModel.replyUserList.value[comment.cId] != null) {
-//            replyUserList = viewModel.replyUserList.value[comment.cId]!!
-//        }
-//        Log.d("미란 라리루루루 Component", replies.toString())
     }
 
     Column {
@@ -417,17 +413,18 @@ fun CommentWidgetItem(
                         painter = painterResource(id = userMyPageImageList[user.userImage]),
                         contentDescription = null,
                         tint = Color.Unspecified,
-                        modifier = Modifier.size((screenHeight / 18).dp)
+                        modifier = Modifier.size((screenHeight / 16).dp)
                     )
                 } else {
                     Box(
                         modifier = Modifier
                             .background(Color.Black, CircleShape)
-                            .size((screenHeight / 18).dp)
+                            .size((screenHeight / 16).dp)
                     ) {}
                 }
             }
             Column(
+                Modifier.padding(vertical = 5.dp)
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -436,8 +433,7 @@ fun CommentWidgetItem(
                 ) {
                     Text(
                         text = if (user != null) comment.nickname else "탈퇴한 사용자입니다.",
-                        fontSize = 13.5.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = commentUserNickname,
                         color = colorResource(id = R.color.mainTextColor),
                         modifier = Modifier
                     )
@@ -454,14 +450,15 @@ fun CommentWidgetItem(
                     ) {
                         Text(
                             "답글",
-                            fontSize = 10.sp,
+                            style = replyButtonText,
                             modifier = Modifier.padding(vertical = 7.dp, horizontal = 20.dp),
                             color = colorResource(id = R.color.meetingDetailButtonTextColor)
                         )
                     }
                 }
                 Text(
-                    comment.content, fontSize = 12.5.sp,
+                    comment.content,
+                    style = commentContent,
                     color = colorResource(id = R.color.mainTextColor),
                     maxLines = Int.MAX_VALUE
                 )
@@ -550,23 +547,22 @@ fun ReplyWidgetItem(
                     .size((screenHeight / 22).dp)
                     .padding(end = 10.dp)
             )
-            Column(
-            ) {
+            Column {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    androidx.compose.material3.Text(
+                    Text(
                         text = reply.nickname,
-                        fontSize = 13.5.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = commentUserNickname,
                         color = colorResource(id = R.color.mainTextColor),
                         modifier = Modifier
                     )
                 }
-                androidx.compose.material3.Text(
-                    reply.content, fontSize = 12.5.sp,
+                Text(
+                    reply.content,
+                    style = commentContent,
                     color = colorResource(id = R.color.mainTextColor),
                     maxLines = Int.MAX_VALUE
                 )

@@ -41,6 +41,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.boardDetailContent
+import com.example.haemo_kotlin.ui.theme.boardDetailTitle
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ErrorScreen
@@ -241,14 +243,12 @@ fun ClubPostInfo(post: ClubPostResponseModel) {
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Text(
             post.title,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = boardDetailTitle,
             color = colorResource(
                 id = R.color.mainTextColor
             )
         )
         Spacer(Modifier.height(5.dp))
-
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -283,7 +283,7 @@ fun ClubPostInfo(post: ClubPostResponseModel) {
         ) {
             Text(
                 post.content,
-                fontSize = 13.sp,
+                style = boardDetailContent,
                 color = colorResource(id = R.color.mainTextColor),
                 maxLines = Int.MAX_VALUE
             )

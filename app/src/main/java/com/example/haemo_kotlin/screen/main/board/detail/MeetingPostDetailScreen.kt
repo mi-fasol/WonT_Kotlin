@@ -42,6 +42,11 @@ import com.example.haemo_kotlin.model.retrofit.comment.reply.ReplyResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.boardDetailAttendButtonText
+import com.example.haemo_kotlin.ui.theme.boardDetailAttendeeInfo
+import com.example.haemo_kotlin.ui.theme.boardDetailContent
+import com.example.haemo_kotlin.ui.theme.boardDetailTitle
+import com.example.haemo_kotlin.ui.theme.sc_dream
 import com.example.haemo_kotlin.util.AttendUserDialog
 import com.example.haemo_kotlin.util.CommentWidget
 import com.example.haemo_kotlin.util.ConfirmDialog
@@ -82,9 +87,6 @@ fun MeetingPostDetailScreen(
     val repliedCId by commentViewModel.commentId.collectAsState()
     val isWished by wishViewModel.isWished.collectAsState()
     val mainColor by mainViewModel.colorState.collectAsState()
-
-    var replies by remember { mutableStateOf<List<ReplyResponseModel>>(emptyList()) }
-    var replyUserList by remember { mutableStateOf<List<UserResponseModel>>(emptyList()) }
 
     var openDialog by remember {
         mutableStateOf(false)
@@ -325,9 +327,9 @@ fun PostInfo(
 
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Text(
-            post.title, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = colorResource(
-                id = R.color.mainTextColor
-            )
+            post.title,
+            color = colorResource(id = R.color.mainTextColor),
+            style = boardDetailTitle
         )
         Spacer(Modifier.height(5.dp))
         Box(
@@ -335,7 +337,11 @@ fun PostInfo(
                 .padding(vertical = 10.dp)
                 .fillMaxWidth()
         ) {
-            Text(post.content, fontSize = 13.sp, color = colorResource(id = R.color.mainTextColor))
+            Text(
+                post.content,
+                style = boardDetailContent,
+                color = colorResource(id = R.color.mainTextColor)
+            )
         }
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -344,14 +350,14 @@ fun PostInfo(
             Text(
                 "$allowedUser/${post.person}",
                 color = colorResource(mainColor),
-                fontWeight = FontWeight.Bold,
+                style = boardDetailAttendeeInfo,
                 modifier = Modifier.padding(4.dp)
             )
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .height((screenHeight / 26).dp)
-                    .width((screenWidth / 5).dp)
+                    .width((screenWidth / 4.5).dp)
                     .background(
                         colorResource(mainColor),
                         RoundedCornerShape(23.dp)
@@ -369,11 +375,9 @@ fun PostInfo(
                     },
             ) {
                 Text(
-                    text,
-                    fontSize = 9.sp,
+                    "$text ${accept?.size}",
                     color = Color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Center
+                    style = boardDetailAttendButtonText
                 )
             }
         }
