@@ -76,6 +76,7 @@ fun MeetingPostDetailScreen(
     val accept by acceptationViewModel.attendeeModelList.collectAsState()
     val commentList by commentViewModel.commentList.collectAsState()
     val content by commentViewModel.content.collectAsState()
+    val beforeCId by commentViewModel.beforeCId.collectAsState()
     val isReply by commentViewModel.isReply.collectAsState()
     val replyList by commentViewModel.replyList.collectAsState()
     val repliedCId by commentViewModel.commentId.collectAsState()
@@ -164,6 +165,22 @@ fun MeetingPostDetailScreen(
     LaunchedEffect(commentList) {
         Log.d("미란 코멘트", "호출ㄹ")
         commentViewModel.getCommentListByPId(pId, 1)
+    }
+
+    LaunchedEffect(isReply) {
+        if (beforeCId != 0) {
+            commentViewModel.getReplyUser(beforeCId, 1)
+            commentViewModel.getReplyListByCId(beforeCId, 1)
+            Log.d("미란 대댓글 미팅 페이지", "호출ㄹ")
+        }
+    }
+
+    if (beforeCId != 0) {
+        LaunchedEffect(replyList[beforeCId]) {
+            commentViewModel.getReplyUser(beforeCId, 1)
+            commentViewModel.getReplyListByCId(beforeCId, 1)
+            Log.d("미란 대댓글 미팅 페이지", "호출ㄹ")
+        }
     }
 
     LaunchedEffect(repliedCId) {

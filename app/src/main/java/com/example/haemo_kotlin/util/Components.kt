@@ -104,7 +104,7 @@ fun EnterInfo(type: String, mainColor: Int, value: String, onValueChange: (Strin
                 modifier = Modifier.fillMaxWidth(),
                 value = value,
                 onValueChange = onValueChange,
-                visualTransformation = if(type != "P/W") VisualTransformation.None
+                visualTransformation = if (type != "P/W") VisualTransformation.None
                 else PasswordVisualTransformation(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = colorResource(id = mainColor),
@@ -285,7 +285,7 @@ fun CommentWidget(
         }
         if (commentList.isNotEmpty()) {
             commentList.forEachIndexed { index, comment ->
-                LaunchedEffect(commentList){
+                LaunchedEffect(commentList) {
                     commentViewModel.getCommentUser(pId, type)
                 }
                 if (userList.size == commentList.size) {
@@ -302,6 +302,64 @@ fun CommentWidget(
         }
     }
 }
+
+@Composable
+fun ReplyWidget(
+    cId: Int,
+    type: Int,
+    replyList: List<ReplyResponseModel>?,
+    users: List<UserResponseModel>?,
+    viewModel: CommentViewModel,
+    navController: NavController
+) {
+    val replies by viewModel.replyList.collectAsState()
+    val replyUsers by viewModel.replyUserList.collectAsState()
+    val replyState by viewModel.replyRegisterState.collectAsState()
+
+    LaunchedEffect(replyState, replyUsers) {
+        viewModel.getReplyListByCId(cId, type)
+        viewModel.getReplyUser(cId, type)
+        Log.d("미란 대댓글", "실행됨")
+    }
+    LaunchedEffect(replies[cId]) {
+        viewModel.getReplyUser(cId, type)
+        viewModel.getReplyListByCId(cId, type)
+        Log.d("미란 대댓글", "리플라이 리스트 바뀜")
+    }
+
+    Column {
+        replyList?.forEachIndexed { index, reply ->
+            LaunchedEffect(replies[cId]){
+                viewModel.getReplyListByCId(cId, type)
+                viewModel.getReplyUser(cId, type)
+                Log.d("미란 대댓글", "리플라이 리스트가 바뀌어서 실행이 됐어요")
+            }
+            LaunchedEffect(replyState){
+                viewModel.getReplyListByCId(cId, type)
+                viewModel.getReplyUser(cId, type)
+                Log.d("미란 대댓글", "리플라이 스테이트가 바뀌어서 실행이 됐어요")
+            }
+            if (users != null) {
+                if (users.size == replyList.size) {
+                    users.getOrNull(index)
+                        ?.let { ReplyWidgetItem(reply, it, navController) }
+                } else{
+                    LaunchedEffect(replies[cId]){
+                        viewModel.getReplyListByCId(cId, type)
+                        viewModel.getReplyUser(cId, type)
+                        Log.d("미란 대댓글", "리플라이 리스트가 바뀌어서 실행이 됐어요")
+                    }
+                    LaunchedEffect(replyState){
+                        viewModel.getReplyListByCId(cId, type)
+                        viewModel.getReplyUser(cId, type)
+                        Log.d("미란 대댓글", "리플라이 스테이트가 바뀌어서 실행이 됐어요")
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun CommentWidgetItem(
@@ -412,12 +470,24 @@ fun CommentWidgetItem(
 
         if (replies != null) {
             if (replies.isNotEmpty()) {
-                replies.forEachIndexed { index, reply ->
-                    if (replyUsers != null) {
-                        replyUsers.getOrNull(index)
-                            ?.let { ReplyWidgetItem(reply, it, navController) }
-                    }
+                LaunchedEffect(replies) {
+                    viewModel.getReplyListByCId(comment.cId, type)
+                    viewModel.getReplyUser(comment.cId, type)
                 }
+                ReplyWidget(
+                    cId = comment.cId,
+                    type = type,
+                    replyList = replies,
+                    users = replyUsers,
+                    viewModel = viewModel,
+                    navController = navController
+                )
+//                replies.forEachIndexed { index, reply ->
+//                    if (replyUsers != null) {
+//                        replyUsers.getOrNull(index)
+//                            ?.let { ReplyWidgetItem(reply, it, navController) }
+//                    }
+//                }
             }
         }
 

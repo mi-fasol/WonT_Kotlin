@@ -58,6 +58,7 @@ class CommentViewModel @Inject constructor(
 
     var isReply = MutableStateFlow(false)
     var commentId = MutableStateFlow(0)
+    var beforeCId = MutableStateFlow(0)
     var postType = MutableStateFlow(0)
 
     suspend fun getCommentListByPId(pId: Int, type: Int) {
@@ -246,7 +247,6 @@ class CommentViewModel @Inject constructor(
                 nickname,
                 getCurrentDateTime()
             )
-
             else -> throw (error("에러러링"))
         }
 
@@ -270,7 +270,9 @@ class CommentViewModel @Inject constructor(
                     _replyList.value[cId] = _replyList.value[cId]!! + savedReply!!
                     Log.d("미란 SavedReply", savedReply.toString())
                     commentId.value = 0
+                    beforeCId.value = cId
                     isReply.value = false
+                    _replyRegisterState.value = Resource.loading(null)
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("API Error", "에러 응답: $errorBody")
