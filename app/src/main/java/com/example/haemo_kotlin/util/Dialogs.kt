@@ -41,6 +41,10 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.acceptation.AcceptationResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
+import com.example.haemo_kotlin.ui.theme.buttonText
+import com.example.haemo_kotlin.ui.theme.contentEnterText
+import com.example.haemo_kotlin.ui.theme.postUserNickname
+import com.example.haemo_kotlin.ui.theme.settingTitle
 import com.example.haemo_kotlin.viewModel.board.AcceptationViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
 import com.example.haemo_kotlin.viewModel.user.InquiryViewModel
@@ -78,7 +82,7 @@ fun YesOrNoDialog(
                         .fillMaxSize()
                         .weight(4f)
                 ) {
-                    Text(content, fontSize = 16.sp)
+                    Text(content, style = settingTitle)
                 }
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -150,7 +154,7 @@ fun ConfirmDialog(
                         .fillMaxSize()
                         .weight(4f)
                 ) {
-                    Text(content, fontSize = 16.sp)
+                    Text(content, style = settingTitle)
                 }
                 Button(
                     onClick = { onClickConfirm() },
@@ -195,8 +199,7 @@ fun InquiryTypeDialog(
                 Text(
                     text = "문의 유형을 선택해 주세요.",
                     color = colorResource(id = R.color.mainGreyColor).copy(0.5f),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    style = buttonText,
                     modifier = Modifier
                         .padding(vertical = 10.dp, horizontal = 20.dp)
                         .fillMaxWidth()
@@ -212,8 +215,7 @@ fun InquiryTypeDialog(
                     ) {
                         Text(
                             type, color = colorResource(id = R.color.inquiryScreenTitleTextColor),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            style = buttonText,
                             modifier = Modifier.padding(vertical = 7.dp, horizontal = 20.dp)
                         )
                     }
@@ -248,7 +250,6 @@ fun PostManagementDialog(
                 .padding(horizontal = 10.dp)
         ) {
             Column(
-
                 Modifier.padding(vertical = 15.dp)
             ) {
                 postManagementList.forEach { type ->
@@ -269,8 +270,7 @@ fun PostManagementDialog(
                     ) {
                         Text(
                             type, color = colorResource(id = R.color.inquiryScreenTitleTextColor),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            style = contentEnterText,
                             modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
                         )
                     }
@@ -305,11 +305,15 @@ fun AttendUserDialog(
                 .padding(horizontal = 20.dp, vertical = 40.dp),
             contentAlignment = Alignment.Center
         ) {
-            LazyColumn() {
+            LazyColumn {
                 items(attendList.size) {
                     val iconColor =
                         if (attendList[it].acceptation) colorResource(mainColor) else colorResource(
                             id = R.color.attendFalseColor
+                        )
+                    val nicknameColor =
+                        if (attendList[it].acceptation) colorResource(id = mainColor) else colorResource(
+                            id = R.color.mainTextColor
                         )
                     Box(
                         modifier = Modifier
@@ -338,9 +342,8 @@ fun AttendUserDialog(
                             )
                             Text(
                                 attendees[it].nickname,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = colorResource(id = R.color.mainTextColor)
+                                style = postUserNickname,
+                                color = nicknameColor
                             )
                             Icon(
                                 painter = painterResource(id = R.drawable.accept_user_icon),
@@ -352,7 +355,7 @@ fun AttendUserDialog(
                             )
                         }
                     }
-                    if(attendList.size -1 != it){
+                    if (attendList.size - 1 != it) {
                         Spacer(modifier = Modifier.height(10.dp))
                     }
                 }

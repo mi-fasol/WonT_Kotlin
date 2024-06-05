@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.model.retrofit.post.NoticeResponseModel
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.buttonText
+import com.example.haemo_kotlin.ui.theme.clubScreenTitle
 import com.example.haemo_kotlin.util.*
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.board.NoticeViewModel
@@ -160,7 +162,7 @@ fun NoticeRegisterButton(
         Text(
             "등록하기",
             color = Color.White,
-            fontWeight = FontWeight.ExtraBold
+            style = clubScreenTitle
         )
     }
 }

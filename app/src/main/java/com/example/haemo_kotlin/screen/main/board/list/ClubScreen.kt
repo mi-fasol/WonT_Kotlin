@@ -51,6 +51,10 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.clubScreenDescription
+import com.example.haemo_kotlin.ui.theme.clubScreenTitle
+import com.example.haemo_kotlin.ui.theme.meetingScreenTitle
+import com.example.haemo_kotlin.ui.theme.postUserInfo
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.viewModel.MainViewModel
@@ -157,7 +161,7 @@ fun SearchBarWidget(
                     .padding(16.dp)
                     .weight(5f),
                 singleLine = true,
-                textStyle = TextStyle(color = Color.Black)
+                textStyle = meetingScreenTitle,
             )
             Box(
                 contentAlignment = Alignment.Center,
@@ -243,25 +247,24 @@ fun ClubBoardItem(
                 Column() {
                     Text(
                         text = "상시 모집",
-                        fontSize = 8.5.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        style = postUserInfo,
                         color = colorResource(mainColor)
                     )
                     Text(
                         text = post.title,
-                        fontSize = 13.5.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        style = clubScreenTitle,
                         color = Color(0xff353535)
                     )
                 }
-                Column() {
+                Column {
                     Text(
-                        post.description, fontSize = 10.sp,
+                        post.description,
+                        style = clubScreenDescription,
                         color = Color(0xff414141)
                     )
-                    LazyRow() {
+                    LazyRow {
                         items(2) {
-                            Row() {
+                            Row {
                                 Box(
                                     contentAlignment = Alignment.Center,
                                     modifier = Modifier
@@ -272,7 +275,11 @@ fun ClubBoardItem(
                                         )
                                         .padding(horizontal = 10.dp),
                                 ) {
-                                    Text("#검도남", fontSize = 8.5.sp, color = Color(0xff717171))
+                                    Text(
+                                        "#검도남",
+                                        style = clubScreenDescription,
+                                        color = Color(0xff717171)
+                                    )
                                     Spacer(modifier = Modifier.width(10.dp))
                                 }
                             }

@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.model.retrofit.chat.FireBaseChatModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.ui.theme.boardRegisterDropdown
+import com.example.haemo_kotlin.ui.theme.commentContent
 import com.example.haemo_kotlin.util.BackArrowAppBar
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.userMyPageImageList
@@ -162,11 +164,14 @@ fun ChatList(
                                     verticalArrangement = Arrangement.SpaceBetween,
                                     modifier = Modifier.padding(start = 10.dp)
                                 ) {
-                                    Text(receiver.nickname)
+                                    Text(
+                                        receiver.nickname,
+                                        style = boardRegisterDropdown
+                                        )
                                     Text(
                                         text = lastMessage.content,
                                         color = Color.DarkGray,
-                                        fontSize = 12.sp
+                                        style = commentContent
                                     )
                                 }
                             }

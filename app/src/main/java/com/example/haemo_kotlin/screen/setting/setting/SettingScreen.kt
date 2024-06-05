@@ -29,13 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.StartActivity
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.ui.theme.settingTitle
+import com.example.haemo_kotlin.ui.theme.switchText
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.YesOrNoDialog
 import com.example.haemo_kotlin.viewModel.MainViewModel
@@ -65,9 +65,7 @@ fun SettingScreen(
             ) {
                 Divider(thickness = 0.5.dp, color = Color(0xffbbbbbb))
 
-                Column(
-                    //    modifier = Modifier.padding(horizontal = 20.dp)
-                ) {
+                Column {
                     AccountSettingField(mainColor, mainViewModel, loginViewModel, navController)
                     AppSettingField(mainColor, mainViewModel, loginViewModel, navController)
                     AppInfoField(
@@ -91,7 +89,7 @@ fun AccountSettingField(
 ) {
     val textList = listOf("로그아웃", "계정 탈퇴")
 
-    Column() {
+    Column {
         SettingTitleField(text = "계정 관리")
         textList.forEach { text ->
             SettingContentField(
@@ -157,7 +155,7 @@ fun AppInfoField(
         NavigationRoutes.NoticeScreen.route
     )
 
-    Column() {
+    Column {
         SettingTitleField(text = "앱 정보")
         AppVersionField(mainColor, mainViewModel)
         Divider(
@@ -196,7 +194,7 @@ fun SettingTitleField(text: String) {
         Text(
             text,
             color = colorResource(id = R.color.settingScreenTitleTextColor),
-            fontWeight = FontWeight.SemiBold,
+            style = settingTitle,
             modifier = Modifier.padding(start = 10.dp)
         )
     }
@@ -240,7 +238,7 @@ fun SettingContentField(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .weight(12f),
-                fontSize = 16.sp
+                style = switchText
             )
             IconButton(
                 onClick = { navController.navigate(route) },
@@ -292,14 +290,14 @@ fun AppVersionField(mainColor: Int, mainViewModel: MainViewModel) {
                 color = colorResource(id = R.color.mainGreyColor),
                 modifier = Modifier
                     .padding(start = 10.dp),
-                fontSize = 16.sp
+                style = switchText
             )
             Text(
                 mainViewModel.getVersion().toString(),
                 color = colorResource(id = mainColor),
                 modifier = Modifier
                     .padding(start = 10.dp),
-                fontSize = 16.sp
+                style = switchText
             )
         }
     }

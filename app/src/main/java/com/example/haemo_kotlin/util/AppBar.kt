@@ -11,10 +11,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarColors
@@ -31,13 +29,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.ui.theme.bacKArrowAppBar
+import com.example.haemo_kotlin.ui.theme.boardAppBar
+import com.example.haemo_kotlin.ui.theme.boardRegisterAppBar
+import com.example.haemo_kotlin.ui.theme.chatRoomAppBar
+import com.example.haemo_kotlin.ui.theme.mainPageAppBar
+import com.example.haemo_kotlin.ui.theme.settingScreenAppBar
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.CommentViewModel
 import com.example.haemo_kotlin.viewModel.boardInfo.WishViewModel
@@ -47,7 +49,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun BackArrowAppBar(appBarText: String, navController: NavController) {
     CenterAlignedTopAppBar(
-        title = { Text(text = appBarText, fontSize = 16.sp, fontWeight = FontWeight.SemiBold) },
+        title = {
+            Text(
+                text = appBarText,
+                style = bacKArrowAppBar,
+            )
+        },
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
@@ -77,8 +84,7 @@ fun SettingScreenAppBar(text: String, mainColor: Int, navController: NavControll
         title = {
             Text(
                 text = text,
-                fontSize = 19.sp,
-                fontWeight = FontWeight.ExtraBold,
+                style = settingScreenAppBar,
                 color = Color.White
             )
         },
@@ -110,8 +116,7 @@ fun MainPageAppBar(appBarText: String, mainColor: Int, navController: NavControl
         title = {
             Text(
                 text = appBarText,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
+                style = boardAppBar,
                 color = colorResource(mainColor)
             )
         },
@@ -138,8 +143,7 @@ fun MyPageAppBar(appBarText: String, mainColor: Int, navController: NavControlle
         title = {
             Text(
                 text = appBarText,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
+                style = mainPageAppBar,
                 color = colorResource(mainColor)
             )
         },
@@ -299,8 +303,7 @@ fun PostRegisterAppBar(appBarText: String, mainColor: Int, navController: NavCon
         title = {
             Text(
                 text = appBarText,
-                fontSize = 19.sp,
-                fontWeight = FontWeight.Bold,
+                style = boardRegisterAppBar,
                 color = Color.White
             )
         },
@@ -334,8 +337,7 @@ fun ChatRoomAppBar(nickname: String, mainColor: Int, navController: NavControlle
                 text = nickname,
                 color = colorResource(id = R.color.mainTextColor),
                 modifier = Modifier.fillMaxWidth(),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 17.sp
+                style = chatRoomAppBar,
             )
         },
         navigationIcon = {
@@ -379,8 +381,7 @@ fun NoticeScreenAppBar(
         title = {
             Text(
                 text = text,
-                fontSize = 19.sp,
-                fontWeight = FontWeight.ExtraBold,
+                style = boardRegisterAppBar,
                 color = Color.White
             )
         },

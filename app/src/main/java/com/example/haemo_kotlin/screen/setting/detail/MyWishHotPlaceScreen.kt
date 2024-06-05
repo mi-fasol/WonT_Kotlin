@@ -32,14 +32,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.hotPlaceScreenTitle
+import com.example.haemo_kotlin.ui.theme.myWishInfo
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.WishButton
@@ -103,8 +103,7 @@ fun MyWishHotPlaceScreen(
                             ) {
                                 Text(
                                     "가고 싶은 모임",
-                                    fontSize = 17.sp,
-                                    fontWeight = FontWeight.Bold,
+                                    style = myWishInfo,
                                     color = colorResource(
                                         id = R.color.myBoardColor
                                     ),
@@ -162,7 +161,6 @@ fun MyWishHotPlaceItem(
             .padding(top = 15.dp)
             .width((screenWidth / 3.5).dp)
             .clickable {
-//                viewModel.deleteWishList(post.hpId, 3)
                 navController.navigate(NavigationRoutes.HotPlacePostDetailScreen.createRoute(post.hpId))
             },
     ) {
@@ -198,9 +196,8 @@ fun MyWishHotPlaceItem(
             )
             Text(
                 post.title,
-                fontSize = 14.sp,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
+                style = hotPlaceScreenTitle,
+                color = Color.White
             )
         }
     }

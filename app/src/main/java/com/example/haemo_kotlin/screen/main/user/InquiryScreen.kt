@@ -23,12 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.user.MailState
+import com.example.haemo_kotlin.ui.theme.clubScreenTitle
+import com.example.haemo_kotlin.ui.theme.enterField
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ContentEnterField
 import com.example.haemo_kotlin.util.InquiryTypeDialog
@@ -109,8 +109,7 @@ fun EnterInquiryInfo(inquiryViewModel: InquiryViewModel) {
             color = colorResource(
                 id = R.color.inquiryScreenTitleTextColor
             ),
-            fontSize = 17.5.sp,
-            fontWeight = FontWeight.SemiBold
+            style = enterField
         )
         ContentEnterField(value = content) {
             if (it.length <= 500) {
@@ -176,7 +175,7 @@ fun InquiryButton(
         Text(
             "문의하기",
             color = Color.White,
-            fontWeight = FontWeight.ExtraBold,
+            style = clubScreenTitle,
             modifier = Modifier.padding(vertical = 5.dp)
         )
     }

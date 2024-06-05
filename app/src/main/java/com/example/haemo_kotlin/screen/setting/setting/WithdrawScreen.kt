@@ -37,12 +37,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.StartActivity
+import com.example.haemo_kotlin.ui.theme.boardAppBar
+import com.example.haemo_kotlin.ui.theme.clubScreenTitle
+import com.example.haemo_kotlin.ui.theme.withdrawCheck
+import com.example.haemo_kotlin.ui.theme.withdrawInfo
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.util.YesOrNoDialog
@@ -91,8 +93,7 @@ fun WithdrawInfo(mainColor: Int, userViewModel: UserViewModel) {
         Column {
             Text(
                 "${nickname}님\n탈퇴하시기 전에 확인해 주세요!",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
+                style = withdrawInfo,
                 color = colorResource(id = mainColor),
                 modifier = Modifier.padding(bottom = 20.dp)
             )
@@ -112,7 +113,7 @@ fun WithdrawInfo(mainColor: Int, userViewModel: UserViewModel) {
                 )
                 Text(
                     "안내사항을 모두 확인했습니다.",
-                    fontSize = 14.sp,
+                    style = withdrawCheck,
                     color = colorResource(id = R.color.mainGreyColor)
                 )
             }
@@ -145,7 +146,7 @@ fun WithdrawCheckNotification(mainColor: Int) {
                 )
                 Text(
                     "지금 탈퇴하시면 서비스 악용 방지를 위해 재가입이 3일 간 제한됩니다.",
-                    fontSize = 14.sp,
+                    style = withdrawCheck,
                     color = colorResource(id = R.color.mainGreyColor)
                 )
             }
@@ -162,7 +163,7 @@ fun WithdrawCheckNotification(mainColor: Int) {
                 )
                 Text(
                     "프로필, 작성글 등 모든 개인 정보가 삭제됩니다.",
-                    fontSize = 14.sp,
+                    style = withdrawCheck,
                     color = colorResource(id = R.color.mainGreyColor)
                 )
             }
@@ -203,7 +204,7 @@ fun WithdrawButton(viewModel: UserViewModel, mainColor: Int, isChecked: MutableS
             .fillMaxWidth()
 
     ) {
-        Text("회원 탈퇴", color = Color.White, fontWeight = FontWeight.SemiBold)
+        Text("회원 탈퇴", color = Color.White, style = clubScreenTitle)
     }
 
     if (dialogOpen.value) {

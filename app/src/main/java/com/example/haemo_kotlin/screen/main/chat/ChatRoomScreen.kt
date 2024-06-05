@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.chat.ChatMessageModel
+import com.example.haemo_kotlin.ui.theme.chatMessage
 import com.example.haemo_kotlin.util.ChatRoomAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
@@ -145,9 +146,9 @@ fun MessageItemFromMe(message: ChatMessageModel, mainColor: Int, chatViewModel: 
     ) {
         Text(
             text = chatViewModel.formatDateTime(message.createdAt),
-            color = Color.Gray,
-            modifier = Modifier.padding(start = 7.dp),
-            fontSize = 13.sp
+            color = colorResource(id = R.color.mainGreyColor),
+            style = chatMessage,
+            modifier = Modifier.padding(start = 7.dp)
         )
         Box(
             modifier = Modifier
@@ -159,7 +160,8 @@ fun MessageItemFromMe(message: ChatMessageModel, mainColor: Int, chatViewModel: 
         ) {
             Text(
                 text = message.content,
-                color = colorResource(id = R.color.mainTextColor)
+                color = colorResource(id = R.color.mainTextColor),
+                style = chatMessage
             )
         }
     }
@@ -185,14 +187,15 @@ fun MessageItemFromOther(message: ChatMessageModel, chatViewModel: ChatViewModel
             ) {
                 Text(
                     text = message.content,
+                    style = chatMessage,
                     color = colorResource(id = R.color.mainTextColor)
                 )
             }
             Text(
                 text = chatViewModel.formatDateTime(message.createdAt),
-                color = Color.Gray,
+                color = colorResource(id = R.color.mainGreyColor),
                 modifier = Modifier.padding(start = 7.dp),
-                fontSize = 13.sp
+                style = chatMessage
             )
         }
     }
@@ -222,8 +225,7 @@ fun SendMessage(
             .padding(10.dp),
         contentAlignment = Alignment.Center
     ) {
-        Row(
-        ) {
+        Row {
             BasicTextField(
                 value = sendMessage.value,
                 onValueChange = {
@@ -234,7 +236,8 @@ fun SendMessage(
                     .weight(10f)
                     .height((screenWidth / 9).dp)
                     .background(Color(0xffededed), RoundedCornerShape(25.dp))
-                    .padding(10.dp)
+                    .padding(10.dp),
+                textStyle = chatMessage
             )
             FilledIconButton(
                 onClick = {

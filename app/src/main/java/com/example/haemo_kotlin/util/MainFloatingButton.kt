@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.user.Role
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.ui.theme.floatingButtonText
 
 @Composable
 fun MainFloatingButton(navController: NavController) {
@@ -103,9 +104,8 @@ fun FabItem(title: String, mainColor: Int, onClicked: () -> Unit) {
     ) {
         Text(
             title,
-            fontSize = 11.5.sp,
+            style = floatingButtonText,
             color = Color.White,
-            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(vertical = 5.dp)
         )
     }

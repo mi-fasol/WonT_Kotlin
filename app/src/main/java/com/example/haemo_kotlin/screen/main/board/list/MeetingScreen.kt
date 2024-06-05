@@ -40,9 +40,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.meetingScreenAttendInfo
+import com.example.haemo_kotlin.ui.theme.meetingScreenDeadline
+import com.example.haemo_kotlin.ui.theme.meetingScreenNoticeText
+import com.example.haemo_kotlin.ui.theme.meetingScreenPerson
+import com.example.haemo_kotlin.ui.theme.meetingScreenTitle
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.convertDate
@@ -137,7 +143,7 @@ fun Today24HoursBoard(
             Column(
                 Modifier.padding(top = 15.dp, bottom = 10.dp)
             ) {
-                Text("공지 24시간", fontSize = 13.sp, color = Color(0xff393939))
+                Text("공지 24시간", style = meetingScreenNoticeText, color = Color(0xff393939))
                 LazyRow {
                     items(postList.size) { idx ->
                         TodayNotice(postList[idx], mainViewModel, mainColor, navController)
@@ -178,12 +184,20 @@ fun TodayNotice(
                 Modifier.padding(10.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = post.title, fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = post.title,
+                    color = colorResource(id = R.color.mainGreyColor),
+                    style = meetingScreenTitle
+                )
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {
-                    Text("${post.person}명", fontSize = 12.sp, color = Color(0xff595959))
-                    Row() {
+                    Text(
+                        "${post.person}명",
+                        style = meetingScreenPerson,
+                        color = colorResource(id = R.color.mainGreyColor)
+                    )
+                    Row {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = null,
@@ -192,8 +206,8 @@ fun TodayNotice(
                         )
                         Text(
                             convertDate(post.deadline),
-                            fontSize = 12.sp,
-                            color = Color(0xff595959),
+                            style = meetingScreenDeadline,
+                            color = colorResource(id = R.color.mainGreyColor),
                             modifier = Modifier.weight(8f),
                             textAlign = TextAlign.End
                         )
@@ -278,16 +292,15 @@ fun MeetingBoardItem(
             ) {
                 Text(
                     text = post.title,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xff595959),
+                    style = meetingScreenTitle,
+                    color = colorResource(id = R.color.mainGreyColor),
                     modifier = Modifier
                         .weight(10f)
                         .fillMaxWidth()
                 )
                 Text(
-                    "$acceptedUser/${post.person}", fontSize = 12.5.sp,
-                    fontWeight = FontWeight.Bold,
+                    "$acceptedUser/${post.person}",
+                    style = meetingScreenAttendInfo,
                     color = colorResource(id = mainColor),
                     modifier = Modifier
                         .weight(1f)
@@ -301,14 +314,13 @@ fun MeetingBoardItem(
             ) {
                 Text(
                     text = "${post.person}명",
-                    fontSize = 11.5.sp,
-//                    fontWeight = FontWeight.SemiBold,
+                    style = meetingScreenPerson,
                     color = Color(0xff999999)
                 )
                 Text(
-                    date, fontSize = 12.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xff595959)
+                    date,
+                    style = meetingScreenDeadline,
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
             }
         }

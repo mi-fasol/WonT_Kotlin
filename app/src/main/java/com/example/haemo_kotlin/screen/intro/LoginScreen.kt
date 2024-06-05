@@ -42,6 +42,7 @@ import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.util.EnterInfo
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
+import com.example.haemo_kotlin.ui.theme.buttonText
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
 import com.example.haemo_kotlin.viewModel.MainViewModel
@@ -147,7 +148,6 @@ fun LoginButton(loginViewModel: LoginViewModel, mainColor: Int, navController: N
             }
 
             else -> {
-                // Handle other states if needed
             }
         }
     }
@@ -172,7 +172,7 @@ fun LoginButton(loginViewModel: LoginViewModel, mainColor: Int, navController: N
                 .fillMaxWidth()
                 .height((screenWidth / 7.5).dp)
         ) {
-            Text("로그인", color = Color.White, fontWeight = FontWeight.SemiBold)
+            Text("로그인", color = Color.White, style = buttonText)
         }
     }
 }

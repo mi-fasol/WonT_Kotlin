@@ -36,6 +36,10 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.meetingScreenDeadline
+import com.example.haemo_kotlin.ui.theme.meetingScreenPerson
+import com.example.haemo_kotlin.ui.theme.meetingScreenTitle
+import com.example.haemo_kotlin.ui.theme.myWishInfo
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.WishButton
@@ -101,8 +105,7 @@ fun MyWishClubScreen(
                         ) {
                             Text(
                                 "가고 싶은 모임",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
+                                style = myWishInfo,
                                 color = colorResource(
                                     id = R.color.myBoardColor
                                 ),
@@ -164,8 +167,7 @@ fun MyWishClubItem(
             ) {
                 Text(
                     text = post.title,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    style = meetingScreenTitle,
                     color = colorResource(id = R.color.mainGreyColor),
                 )
                 WishButton(
@@ -184,12 +186,12 @@ fun MyWishClubItem(
             ) {
                 Text(
                     text = "${post.person}명",
-                    fontSize = 11.5.sp,
-                    color = Color(0xff999999)
+                    style = meetingScreenPerson,
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
                 Text(
-                    date, fontSize = 12.5.sp,
-                    fontWeight = FontWeight.Bold,
+                    date,
+                    style = meetingScreenDeadline,
                     color = colorResource(id = R.color.mainGreyColor)
                 )
             }

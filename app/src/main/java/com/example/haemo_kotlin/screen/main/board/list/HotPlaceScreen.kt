@@ -50,6 +50,9 @@ import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.hotPlaceScreenInfo
+import com.example.haemo_kotlin.ui.theme.hotPlaceScreenTitle
+import com.example.haemo_kotlin.ui.theme.popularPlaceTitle
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MainPageAppBar
 import com.example.haemo_kotlin.util.WishButton
@@ -152,9 +155,8 @@ fun PopularPlace(
             ) {
                 Text(
                     "현재, 가장 인기있는 핫플",
-                    fontSize = 15.sp,
-                    color = Color(0xff414141),
-                    fontWeight = FontWeight.SemiBold
+                    style = hotPlaceScreenInfo,
+                    color = Color(0xff414141)
                 )
                 LazyRow(
                 ) {
@@ -245,9 +247,8 @@ fun PopularPlaceItem(
                         ) {
                             Text(
                                 post.title,
-                                fontSize = 18.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
+                                style = popularPlaceTitle,
+                                color = Color.White
                             )
                             Text(
                                 post.content,
@@ -273,9 +274,9 @@ fun HotPlaceBoard(
 ) {
     Column {
         Text(
-            "이런 장소는 어때요?", fontSize = 15.sp,
+            "이런 장소는 어때요?",
+            style = hotPlaceScreenInfo,
             color = Color(0xff414141),
-            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 5.dp)
         )
         LazyVerticalStaggeredGrid(
@@ -357,9 +358,8 @@ fun HotPlaceBoardItem(
                 WishButton(null, null, post, mainColor, 3, wishViewModel = wishViewModel)
                 Text(
                     post.title,
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    style = hotPlaceScreenTitle,
+                    color = Color.White
                 )
             }
         }

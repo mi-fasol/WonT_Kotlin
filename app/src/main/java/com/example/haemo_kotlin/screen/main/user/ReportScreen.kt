@@ -26,12 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.user.MailState
+import com.example.haemo_kotlin.ui.theme.clubScreenTitle
+import com.example.haemo_kotlin.ui.theme.reportCheck
+import com.example.haemo_kotlin.ui.theme.reportedNickname
 import com.example.haemo_kotlin.util.ConfirmDialog
 import com.example.haemo_kotlin.util.ContentEnterField
 import com.example.haemo_kotlin.util.DropDownMenu
@@ -84,8 +85,7 @@ fun ReportTitle(nickname: String, mainColor: Int) {
     Column(Modifier.padding(top = 50.dp)) {
         Text(
             nickname,
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold,
+            style = reportedNickname,
             color = colorResource(
                 id = mainColor
             ),
@@ -93,8 +93,7 @@ fun ReportTitle(nickname: String, mainColor: Int) {
         )
         Text(
             "님을 신고하시겠습니까?",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            style = reportCheck,
             color = colorResource(
                 id = R.color.mainGreyColor
             ),
@@ -170,7 +169,7 @@ fun ReportButton(mainColor: Int, nickname: String, reportViewModel: ReportViewMo
         Text(
             "등록하기",
             color = Color.White,
-            fontWeight = FontWeight.ExtraBold,
+            style = clubScreenTitle,
             modifier = Modifier.padding(vertical = 5.dp)
         )
     }

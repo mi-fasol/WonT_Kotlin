@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,14 +30,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.meetingScreenAttendInfo
+import com.example.haemo_kotlin.ui.theme.meetingScreenDeadline
+import com.example.haemo_kotlin.ui.theme.meetingScreenPerson
+import com.example.haemo_kotlin.ui.theme.meetingScreenTitle
+import com.example.haemo_kotlin.ui.theme.myWishInfo
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageListAppBar
 import com.example.haemo_kotlin.util.convertDate
@@ -130,8 +136,7 @@ fun MyMeetingBoardList(
         ) {
             Text(
                 "내가 작성한 글",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
+                style = myWishInfo,
                 color = colorResource(
                     id = R.color.myBoardColor
                 ),
@@ -152,13 +157,12 @@ fun MyMeetingBoardItem(
     navController: NavController
 ) {
     val config = LocalConfiguration.current
-    val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
-    val attendees by viewModel.attendeeList.collectAsState()
+    val screenWidth = config.screenWidthDp
     val acceptationList by viewModel.attendeeModelList.collectAsState()
     val allowedUser = acceptationList[post.pId]?.filter { it.acceptation }?.size ?: 0
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.getAcceptationByPId(post.pId)
         viewModel.getAttendeeByPId(post.pId)
     }
@@ -185,21 +189,30 @@ fun MyMeetingBoardItem(
             ) {
                 Text(
                     text = post.title,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xff595959),
+                    style = meetingScreenTitle,
+                    color = colorResource(id = R.color.mainGreyColor),
                     modifier = Modifier
                         .weight(10f)
                         .fillMaxWidth()
                 )
-                Text(
-                    "$allowedUser/${post.person}", fontSize = 12.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = mainColor),
-                    modifier = Modifier
-                        .weight(1f)
+                Row(
+                    Modifier
                         .fillMaxWidth()
-                )
+                        .weight(1.5f)) {
+                    Text(
+                        "$allowedUser/${post.person}",
+                        style = meetingScreenAttendInfo,
+                        color = colorResource(id = mainColor),
+                        modifier = Modifier
+                            .padding(end = 3.dp)
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.person),
+                        contentDescription = null,
+                        modifier = Modifier.size(13.dp),
+                        tint = colorResource(id = mainColor)
+                    )
+                }
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -208,13 +221,13 @@ fun MyMeetingBoardItem(
             ) {
                 Text(
                     text = "${post.person}명",
-                    fontSize = 11.5.sp,
-                    color = Color(0xff999999)
+                    style = meetingScreenPerson,
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
                 Text(
-                    convertDate(post.date), fontSize = 12.5.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xff595959)
+                    convertDate(post.date),
+                    style = meetingScreenDeadline,
+                    color = colorResource(id = R.color.mainGreyColor)
                 )
             }
         }

@@ -29,12 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.post.NoticeResponseModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.boardDetailContent
+import com.example.haemo_kotlin.ui.theme.noticeScreenDate
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.util.convertDate
@@ -157,14 +158,14 @@ fun NoticeListItem(
             ) {
                 Text(
                     text = "[${notice.category}] ${notice.title}",
-                    fontSize = 13.sp,
+                    style = boardDetailContent,
                     color = colorResource(
                         id = R.color.mainGreyColor
                     )
                 )
                 Text(
                     text = date,
-                    fontSize = 11.sp,
+                    style = noticeScreenDate,
                     color = colorResource(id = R.color.noticeListScreenTextColor)
                 )
             }

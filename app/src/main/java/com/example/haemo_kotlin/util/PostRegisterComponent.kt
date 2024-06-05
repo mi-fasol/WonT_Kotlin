@@ -22,7 +22,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -46,6 +45,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.ui.theme.boardRegisterDropdown
+import com.example.haemo_kotlin.ui.theme.clubScreenTitle
+import com.example.haemo_kotlin.ui.theme.contentEnterText
+import com.example.haemo_kotlin.ui.theme.enterField
 import com.example.haemo_kotlin.viewModel.board.ClubPostViewModel
 import com.example.haemo_kotlin.viewModel.board.HotPlacePostViewModel
 import com.example.haemo_kotlin.viewModel.board.PostViewModel
@@ -65,8 +68,7 @@ fun TextEnterRowField(
     ) {
         Text(
             type,
-            fontSize = 17.5.sp,
-            fontWeight = FontWeight.Bold,
+            style = enterField,
             color = colorResource(id = mainColor),
             modifier = Modifier.weight(1f)
         )
@@ -79,11 +81,11 @@ fun TextEnterRowField(
                 modifier = Modifier
                     .background(Color.White)
                     .padding(8.dp),
-                textStyle = androidx.compose.ui.text.TextStyle(
+                textStyle = TextStyle(
                     color = colorResource(id = R.color.postRegisterTextColor),
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+                    fontWeight = FontWeight.W500
+                ),
             )
             Divider()
         }
@@ -110,8 +112,7 @@ fun TextEnterColumnField(
     ) {
         Text(
             title,
-            fontSize = 17.5.sp,
-            fontWeight = FontWeight.Bold,
+            style = enterField,
             color = colorResource(id = R.color.inquiryScreenTitleTextColor),
             modifier = Modifier.padding(bottom = 5.dp)
         )
@@ -130,7 +131,7 @@ fun TextEnterColumnField(
                     textStyle = TextStyle(
                         color = contentColor,
                         fontSize = 17.5.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.W500
                     ),
                     readOnly = hasButton
                 )
@@ -184,7 +185,7 @@ fun DropDownMenu(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(selectedText, color = borderColor)
+                Text(selectedText, color = borderColor, style = boardRegisterDropdown)
                 Spacer(modifier = Modifier.width(10.dp))
                 Icon(icon, contentDescription = null, tint = borderColor)
             }
@@ -211,7 +212,7 @@ fun DropDownMenu(
                         expanded = false
                     },
                 ) {
-                    Text(text = label, fontSize = 11.sp)
+                    Text(text = label, style = boardRegisterDropdown)
                 }
             }
         }
@@ -234,11 +235,7 @@ fun ContentEnterField(value: String, onValueChange: (String) -> Unit) {
             onValueChange = onValueChange,
             modifier = Modifier
                 .padding(15.dp),
-            textStyle = androidx.compose.ui.text.TextStyle(
-                color = Color(0xffb6b6b6),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            ),
+            textStyle = contentEnterText
         )
     }
 }
@@ -280,7 +277,7 @@ fun PostRegisterButton(
         Text(
             "등록하기",
             color = Color.White,
-            fontWeight = FontWeight.ExtraBold
+            style = clubScreenTitle
         )
     }
 }

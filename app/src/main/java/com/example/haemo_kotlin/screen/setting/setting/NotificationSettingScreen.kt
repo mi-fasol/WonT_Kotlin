@@ -47,7 +47,7 @@ fun NotificationSettingScreen(viewModel: MainViewModel, navController: NavContro
         },
         modifier = Modifier.background(colorResource(id = R.color.settingScreenBackgroundColor))
     ) {
-        Column() {
+        Column {
             SettingTitleField(text = "푸시 알림 설정")
             SettingSwitch(
                 "알림 설정",

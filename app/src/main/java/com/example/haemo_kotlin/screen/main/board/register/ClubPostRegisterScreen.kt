@@ -223,14 +223,13 @@ fun ImagePickerBox(
         }
     }
 
-
     val imageUrl = when (type) {
         2 -> viewModel!!.image.collectAsState().value
         3 -> hotPlacePostViewModel!!.image.collectAsState().value
         else -> throw IllegalArgumentException("Invalid type: $type")
     }
-    LaunchedEffect(imageUrl) {
 
+    LaunchedEffect(imageUrl) {
     }
 
     Box(
@@ -246,7 +245,7 @@ fun ImagePickerBox(
         ) {
             if (imageUrl == "") {
                 Icon(
-                    painter = painterResource(id = R.drawable.accept_user_icon),
+                    painter = painterResource(id = R.drawable.image_picker_icon),
                     contentDescription = "Add Image",
                     tint = Color.Gray
                 )

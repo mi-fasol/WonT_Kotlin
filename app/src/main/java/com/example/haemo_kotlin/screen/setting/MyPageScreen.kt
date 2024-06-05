@@ -32,14 +32,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
 import com.example.haemo_kotlin.model.system.navigation.NavigationRoutes
 import com.example.haemo_kotlin.network.Resource
+import com.example.haemo_kotlin.ui.theme.myPageListItem
+import com.example.haemo_kotlin.ui.theme.myPageNickname
+import com.example.haemo_kotlin.ui.theme.myPageProfile
+import com.example.haemo_kotlin.ui.theme.withdrawCheck
 import com.example.haemo_kotlin.util.ErrorScreen
 import com.example.haemo_kotlin.util.MyPageAppBar
 import com.example.haemo_kotlin.util.SharedPreferenceUtil
@@ -106,7 +108,6 @@ fun MyPageScreen(
                                     color = colorResource(mainColor)
                                 )
                                 MyPageList(
-                                    user.uId,
                                     mainColor,
                                     user.nickname,
                                     mainViewModel,
@@ -140,8 +141,7 @@ fun UserProfile(user: UserResponseModel) {
         ) {
             Text(
                 "프로필",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
+                style = myPageProfile,
                 color = Color(0xff818181)
             )
             Image(
@@ -149,7 +149,7 @@ fun UserProfile(user: UserResponseModel) {
                 contentDescription = null,
                 Modifier.size((screenWidth / 2.5).dp)
             )
-            Text(text = user.major, fontSize = 13.sp)
+            Text(text = user.major, style = withdrawCheck)
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -158,7 +158,7 @@ fun UserProfile(user: UserResponseModel) {
                     contentDescription = null,
                     Modifier.size((screenWidth / 20).dp)
                 )
-                Text(user.nickname, fontSize = 22.sp)
+                Text(user.nickname, style = myPageNickname)
             }
         }
     }
@@ -166,7 +166,6 @@ fun UserProfile(user: UserResponseModel) {
 
 @Composable
 fun MyPageList(
-    uId: Int,
     mainColor: Int,
     nickname: String,
     mainViewModel: MainViewModel,
@@ -181,7 +180,7 @@ fun MyPageList(
             Modifier.padding(bottom = 10.dp)
         ) {
             items(4) { idx ->
-                MyPageListItem(idx, uId, mainColor, nickname, mainViewModel, navController)
+                MyPageListItem(idx, mainColor, nickname, mainViewModel, navController)
                 Spacer(Modifier.height(5.dp))
             }
         }
@@ -192,14 +191,12 @@ fun MyPageList(
 @Composable
 fun MyPageListItem(
     idx: Int,
-    uId: Int,
     mainColor: Int,
     nickname: String,
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
     val textList = listOf("내가 작성한 글", "찜한 장소", "가고 싶은 모임", "가고 싶은 소모임")
     val navigationRoutes = listOf(
@@ -212,6 +209,7 @@ fun MyPageListItem(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .background(Color.White)
+            .padding(top = 3.dp)
             .fillMaxWidth()
             .height((screenHeight / 16).dp)
             .clickable {
@@ -224,7 +222,11 @@ fun MyPageListItem(
                 .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = textList[idx], fontSize = 16.5.sp, color = Color(0xff515151))
+            Text(
+                text = textList[idx],
+                color = colorResource(id = R.color.mainGreyColor),
+                style = myPageListItem
+            )
             Icon(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,

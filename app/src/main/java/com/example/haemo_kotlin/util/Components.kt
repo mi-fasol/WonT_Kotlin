@@ -46,7 +46,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -60,9 +60,12 @@ import com.example.haemo_kotlin.model.retrofit.post.ClubPostResponseModel
 import com.example.haemo_kotlin.model.retrofit.post.HotPlaceResponsePostModel
 import com.example.haemo_kotlin.model.retrofit.post.PostResponseModel
 import com.example.haemo_kotlin.model.retrofit.user.UserResponseModel
+import com.example.haemo_kotlin.ui.theme.textFieldTitle
 import com.example.haemo_kotlin.ui.theme.commentContent
 import com.example.haemo_kotlin.ui.theme.commentInfo
+import com.example.haemo_kotlin.ui.theme.commentText
 import com.example.haemo_kotlin.ui.theme.commentUserNickname
+import com.example.haemo_kotlin.ui.theme.textFieldContent
 import com.example.haemo_kotlin.ui.theme.postUserInfo
 import com.example.haemo_kotlin.ui.theme.postUserNickname
 import com.example.haemo_kotlin.ui.theme.replyButtonText
@@ -88,7 +91,7 @@ fun ErrorScreen(text: String) {
             Text(
                 text = text,
                 color = Color(0xffc2c2c2),
-                fontSize = 12.5.sp,
+                style = commentContent,
                 textAlign = TextAlign.Center
             )
         }
@@ -102,9 +105,8 @@ fun EnterInfo(type: String, mainColor: Int, value: String, onValueChange: (Strin
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-        ) {
-            Text(type, fontWeight = FontWeight.SemiBold)
+        Column {
+            Text(type, style = textFieldTitle)
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
@@ -117,7 +119,8 @@ fun EnterInfo(type: String, mainColor: Int, value: String, onValueChange: (Strin
                     unfocusedBorderColor = Color.LightGray,
                     containerColor = Color.White
                 ),
-                shape = RoundedCornerShape(15.dp)
+                shape = RoundedCornerShape(15.dp),
+                textStyle = textFieldContent
             )
         }
     }
@@ -223,11 +226,11 @@ fun SendReply(
                     .weight(10f)
                     .height((screenWidth / 9).dp)
                     .background(Color(0xffededed), RoundedCornerShape(25.dp))
-                    .padding(10.dp)
+                    .padding(10.dp),
+                textStyle = commentText
             )
             FilledIconButton(
                 onClick = {
-                    SharedPreferenceUtil(context).setString("nickname", "뜽미니에요")
                     if (!isReply) {
                         commentViewModel.registerComment(value, pId, postType)
                     } else {
@@ -479,23 +482,8 @@ fun CommentWidgetItem(
                     viewModel = viewModel,
                     navController = navController
                 )
-//                replies.forEachIndexed { index, reply ->
-//                    if (replyUsers != null) {
-//                        replyUsers.getOrNull(index)
-//                            ?.let { ReplyWidgetItem(reply, it, navController) }
-//                    }
-//                }
             }
         }
-
-//        if (replies.isNotEmpty()) {
-//            replies.forEachIndexed { index, reply ->
-//                if (replyUserList.isNotEmpty()) {
-//                    replyUserList.getOrNull(index)
-//                        ?.let { ReplyWidgetItem(reply, it, navController) }
-//                }
-//            }
-//        }
     }
 
     if (bottomSheetOpen) {

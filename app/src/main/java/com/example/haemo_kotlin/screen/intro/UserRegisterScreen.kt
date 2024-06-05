@@ -50,18 +50,25 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.MainActivity
 import com.example.haemo_kotlin.R
+import com.example.haemo_kotlin.ui.theme.buttonText
+import com.example.haemo_kotlin.ui.theme.textFieldTitle
+import com.example.haemo_kotlin.ui.theme.textFieldContent
+import com.example.haemo_kotlin.ui.theme.registerScreenProfileText
 import com.example.haemo_kotlin.util.*
 import com.example.haemo_kotlin.viewModel.MainViewModel
 import com.example.haemo_kotlin.viewModel.user.UserViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun UserRegisterScreen(viewModel: UserViewModel, mainViewModel: MainViewModel, navController: NavController) {
+fun UserRegisterScreen(
+    viewModel: UserViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController
+) {
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
     val screenHeight = config.screenHeightDp
@@ -95,7 +102,11 @@ fun UserRegisterScreen(viewModel: UserViewModel, mainViewModel: MainViewModel, n
                             .height((screenHeight / 7).dp)
                     )
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text("프로필", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+                    Text(
+                        "프로필",
+                        style = registerScreenProfileText,
+                        color = colorResource(id = R.color.myBoardColor)
+                    )
                     Spacer(Modifier.height(20.dp))
                     SelectUserImage(viewModel = viewModel, screenWidth)
                     Spacer(Modifier.height(20.dp))
@@ -185,14 +196,14 @@ fun SelectUserImage(viewModel: UserViewModel, width: Int) {
 fun SelectDropDownMenu(
     type: String,
     text: String,
-    mainColor : Int,
+    mainColor: Int,
     list: List<String>,
     modifier: Modifier,
     onValueChange: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(text) }
-    var textfieldSize by remember { mutableStateOf(Size.Zero) }
+    var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
     val icon = if (expanded)
         Icons.Filled.KeyboardArrowUp
@@ -200,11 +211,11 @@ fun SelectDropDownMenu(
         Icons.Filled.KeyboardArrowDown
 
     Column(modifier) {
-        Text(type, fontWeight = FontWeight.SemiBold)
+        Text(type, style = textFieldTitle)
         androidx.compose.material3.OutlinedTextField(
             modifier = Modifier
                 .onGloballyPositioned { coordinates ->
-                    textfieldSize = coordinates.size.toSize()
+                    textFieldSize = coordinates.size.toSize()
                 },
             value = selectedText,
             readOnly = true,
@@ -233,7 +244,11 @@ fun SelectDropDownMenu(
                 onValueChange(label)
                 expanded = false
             }) {
-                Text(text = label)
+                Text(
+                    text = label,
+                    style = textFieldContent,
+                    color = colorResource(id = R.color.myBoardColor)
+                )
             }
         }
     }
@@ -288,7 +303,7 @@ fun UserRegisterButton(viewModel: UserViewModel, mainColor: Int, navController: 
                 .fillMaxWidth()
                 .fillMaxHeight(0.2f)
         ) {
-            Text("가입하기", color = Color.White, fontWeight = FontWeight.SemiBold)
+            Text("가입하기", color = Color.White, style = buttonText)
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.example.haemo_kotlin.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -81,33 +81,257 @@ val commentInfo = TextStyle(
     fontFamily = sc_dream
 )
 
-val commentUserNickname =  TextStyle(
+val commentUserNickname = TextStyle(
     fontSize = 13.sp,
     fontWeight = FontWeight.W600,
     fontFamily = sc_dream
 )
 
-val postUserNickname =  TextStyle(
+val postUserNickname = TextStyle(
     fontSize = 12.5.sp,
     fontWeight = FontWeight.W600,
     fontFamily = sc_dream
 )
 
-val postUserInfo =  TextStyle(
+val postUserInfo = TextStyle(
     fontSize = 8.5.sp,
     fontWeight = FontWeight.W500,
     fontFamily = sc_dream
 )
 
 
-val commentContent =  TextStyle(
+val commentContent = TextStyle(
     fontSize = 12.5.sp,
     fontWeight = FontWeight.W500,
     fontFamily = sc_dream
 )
 
-val replyButtonText =  TextStyle(
+val replyButtonText = TextStyle(
     fontSize = 10.sp,
+    fontWeight = FontWeight.W500,
+    fontFamily = sc_dream
+)
+
+val buttonText = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val registerScreenProfileText = TextStyle(
+    fontSize = 20.sp,
+    fontWeight = FontWeight.W700,
+    fontFamily = sc_dream
+)
+
+val textFieldContent = TextStyle(
+    fontSize = 15.sp,
+    fontWeight = FontWeight.W400,
+    fontFamily = sc_dream
+)
+
+val textFieldTitle = TextStyle(
+    fontSize = 15.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val meetingScreenNoticeText = TextStyle(
+    fontSize = 10.sp,
+    fontWeight = FontWeight.W400,
+    fontFamily = sc_dream
+)
+
+val meetingScreenTitle = TextStyle(
+    fontSize = 13.5.sp,
+    fontWeight = FontWeight.W500,
+    fontFamily = sc_dream
+)
+
+val meetingScreenPerson = TextStyle(
+    fontSize = 12.sp,
+    fontWeight = FontWeight.W300,
+    fontFamily = sc_dream
+)
+
+val meetingScreenDeadline = TextStyle(
+    fontSize = 12.sp,
+    fontWeight = FontWeight.W200,
+    fontFamily = sc_dream
+)
+
+val meetingScreenAttendInfo = TextStyle(
+    fontSize = 12.5.sp,
+    fontWeight = FontWeight.W700,
+    fontFamily = sc_dream
+)
+
+val clubScreenTitle = TextStyle(
+    fontSize = 13.5.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val clubScreenDescription = TextStyle(
+    fontSize = 10.sp,
+    fontWeight = FontWeight.W400,
+    fontFamily = sc_dream
+)
+
+val boardAppBar = TextStyle(
+    fontSize = 17.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val hotPlaceScreenInfo = TextStyle(
+    fontSize = 15.sp,
+    fontWeight = FontWeight.W500,
+    fontFamily = sc_dream
+)
+
+val popularPlaceTitle = TextStyle(
+    fontSize = 18.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val hotPlaceScreenTitle = TextStyle(
+    fontSize = 14.sp,
+    fontWeight = FontWeight.W500,
+    fontFamily = sc_dream
+)
+
+val noticeScreenDate = TextStyle(
+    fontSize = 11.sp,
+    fontWeight = FontWeight.W400,
+    fontFamily = sc_dream
+)
+
+val settingScreenAppBar = TextStyle(
+    fontSize = 19.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val bacKArrowAppBar = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.W400,
+    fontFamily = sc_dream
+)
+
+val mainPageAppBar = TextStyle(
+    fontSize = 17.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val boardRegisterAppBar = TextStyle(
+    fontSize = 19.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val chatRoomAppBar = TextStyle(
+    fontSize = 17.sp,
+    fontWeight = FontWeight.W500,
+    fontFamily = sc_dream
+)
+
+val boardRegisterDropdown = TextStyle(
+    fontSize = 11.sp,
+    fontWeight = FontWeight.W500,
+    fontFamily = sc_dream
+)
+
+val contentEnterText = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.W500,
+    fontFamily = sc_dream,
+    color = Color(0xFFB6B6B6)
+)
+
+val enterField = TextStyle(
+    fontSize = 17.5.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val chatMessage = TextStyle(
+    fontSize = 13.sp,
+    fontWeight = FontWeight.W400,
+    fontFamily = sc_dream
+)
+
+val reportedNickname = TextStyle(
+    fontSize = 30.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val reportCheck = TextStyle(
+    fontSize = 20.sp,
+    fontWeight = FontWeight.W600,
+    fontFamily = sc_dream
+)
+
+val myWishInfo = TextStyle(
+    fontSize = 17.sp,
+    fontWeight = FontWeight.W700,
+    fontFamily = sc_dream
+)
+
+val switchText = TextStyle(
+    fontSize = 15.sp,
+    fontWeight = FontWeight.W300,
+    fontFamily = sc_dream
+)
+
+val settingTitle = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.W300,
+    fontFamily = sc_dream
+)
+
+val withdrawInfo = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.W300,
+    fontFamily = sc_dream
+)
+
+val withdrawCheck = TextStyle(
+    fontSize = 14.sp,
+    fontWeight = FontWeight.W300,
+    fontFamily = sc_dream
+)
+
+val myPageProfile = TextStyle(
+    fontSize = 22.sp,
+    fontWeight = FontWeight.W700,
+    fontFamily = sc_dream
+)
+
+val myPageNickname = TextStyle(
+    fontSize = 22.sp,
+    fontWeight = FontWeight.W300,
+    fontFamily = sc_dream
+)
+
+val myPageListItem = TextStyle(
+    fontSize = 16.5.sp,
+    fontWeight = FontWeight.W400,
+    fontFamily = sc_dream
+)
+
+val commentText = TextStyle(
+    fontSize = 12.5.sp,
+    fontWeight = FontWeight.W400,
+    fontFamily = sc_dream,
+    color = Color(0xFF393939)
+)
+
+val floatingButtonText = TextStyle(
+    fontSize = 11.5.sp,
     fontWeight = FontWeight.W500,
     fontFamily = sc_dream
 )

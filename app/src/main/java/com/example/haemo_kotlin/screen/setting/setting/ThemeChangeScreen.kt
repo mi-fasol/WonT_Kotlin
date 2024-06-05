@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.haemo_kotlin.R
 import com.example.haemo_kotlin.model.system.theme.ColorOption
+import com.example.haemo_kotlin.ui.theme.switchText
 import com.example.haemo_kotlin.util.SettingScreenAppBar
 import com.example.haemo_kotlin.viewModel.MainViewModel
 
@@ -104,7 +105,11 @@ fun SettingSwitch(
                 bottom = 10.dp
             )
     ) {
-        Text(text, color = colorResource(id = R.color.settingScreenColorTextColor))
+        Text(
+            text,
+            color = colorResource(id = R.color.settingScreenColorTextColor),
+            style = switchText
+        )
         Switch(
             checked = isChecked,
             onCheckedChange = { onCheckedChange(it) },
