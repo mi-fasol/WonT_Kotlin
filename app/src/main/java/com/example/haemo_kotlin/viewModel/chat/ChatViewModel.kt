@@ -142,12 +142,18 @@ class ChatViewModel @Inject constructor(
 
     fun findChatRoom(receiverId: Int) {
         chatRef.child("${receiverId}+${uId}").get().addOnSuccessListener { snapshot ->
+            Log.d("미란", "일단 석세스로 들어옴")
+            Log.d("미란","$receiverId + $uId")
             if (snapshot.exists()) {
                 _chatId.value = "${receiverId}+${uId}"
             } else {
                 chatRef.child("${uId}+${receiverId}").get().addOnSuccessListener { snapshot ->
                     if (snapshot.exists()) {
                         _chatId.value = "${uId}+${receiverId}"
+                        Log.d("미란", "있다 있어")
+                        Log.d("미란 챗아이디: ", _chatId.value)
+                    } else{
+                        _chatId.value = "${receiverId}+${uId}"
                     }
                 }
             }
@@ -181,18 +187,20 @@ class ChatViewModel @Inject constructor(
 
 
     fun sendMessage(
-        chatId: String,
         receiverId: Int,
         chatMessageModel: ChatMessageModel
     ) {
         if (chatMessages.value.isEmpty()) {
             chatMessages.value = listOf(chatMessageModel)
             Log.d("미란 sendMessage", "새로운 채팅방 만들 거야")
-            createNewChatRoom(chatId, receiverId, chatMessages.value)
+            createNewChatRoom(_chatId.value, receiverId, chatMessages.value)
         } else {
+            Log.d("미란 이전 message: ", chatMessages.value.toString())
             chatMessages.value += chatMessageModel
-            chatRef.child(chatId).child("messages").setValue(chatMessages.value)
+            Log.d("미란 이후 message: ", chatMessages.value.toString())
+            chatRef.child(_chatId.value).child("messages").setValue(chatMessages.value)
                 .addOnSuccessListener {
+                    Log.d("미란 message", chatMessageModel.toString())
                     Log.d("미란 message", "메시지 전송 됨")
                 }
                 .addOnFailureListener {

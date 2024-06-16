@@ -99,7 +99,7 @@ fun ChatList(
 
     LazyColumn {
         items(chatList.size) { idx ->
-            val lastMessage = chatList[idx].messages.get(0)
+            val lastMessage = chatList[idx].messages[0]
             val receiver = chatMap[chatList[idx].id]
             val swipeableState = rememberSwipeableState(initialValue = 0)
             val sizePx = with(LocalDensity.current) { ((screenWidth / 8).dp).toPx() }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.FilledIconButton
@@ -55,8 +56,8 @@ fun ChatScreen(
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     val uId = SharedPreferenceUtil(context).getInt("uId", 0)
-    val receiver = chatViewModel.receiverInfo.collectAsState().value
-    val chatMessage = chatViewModel.chatMessages.collectAsState().value
+    val receiver by chatViewModel.receiverInfo.collectAsState()
+    val chatMessage by chatViewModel.chatMessages.collectAsState()
     val mainColor by mainViewModel.colorState.collectAsState()
     val chatId by chatViewModel.chatId.collectAsState()
 
@@ -251,7 +252,7 @@ fun SendMessage(
                                 SharedPreferenceUtil(context).getString("nickname", "")!!,
                                 false
                             )
-                        viewModel.sendMessage(chatId, receiverId, message)
+                        viewModel.sendMessage(receiverId, message)
                         sendMessage.value = ""
                     }
                 },
@@ -263,7 +264,7 @@ fun SendMessage(
                     disabledContentColor = Color.White
                 ),
             ) {
-                androidx.compose.material.Icon(
+                Icon(
                     painter = painterResource(id = R.drawable.send_comment_icon),
                     contentDescription = null,
                     tint = Color.White,
