@@ -1,24 +1,17 @@
 # What's on TUK!
 
-### 📝 index
-+ [:sparkles: Main Topic](#-sparkles--main-topic)
-+ [:smiley: Theme](#-smiley--theme)
-+ [:globe_with_meridians: Functions](#-globe-with-meridians--functions)
-+ [📷 Screenshots](#---screenshots)
-
-
-## :sparkles: Main Topic
+### :sparkles: Main Topic
 교류가 없는 우리 학교, 소통이 필요해!
 학교 커뮤니티 어플리케이션 <What's on TUK>입니다.
 
 
-## :smiley: Theme
+### :smiley: Theme
 - 학생회나 동아리에 참여하지 않아도 다른 과 친구들과 얘기하고 싶어!
 - 같이 프로젝트를 만들어서 공모전에 참여할 친구를 찾고 싶어!
 - 소모임을 만들 건데, 같이 취미를 나눌 친구를 구하고 싶어!
 
 
-## :globe_with_meridians: Functions
+### :globe_with_meridians: Functions
 1. 모임 게시물
    - 식사, 공모전, 공부 등을 함께 할 친구를 찾는 기능
 2. 소모임 게시물
@@ -37,7 +30,7 @@
    - 알림 설정, 앱 테마 변경, 문의, 앱 버전, 공지사항 등의 기능을 사용할 수 있는 기능
 
 
-## 📷 Screenshots
+### 📷 Screenshots
 <img src="https://github.com/user-attachments/assets/dc35d067-285f-4c34-b7e0-3ffb16db92ce" width="200" height="400"/> <img src="https://github.com/user-attachments/assets/c951c8ae-3a3a-497d-92dc-1d1f844602b9" width="200" height="400"/> <img src="https://github.com/user-attachments/assets/129fcc0f-2e0d-4111-bfe6-9fd696b5b52d" width="200" height="400"/>
 <img src="https://github.com/user-attachments/assets/cabd7be0-2797-4ec9-97ee-f8da1b1a4505" width="200" height="400"/>
 
