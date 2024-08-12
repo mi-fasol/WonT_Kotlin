@@ -1,5 +1,12 @@
 # What's on TUK!
 
+### 📝 index
++ [:sparkles: Main Topic](#-sparkles--main-topic)
++ [:smiley: Theme](#-smiley--theme)
++ [:globe_with_meridians: Functions](#-globe-with-meridians--functions)
++ [📷 Screenshots](#---screenshots)
+
+
 
 ### :sparkles: Main Topic
 교류가 없는 우리 학교, 소통이 필요해!
@@ -31,11 +38,14 @@
 ### 📷 Screenshots
 <img src="https://github.com/user-attachments/assets/dc35d067-285f-4c34-b7e0-3ffb16db92ce" width="200" height="400"/> <img src="https://github.com/user-attachments/assets/c951c8ae-3a3a-497d-92dc-1d1f844602b9" width="200" height="400"/> <img src="https://github.com/user-attachments/assets/129fcc0f-2e0d-4111-bfe6-9fd696b5b52d" width="200" height="400"/>
 <img src="https://github.com/user-attachments/assets/cabd7be0-2797-4ec9-97ee-f8da1b1a4505" width="200" height="400"/>
-----------
+
 <img src="https://github.com/user-attachments/assets/53d36c67-f9c9-4d36-a0cc-66067cc0f27b" width="200" height="400"/> <img src="https://github.com/user-attachments/assets/d1c8feaa-9f26-4ab9-a5c0-15944d96cf12" width="200" height="400"/> 
 <img src="https://github.com/user-attachments/assets/16f742e6-cdce-4cf8-a789-297c26d2fffe" width="200" height="400"/> <img src="https://github.com/user-attachments/assets/7ca9ea55-c6b8-403e-ba0e-dda0a7d4b861" width="200" height="400"/> 
---
+
 <img src="https://github.com/user-attachments/assets/a3bfaa57-d2f9-416a-9b94-c229d9bf25ba" width="200" height="400"/>
 <img src="https://github.com/user-attachments/assets/073f490c-6ea5-4742-b86e-bf630fba24a8" width="200" height="400"/>
+<img src="https://github.com/user-attachments/assets/68172851-510f-4b85-ae01-546e948c3792" width="200" height="400"/>
+<img src="https://github.com/user-attachments/assets/7cdc7368-af79-442c-96d7-e1e5f419cdc6" width="200" height="400"/>
+
 <img src="https://github.com/user-attachments/assets/a7d931da-4dfb-4c59-a752-c70b3ab0c019" width="200" height="400"/>
 <img src="https://github.com/user-attachments/assets/1428aed3-a46a-421e-8a5e-068ed19019b2" width="200" height="400"/>
